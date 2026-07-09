@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yyyy0124-cyber.github.io/chukguchanggo/sitemap.xml
