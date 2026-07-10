@@ -1,0 +1,17 @@
+{
+  "name": "축구창고 — 축구 팬의 창고",
+  "short_name": "축구창고",
+  "description": "축구 도구 60여 종 · 30분마다 갱신되는 축구 뉴스 · 익명 토론방",
+  "start_url": "/?utm_source=pwa&utm_medium=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1e1b4b",
+  "theme_color": "#1e1b4b",
+  "lang": "ko",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "favicon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
