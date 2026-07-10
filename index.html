@@ -1331,7 +1331,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-F</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-G</span></div>
   </div>
 </footer>
 
@@ -3969,4 +3969,65 @@ function boardWrite(){
   if(CHAT_BAN.test(nk+" "+t+" "+b)){alert("부적절한 표현이 포함되어 등록할 수 없습니다.");return;}
   if(/https?:\/\//i.test(t+" "+b)){alert("링크는 넣을 수 없습니다. (스팸 방지)");return;}
   var now=Date.now();
-  if(now-boardLastWrite<30000){alert("도배 방지: 30초에 한 번만 작성할 수
+  if(now-boardLastWrite<30000){alert("도배 방지: 30초에 한 번만 작성할 수 있어요.");return;}
+  boardIp(function(ip){
+    boardLastWrite=Date.now();
+    firebase.database().ref("posts").push({
+      n:nk.slice(0,10),ip:ip,t:t.slice(0,100),b:b.slice(0,2000),d:firebase.database.ServerValue.TIMESTAMP
+    }).then(function(){
+      document.getElementById("bw-title").value="";
+      document.getElementById("bw-body").value="";
+      var w=document.getElementById("board-write"); if(w) w.hidden=true;
+      boardLoad();
+    }).catch(function(){alert("등록에 실패했습니다. 잠시 후 다시 시도해 주세요.");});
+  });
+}
+function boardCmt(id){
+  if(!chatReady||!window.firebase) return;
+  var el=document.getElementById("bc-in"); if(!el) return;
+  var t=(el.value||"").trim(); if(!t) return;
+  if(t.length>200){alert("200자 이내로 입력해 주세요.");return;}
+  if(CHAT_BAN.test(t)){alert("부적절한 표현이 포함되어 있습니다.");return;}
+  if(/https?:\/\//i.test(t)){alert("링크는 넣을 수 없습니다.");return;}
+  var now=Date.now();
+  if(now-chatLastSend<5000){alert("잠시 후 다시 시도해 주세요. (5초 간격)");return;}
+  chatLastSend=now;
+  boardIp(function(ip){
+    firebase.database().ref("pcmt/"+id).push({
+      n:"ㅇㅇ",ip:ip,t:t.slice(0,200),d:firebase.database.ServerValue.TIMESTAMP
+    }).then(function(){
+      return firebase.database().ref("pcmt/"+id).once("value");
+    }).then(function(s){
+      boardCmts[id]=s.val()||{};
+      renderBoardList();
+    }).catch(function(){});
+  });
+}
+chatInit();
+
+// ⑨ 매 10분(+10초) 자동 갱신 등록 — 10분 간격
+scheduleHourly(loadNews);
+scheduleHourly(loadKNews);
+scheduleHourly(loadKLeague);
+scheduleHourly(loadFixtures);
+scheduleHourly(loadHighlights);
+
+// ── 초기화 ─────────────────────────────────────────────
+(function init(){
+  try{renderChal();}catch(e){}
+  try{buildMagList();}catch(e){}
+  try{renderVote();}catch(e){}
+  try{renderWeeklyPick();}catch(e){}
+  try{renderTransferWindow();}catch(e){}
+  try{loadNews();}catch(e){}
+  try{loadKLeague();}catch(e){}
+  try{loadKNews();}catch(e){}
+  try{loadFixtures();}catch(e){}
+  try{loadHighlights();}catch(e){}
+  // renderRank 는 상단의 setTimeout(renderRank,0) 로 호출됩니다.
+  var h=(location.hash||"").replace(/^#/,"");
+  if(h){ NAV_SILENT=true; routeTo(h); NAV_SILENT=false; }
+})();
+</script>
+</body>
+</html>
