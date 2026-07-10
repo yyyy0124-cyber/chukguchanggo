@@ -1,4 +1,6 @@
+# 축구창고 — 모든 크롤러 허용
 User-agent: *
 Allow: /
 
-Sitemap: https://yyyy0124-cyber.github.io/chukguchanggo/sitemap.xml
+# ⚠️ 배포 후: YOUR-DOMAIN 을 실제 주소로 바꾸세요
+Sitemap: https://chukguchanggo.com/sitemap.xml

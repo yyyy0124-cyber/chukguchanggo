@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ⚠️ 배포 후: 아래 3곳의 https://yyyy0124-cyber.github.io/chukguchanggo 을 실제 주소로 바꿔 저장하세요
+<!-- ⚠️ 배포 후: 아래 3곳의 https://chukguchanggo.com 을 실제 주소로 바꿔 저장하세요
      (예: https://chukguchanggo.pages.dev 또는 https://내도메인.com) -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://yyyy0124-cyber.github.io/chukguchanggo/</loc>
+    <loc>https://chukguchanggo.com/</loc>
     <changefreq>hourly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://yyyy0124-cyber.github.io/chukguchanggo/#tools</loc>
+    <loc>https://chukguchanggo.com/#tools</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://yyyy0124-cyber.github.io/chukguchanggo/#mag</loc>
+    <loc>https://chukguchanggo.com/#mag</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
