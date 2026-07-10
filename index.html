@@ -305,10 +305,19 @@
   .hero2 img{width:100%;height:100%;object-fit:cover;display:block}
   .hero2 .ht{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;
     padding:24px;background:linear-gradient(180deg,rgba(12,35,64,.1) 30%,rgba(8,15,28,.8));color:#fff}
-  .hero2 h2{font-size:25px;letter-spacing:-.5px;margin-bottom:4px}
+  .hero2 h2{font-size:25px;letter-spacing:-.5px;margin-bottom:4px;word-break:keep-all;line-height:1.35}
   .hero2 p{font-size:14px;opacity:.9;max-width:520px;word-break:keep-all;line-height:1.7}
   .hero2 .hbtn{align-self:flex-start;margin-top:12px;background:var(--accent);color:#3b2b00;
     font-weight:800;padding:9px 20px;border-radius:8px;font-size:14px;border:none;cursor:pointer;font-family:inherit}
+  @media(max-width:700px){
+    .hero2{height:auto;min-height:240px}
+    .hero2 img{position:absolute;inset:0;height:100%}
+    .hero2 .ht{position:static;padding:64px 18px 18px;
+      background:linear-gradient(180deg,rgba(12,35,64,.12) 0%,rgba(8,15,28,.55) 40%,rgba(8,15,28,.88) 100%)}
+    .hero2 h2{font-size:20px;margin-top:8px}
+    .hero2 p{font-size:13px;line-height:1.6}
+    .hero2 .hbtn{margin-top:10px;padding:8px 18px;font-size:13px}
+  }
   .banner{position:relative;border-radius:12px;overflow:hidden;margin:16px 0 22px;height:140px}
   .banner img{width:100%;height:100%;object-fit:cover;display:block}
   .banner .cap{position:absolute;left:0;right:0;bottom:0;padding:10px 16px;
@@ -1330,7 +1339,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-I</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-J</span></div>
   </div>
 </footer>
 
