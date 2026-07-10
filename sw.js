@@ -1,5 +1,5 @@
 // 축구창고 PWA 서비스워커 — 같은 도메인만 개입, 네트워크 우선(항상 최신) + 오프라인 캐시 폴백
-var CACHE = "chukgu-v1";
+var CACHE = "chukgu-v2";
 var ASSETS = ["/", "/index.html", "/logo_header.png", "/favicon.png", "/icon-192.png", "/manifest.json"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));
