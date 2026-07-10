@@ -1330,7 +1330,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-H</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-I</span></div>
   </div>
 </footer>
 
@@ -3757,8 +3757,10 @@ function renderToolSpot(){
   if(!spot||!grid) return;
   var pool=TOOL_SPOT.filter(function(t){return document.getElementById(t.id);});
   if(!pool.length) return;
-  var day=Math.floor(Date.now()/86400000);
-  var s=pool[day%pool.length];
+  // 로컬(한국) 날짜 기준 일별 시드 → 매일 자정에 무작위 재배치
+  var n0=new Date(), daySalt=n0.getFullYear()*10000+(n0.getMonth()+1)*100+n0.getDate();
+  var shuffled=pool.slice().sort(function(a,b){return rankScore(a.id,daySalt)-rankScore(b.id,daySalt);});
+  var s=shuffled[0];
   // 실사용 횟수(Firebase 집계)는 100회 이상일 때만 표시 — 배포 초기엔 숨김
   function useTag(id){
     var n=(window.TOOL_USES||{})[id]||0;
@@ -3768,12 +3770,25 @@ function renderToolSpot(){
     +'<div><b>오늘의 도구 · '+s.n+'</b><div class="small" style="margin-top:4px">'+s.d+'</div>'
     +'<div style="margin-top:2px">'+useTag(s.id)+'</div></div>'
     +'<button class="go" onclick="return navToolA(\''+s.id+'\')">바로 쓰기 →</button></div>';
-  var others=pool.filter(function(t){return t.id!==s.id;}).slice(0,6);
+  var others=shuffled.slice(1,7);
   grid.innerHTML=others.map(function(t){
     return '<div class="tqcard" onclick="navToolA(\''+t.id+'\')"><span class="ic">'+t.ic+'</span><b>'+t.n+'</b>'+useTag(t.id)+'</div>';
   }).join("");
 }
 renderToolSpot();
+// 자정(00:00:05)마다 오늘의 도구·인기 도구 재배치 — 주간은 월요일, 월간은 1일 자정에 시드가 바뀌며 함께 반영
+(function armMidnight(){
+  var now=new Date();
+  var next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5);
+  setTimeout(function(){
+    try{renderToolSpot();}catch(e){}
+    try{
+      var onTab=document.querySelector(".rk-tab.on");
+      renderRank(onTab&&onTab.dataset?onTab.dataset.p:"day");
+    }catch(e){}
+    armMidnight();
+  },next-now);
+})();
 // 실사용 카운터: 도구를 열 때마다 Firebase에 +1 (채팅 DB 연결 시 자동 활성화)
 window.TOOL_USES={};
 var _navToolA_cnt=navToolA;
