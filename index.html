@@ -544,7 +544,7 @@ if(GA_ID){
             <button class="hbtn" onclick="navTo('tools')">창고 열어보기 →</button>
           </div>
         </div>
-        <h2 class="sec">📰 오늘 들어온 소식 <span id="hn-stamp" style="font-size:12px;color:var(--sub);font-weight:400">자동 수집 중…</span></h2>
+        <h2 class="sec">📰 오늘 들어온 소식 <span id="hn-stamp" style="font-size:12px;color:var(--sub);font-weight:400">불러오는 중…</span></h2>
         <div id="home-news"><div class="nmain"><div class="skel" style="min-height:260px"></div><div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div></div></div></div>
         <div class="note" style="margin:6px 0 22px">※ 사진은 기사 제공 이미지(RSS)를 사용하며, 없으면 대체 이미지가 표시됩니다. 클릭하면 원문 기사로 이동합니다.</div>
 
@@ -964,7 +964,7 @@ if(GA_ID){
 
       <!-- ════════════ [뷰: 실시간 인기 도구] 일·주·월 TOP 10 ════════════ -->
       <div data-view="home hot">
-        <h2 class="sec">🔥 인기 도구 <span style="font-size:12px;color:var(--sub);font-weight:400">기간별 TOP 10 · 매일/매주/매월 자동 갱신</span></h2>
+        <h2 class="sec">🔥 인기 도구 <span style="font-size:12px;color:var(--sub);font-weight:400">기간별 TOP 10</span></h2>
         <div style="display:flex;gap:8px;margin-bottom:12px">
           <button class="rk-tab on" data-p="day" onclick="renderRank('day')">일간</button>
           <button class="rk-tab" data-p="week" onclick="renderRank('week')">주간</button>
@@ -997,13 +997,13 @@ if(GA_ID){
           <span id="wc-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">수집 중…</span>
         </div>
         <ul class="plist" id="wc-board">
-          <li><span class="pill">대기</span><b>월드컵 관련 헤드라인을 수집하는 중…</b><span class="pmeta2">키워드 자동 분류</span></li>
+          <li><span class="pill">대기</span><b>월드컵 관련 헤드라인을 수집하는 중…</b><span class="pmeta2">잠시만 기다려 주세요</span></li>
         </ul>
 
         <!-- ⚽ 주요 리그별 보드 -->
         <div class="klhead" style="background:#1e1b4b;border-bottom-color:var(--accent)">
           <span class="klmark" style="background:var(--accent);color:#3b2b00;font-style:italic">LEAGUES</span> 주요 리그 소식
-          <span id="news-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">2026.07.06 수집본 · 자동 갱신 시도 중…</span>
+          <span id="news-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">불러오는 중…</span>
           <button onclick="loadNews()" style="font-size:11px;padding:3px 10px;margin-left:6px;border:1px solid rgba(255,255,255,.4);border-radius:99px;background:transparent;color:#fff;cursor:pointer;font-family:inherit">↻</button>
         </div>
         <div id="lg-boards"></div>
@@ -1020,7 +1020,7 @@ if(GA_ID){
           <li><span class="pill">Sky</span><a href="https://www.skysports.com/football/news/11095/13559590/oliver-glasner-nottingham-forest-in-talks-to-replace-vitor-pereira-as-head-coach-with-ex-crystal-palace-boss" target="_blank" rel="noopener"><b>노팅엄, 페레이라와 결별 — 글라스너 선임 임박</b></a><span class="pmeta2">감독 인사</span></li>
           <li><span class="pill">Sky</span><a href="https://www.skysports.com/football/news/11095/13559666/mexico-vs-england-thomas-tuchels-side-face-a-huge-altitude-problem-by-playing-world-cup-round-of-16-at-7-000-feet" target="_blank" rel="noopener"><b>잉글랜드의 난제: 해발 2,200m 아스테카에서 열리는 멕시코전</b></a><span class="pmeta2">월드컵</span></li>
         </ul>
-        <div class="note" style="margin-bottom:22px">※ ESPN·스카이스포츠 공식 소식을 <b>10분마다</b> 자동으로 불러오며, 영어 제목은 <b>한국어로 자동 번역</b>됩니다. 제목에 마우스를 올리면 영어 원문, 클릭하면 원문 기사로 이동합니다. 출처는 항상 함께 표기됩니다.</div>
+        <div class="note" style="margin-bottom:22px">※ ESPN·스카이스포츠 공식 소식을 전해드립니다. 영어 제목은 한국어로 표시되며, 제목에 마우스를 올리면 영어 원문, 클릭하면 원문 기사로 이동합니다. 출처는 항상 함께 표기됩니다.</div>
 
         <h2 class="sec">해외축구 미디어 링크</h2>
         <div class="arts" style="margin-bottom:22px">
@@ -1071,7 +1071,7 @@ if(GA_ID){
         <!-- K리그 공식 소식 게시판 (kleague.com 공식 뉴스 자동 발췌) -->
         <div class="klhead">
           <span class="klmark">K LEAGUE</span> K리그 뉴스
-          <span id="kl-stamp" style="font-size:12px;color:var(--sub);font-weight:400;margin-left:8px">언론사 기사 자동 발췌 · 10분마다</span>
+          <span id="kl-stamp" style="font-size:12px;color:var(--sub);font-weight:400;margin-left:8px">언론사 기사 모음</span>
           <button onclick="loadKLeague()" style="font-size:11px;padding:3px 10px;margin-left:6px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);cursor:pointer;font-family:inherit">↻</button>
         </div>
         <div style="display:flex;gap:8px;margin:10px 0 12px">
@@ -1157,29 +1157,28 @@ if(GA_ID){
         <!-- ① 최신 오피셜 이적 — 검수 확정 + 자동 감지 통합 보드 -->
         <div class="klhead" style="background:#00193f;border-bottom-color:#5ba3d9">
           <span class="klmark" style="background:#1d75a3">TRANSFERS</span> 최신 오피셜 이적
-          <span id="of-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">자동 감지 + 검수 확정 · 10분마다 갱신</span>
+          <span id="of-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">이번 여름 확정 이적</span>
         </div>
         <ul class="plist" id="official-live">
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13558090/elliot-anderson-to-man-city-midfielder-completes-record-breaking-lb116m-transfer-from-nottingham-forest" target="_blank" rel="noopener"><b>엘리엇 앤더슨: 노팅엄 → 맨체스터 시티 (영국 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£116m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13559730/sandro-tonali-tottenham-sign-italy-midfielder-in-club-record-lb100m-deal-from-newcastle" target="_blank" rel="noopener"><b>산드로 토날리: 뉴캐슬 → 토트넘 (구단 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£100m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13559479/mateus-fernandes-transfer-news-midfielder-set-for-medical-after-spurs-beat-man-utd-to-lb85m-deal" target="_blank" rel="noopener"><b>마테우스 페르난데스: 웨스트햄 → 토트넘</b></a><span class="pmeta2"><span class="feechip">£85m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13548577/anthony-gordon-transfer-news-barcelona-reach-agreement-with-newcastle-for-england-international-winger" target="_blank" rel="noopener"><b>안토니 고든: 뉴캐슬 → 바르셀로나</b></a><span class="pmeta2"><span class="feechip">£69.3m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11669/13559447/jeremy-jacquet-transfer-news-liverpool-sign-rennes-defender-in-lb60m-deal-with-20-year-old-moving-to-anfield-this-summer" target="_blank" rel="noopener"><b>제레미 자케: 렌 → 리버풀</b></a><span class="pmeta2"><span class="feechip">£60m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11675/13555493/jan-paul-van-hecke-tottenham-sign-brighton-defender-for-lb52m" target="_blank" rel="noopener"><b>얀 파울 판 헤케: 브라이턴 → 토트넘</b></a><span class="pmeta2"><span class="feechip">£52m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13554263/marc-cucurella-transfer-news-real-madrid-sign-defender-from-chelsea-in-deal-worth-lb51-8m" target="_blank" rel="noopener"><b>마르크 쿠쿠레야: 첼시 → 레알 마드리드</b></a><span class="pmeta2"><span class="feechip">£51.8m</span> · Sky</span></li>
-          <li><span class="klcat" style="background:#1d75a3;color:#fff">검수</span><a href="https://www.skysports.com/football/news/11095/13554908/bernardo-silva-real-madrid-sign-manchester-city-midfielder-on-free-transfer-as-jose-mourinho-impact-continues" target="_blank" rel="noopener"><b>베르나르두 실바: 맨체스터 시티 → 레알 마드리드</b></a><span class="pmeta2">자유이적 · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13558090/elliot-anderson-to-man-city-midfielder-completes-record-breaking-lb116m-transfer-from-nottingham-forest" target="_blank" rel="noopener"><b>엘리엇 앤더슨: 노팅엄 → 맨체스터 시티 (영국 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£116m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13559730/sandro-tonali-tottenham-sign-italy-midfielder-in-club-record-lb100m-deal-from-newcastle" target="_blank" rel="noopener"><b>산드로 토날리: 뉴캐슬 → 토트넘 (구단 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£100m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13559479/mateus-fernandes-transfer-news-midfielder-set-for-medical-after-spurs-beat-man-utd-to-lb85m-deal" target="_blank" rel="noopener"><b>마테우스 페르난데스: 웨스트햄 → 토트넘</b></a><span class="pmeta2"><span class="feechip">£85m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13548577/anthony-gordon-transfer-news-barcelona-reach-agreement-with-newcastle-for-england-international-winger" target="_blank" rel="noopener"><b>안토니 고든: 뉴캐슬 → 바르셀로나</b></a><span class="pmeta2"><span class="feechip">£69.3m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11669/13559447/jeremy-jacquet-transfer-news-liverpool-sign-rennes-defender-in-lb60m-deal-with-20-year-old-moving-to-anfield-this-summer" target="_blank" rel="noopener"><b>제레미 자케: 렌 → 리버풀</b></a><span class="pmeta2"><span class="feechip">£60m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11675/13555493/jan-paul-van-hecke-tottenham-sign-brighton-defender-for-lb52m" target="_blank" rel="noopener"><b>얀 파울 판 헤케: 브라이턴 → 토트넘</b></a><span class="pmeta2"><span class="feechip">£52m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13554263/marc-cucurella-transfer-news-real-madrid-sign-defender-from-chelsea-in-deal-worth-lb51-8m" target="_blank" rel="noopener"><b>마르크 쿠쿠레야: 첼시 → 레알 마드리드</b></a><span class="pmeta2"><span class="feechip">£51.8m</span> · Sky</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13554908/bernardo-silva-real-madrid-sign-manchester-city-midfielder-on-free-transfer-as-jose-mourinho-impact-continues" target="_blank" rel="noopener"><b>베르나르두 실바: 맨체스터 시티 → 레알 마드리드</b></a><span class="pmeta2">자유이적 · Sky</span></li>
         </ul>
-        <div class="note" style="margin-bottom:22px">🤖 <b>초록 배지(오피셜)</b>는 헤드라인의 완료형 표현(completes·signs·done deal·confirmed 등)을 자동 감지한 것으로, 루머 표현(in talks·close in·target 등)이 있으면 제외됩니다. 이적료(£·€)는 헤드라인에서 자동 추출됩니다. <b>파란 배지(검수)</b>는 운영자가 확인한 확정 건입니다. 10분마다 자동 갱신 · 원문 링크로 확인하세요.</div>
 
         <!-- ③ 이적 뉴스·루머 자동 피드 -->
         <div class="klhead" style="background:#00193f;border-bottom-color:#5ba3d9">
           <span class="klmark" style="background:#1d75a3">RUMOURS</span> 이적 뉴스·루머
-          <span id="tr-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">10분마다 자동 수집 · 한국어 자동 번역</span>
+          <span id="tr-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px"></span>
         </div>
         <ul class="plist" id="transfer-live">
-          <li><span class="pill">대기</span><b>이적 관련 헤드라인을 불러오는 중…</b><span class="pmeta2">ESPN·스카이스포츠 RSS에서 이적 키워드만 자동 선별</span></li>
+          <li><span class="pill">대기</span><b>이적 관련 헤드라인을 불러오는 중…</b><span class="pmeta2">잠시만 기다려 주세요</span></li>
         </ul>
-        <div class="note" style="margin-bottom:22px">※ 전체 뉴스 피드에서 이적 키워드(transfer·sign·deal·loan 등)를 자동으로 걸러 표시합니다. 오피셜 확정 전 소식은 루머일 수 있으니 원문으로 확인하세요.</div>
+        <div class="note" style="margin-bottom:22px">※ 오피셜 확정 전 소식은 루머일 수 있으니 원문 기사로 확인하세요.</div>
 
         <!-- ④ 바로가기 -->
         <div class="arts" style="margin:14px 0 14px">
@@ -1296,7 +1295,7 @@ if(GA_ID){
       </div>
 
       <div class="box">
-        <h3>🧰 오늘의 도구 <span style="font-size:11px;color:var(--sub);font-weight:400">매일 자동 교체</span></h3>
+        <h3>🧰 오늘의 도구</h3>
         <div id="tool-spot"></div>
         <div class="tqgrid" id="tool-quick"></div>
         <div style="text-align:right;margin-top:8px"><a href="#" onclick="return navTo('tools')" style="font-size:12px;font-weight:700;color:var(--pitch)">61종 전체 보기 →</a></div>
@@ -1305,7 +1304,7 @@ if(GA_ID){
       <div class="box" id="fx-box" hidden>
         <h3>📅 경기 일정 · 결과</h3>
         <div id="fx-list" data-notranslate style="font-size:12px;line-height:1.9"></div>
-        <div style="font-size:10px;color:var(--sub);margin-top:6px">한국시간 기준 · 매시 자동 갱신 · 출처: TheSportsDB</div>
+        <div style="font-size:10px;color:var(--sub);margin-top:6px">한국시간 기준 · 출처: TheSportsDB</div>
       </div>
 
       <div class="box">
@@ -1331,7 +1330,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-G</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-H</span></div>
   </div>
 </footer>
 
@@ -2798,17 +2797,17 @@ function buildHomeNews(items){
 function seedWC(){
   var wc=document.getElementById("wc-board"); if(!wc) return;
   var items=domItems(document.getElementById("news-live")).filter(function(n){return /월드컵|World Cup|R16|16강|8강|4강/.test(n.title+" "+n.meta);});
-  if(!items.length){wc.innerHTML='<li><span class="pill">정보</span><b>현재 자동 분류된 월드컵 헤드라인이 없습니다.</b><span class="pmeta2">대회 기간에 더 많이 표시됩니다</span></li>';}
+  if(!items.length){wc.innerHTML='<li><span class="pill">정보</span><b>현재 표시할 월드컵 헤드라인이 없습니다.</b><span class="pmeta2">대회 기간에 더 많이 표시됩니다</span></li>';}
   else wc.innerHTML=items.map(function(n){return '<li><span class="pill">'+escHtml(n.src||"뉴스")+'</span><a href="'+n.link+'" target="_blank" rel="noopener"><b>'+escHtml(n.title)+'</b></a><span class="pmeta2">'+escHtml(n.meta||"월드컵")+'</span></li>';}).join("");
-  stamp("wc-stamp","자동 분류 · "+nowT());
+  stamp("wc-stamp",nowT());
 }
 function seedTransfer(){
   var tl=document.getElementById("transfer-live"); if(!tl) return;
   var wRe=/women|wsl\b|nwsl|female|ladies|f[ée]?men[ií]|feminin|lioness|matildas|uswnt|\bshe\b|\bher\b|putellas|여자|위민/i;
   var items=domItems(document.getElementById("news-live")).filter(function(n){return /이적|영입|감독|transfer|sign|deal|loan|£|€/i.test(n.title+" "+n.meta)&&!wRe.test(n.title+" "+n.link);});
-  if(!items.length){tl.innerHTML='<li><span class="pill">정보</span><b>현재 자동 선별된 이적 헤드라인이 없습니다.</b><span class="pmeta2">해외축구 탭에서 전체 헤드라인 확인</span></li>';}
+  if(!items.length){tl.innerHTML='<li><span class="pill">정보</span><b>현재 표시할 이적 헤드라인이 없습니다.</b><span class="pmeta2">해외축구 탭에서 전체 헤드라인 확인</span></li>';}
   else tl.innerHTML=items.map(function(n){return '<li><span class="pill">'+escHtml(n.src||"뉴스")+'</span><a href="'+n.link+'" target="_blank" rel="noopener"><b>'+escHtml(n.title)+'</b></a><span class="pmeta2">'+escHtml(n.meta||"이적")+'</span></li>';}).join("");
-  stamp("tr-stamp","자동 선별 · "+nowT());
+  stamp("tr-stamp",nowT());
 }
 function lgTab(c){
   document.querySelectorAll(".lg-tab").forEach(function(b){b.classList.toggle("on",b.dataset.c===c);});
@@ -2906,7 +2905,7 @@ var TEAM_BADGE={
 "Bayern":R2B+"01ogkh1716960412.png","Dortmund":R2B+"tqo8ge1716960353.png","Juventus":R2B+"uxf0gr1742983727.png",
 "Inter Milan":R2B+"ryhu6d1617113103.png","AC Milan":R2B+"wvspur1448806617.png","Napoli":R2B+"l8qyxv1742982541.png",
 "PSG":R2B+"has8b01763050866.png","Paris Saint-Germain":R2B+"has8b01763050866.png",
-"FC Seoul":R2B+"31z1zf1579473186.png","Ulsan":R2B+"0wooic1706533767.png"
+"Rennes":R2B+"ypturx1473504818.png","FC Seoul":R2B+"31z1zf1579473186.png","Ulsan":R2B+"0wooic1706533767.png"
 };
 var FLAG_EMOJI={
 "South Korea":"🇰🇷","Korea Republic":"🇰🇷","Japan":"🇯🇵","Brazil":"🇧🇷","Argentina":"🇦🇷","Germany":"🇩🇪","France":"🇫🇷",
@@ -2925,6 +2924,39 @@ function iconFor(t){
   for(k in TEAM_BADGE){ if(t.indexOf(k)>-1) return '<img class="fxbdg" src="'+TEAM_BADGE[k]+'" alt="" loading="lazy">'; }
   for(k in FLAG_EMOJI){ if(t.indexOf(k)>-1) return '<span class="fxflag">'+FLAG_EMOJI[k]+'</span>'; }
   return "";
+}
+
+// 한글 구단명 → 배지 (오피셜 이적 제목용 — 이적 전·후 구단 모두 아이콘 표시)
+var KO_CLUB={
+"노팅엄":"Nottingham Forest","맨체스터 시티":"Manchester City","맨시티":"Manchester City",
+"맨체스터 유나이티드":"Manchester United","맨유":"Manchester United",
+"뉴캐슬":"Newcastle","토트넘":"Tottenham","웨스트햄":"West Ham","바르셀로나":"Barcelona",
+"리버풀":"Liverpool","브라이턴":"Brighton","첼시":"Chelsea","레알 마드리드":"Real Madrid",
+"아스널":"Arsenal","아스톤 빌라":"Aston Villa","에버턴":"Everton","렌":"Rennes",
+"바이에른":"Bayern","도르트문트":"Dortmund","유벤투스":"Juventus","인테르":"Inter Milan",
+"AC 밀란":"AC Milan","나폴리":"Napoli","아틀레티코":"Atletico","파리 생제르맹":"PSG"
+};
+function clubIconize(){
+  var keys=Object.keys(KO_CLUB).sort(function(a,b){return b.length-a.length;});
+  var items=document.querySelectorAll("#official-live a b");
+  for(var i=0;i<items.length;i++){
+    var el=items[i]; if(el.getAttribute("data-badged")) continue;
+    var t=el.textContent, out="", pos=0;
+    while(pos<t.length){
+      var hitK="";
+      var prev=pos>0?t.charAt(pos-1):"";
+      if(!/[가-힣A-Za-z]/.test(prev)){
+        for(var j=0;j<keys.length;j++){
+          if(t.substr(pos,keys[j].length)===keys[j]){hitK=keys[j];break;}
+        }
+      }
+      if(hitK&&TEAM_BADGE[KO_CLUB[hitK]]){
+        out+='<img class="fxbdg" src="'+TEAM_BADGE[KO_CLUB[hitK]]+'" alt="" loading="lazy">'+escHtml(hitK);
+        pos+=hitK.length;
+      }else{ out+=escHtml(t.charAt(pos)); pos++; }
+    }
+    el.innerHTML=out; el.setAttribute("data-badged","1");
+  }
 }
 var FX_TAG_EN={"월드컵":"World Cup","EPL":"EPL","K리그1":"K League 1"};
 function fxT(ts){
@@ -3369,7 +3401,7 @@ function renderIntlLive(items){
     if(ul&&etc.length) ul.innerHTML=etc.map(function(n){return liIntl(n,"기타·종합");}).join("");
     translateNodes("#lg-boards .tr-t");
     translateNodes("#news-live .tr-t");
-    stamp("news-stamp","10분마다 자동 수집 · "+nowT());
+    stamp("news-stamp",nowT()+" 업데이트");
   }
   var wc=document.getElementById("wc-board");
   var wcItems=items.filter(function(n){return /world cup/i.test(n.t)||lgDetect(n.t)==="월드컵";}).slice(0,8);
@@ -3378,7 +3410,7 @@ function renderIntlLive(items){
       return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
     }).join("");
     translateNodes("#wc-board .tr-t");
-    stamp("wc-stamp","자동 분류 · "+nowT());
+    stamp("wc-stamp",nowT());
   }
   var trWords=/\btransfer|sign(s|ed|ing)?|deal|loan|fee|move(s)?|join(s|ed)?|swap|release clause|bid\b/i;
   // 이적 보드는 남자축구만 — 리그·팀명·인칭대명사·주요 선수명까지 다중 감지
@@ -3391,7 +3423,7 @@ function renderIntlLive(items){
       return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
     }).join("");
     translateNodes("#transfer-live .tr-t");
-    stamp("tr-stamp","10분마다 자동 수집 · "+nowT());
+    stamp("tr-stamp",nowT()+" 업데이트");
   }
   var ol=document.getElementById("official-live");
   if(ol){
@@ -3404,7 +3436,7 @@ function renderIntlLive(items){
       }).join("");
       translateNodes("#official-live .tr-t");
     }
-    stamp("of-stamp","자동 감지 + 검수 확정 · "+nowT());
+    stamp("of-stamp",nowT()+" 업데이트");
   }
 }
 function loadNews(){
@@ -3434,7 +3466,7 @@ function loadNews(){
     items=items.filter(function(n){if(seen.has(n.l))return false;seen.add(n.l);return true;});
     HOME_INTL=items; mixHomeNews(); // 홈은 해외+국내 중요도 혼합
     renderIntlLive(items);
-    stamp("hn-stamp","10분마다 자동 갱신 · "+nowT());
+    stamp("hn-stamp",nowT()+" 업데이트");
   });
 }
 
@@ -3486,7 +3518,7 @@ function loadKNews(){
     }
     if(knTimer) clearInterval(knTimer);
     knTimer=setInterval(function(){knIdx=(knIdx+1)%knPool.length;knShow();},4000);
-    stamp("k-stamp","10분마다 자동 수집 · 4초 회전 · "+nowT());
+    stamp("k-stamp",nowT()+" 업데이트");
   });
 }
 
@@ -3520,7 +3552,7 @@ function loadKLeague(){
     var items=results.filter(function(r){return r.status==="fulfilled";})
       .reduce(function(a,r){return a.concat(r.value);},[]);
     if(!items.length){
-      stamp("kl-stamp","언론 기사 자동 발췌 — 네트워크 제한, ↻로 재시도");
+      stamp("kl-stamp","일시적으로 불러오지 못했습니다 — ↻로 재시도");
       klTab("all"); return;
     }
     var seen=new Set();
@@ -3540,7 +3572,7 @@ function loadKLeague(){
       }).join("");
     }
     klTab("all");
-    stamp("kl-stamp","언론사 기사 자동 발췌 · 10분마다 · "+nowT());
+    stamp("kl-stamp","언론사 기사 모음 · "+nowT()+" 기준");
   });
 }
 
@@ -3595,13 +3627,13 @@ var PRE_EN={
 "축구 팬을 위한 도구 · 뉴스 · 커뮤니티":"Tools · News · Community for football fans",
 "필요한 축구 도구, 전부":"Every football tool you need — all in the","창고":"Warehouse","에 있습니다":"",
 "축구 팬의":"The football fan's","축구팬들의":"The football fans'","를 열었습니다":"is now open","를 열었습니다.":"is now open.","창고 열어보기 →":"Open the Warehouse →","도구함 바로가기 →":"Go to Tools →",
-"📰 오늘 들어온 소식":"📰 Today's News","🧰 오늘의 도구":"🧰 Today's Tools","매일 자동 교체":"Rotates daily","바로 쓰기 →":"Use now →","61종 전체 보기 →":"Browse all 61 →","오늘의 도구":"Tool of the Day","🧰 카테고리별 도구 찾기":"🧰 Browse Tools by Category","📚 창고에서 골라둔 글":"📚 Picked from the Warehouse","🔥 많이 꺼내 쓴 도구":"🔥 Most Used Tools","📖 함께 보면 좋은 글":"📖 Recommended Reads","📅 경기 일정 · 결과":"📅 Fixtures & Results","🎬 공식 하이라이트":"🎬 Official Highlights","🏆 이번 주 퀴즈 챌린지":"🏆 Weekly Quiz Challenge",
+"📰 오늘 들어온 소식":"📰 Today's News","🧰 오늘의 도구":"🧰 Today's Tools","바로 쓰기 →":"Use now →","61종 전체 보기 →":"Browse all 61 →","오늘의 도구":"Tool of the Day","🧰 카테고리별 도구 찾기":"🧰 Browse Tools by Category","📚 창고에서 골라둔 글":"📚 Picked from the Warehouse","🔥 많이 꺼내 쓴 도구":"🔥 Most Used Tools","📖 함께 보면 좋은 글":"📖 Recommended Reads","📅 경기 일정 · 결과":"📅 Fixtures & Results","🎬 공식 하이라이트":"🎬 Official Highlights","🏆 이번 주 퀴즈 챌린지":"🏆 Weekly Quiz Challenge",
 "🔎 도구 빠른 검색":"🔎 Quick Tool Search","⭐ 즐겨찾기":"⭐ Favorites","전체":"All","일간":"Daily","주간":"Weekly","월간":"Monthly",
 "도전하러 가기 →":"Take the challenge →","📤 기록 공유":"📤 Share Score","📤 결과 공유하기":"📤 Share Result","📤 팀 배정 공유하기":"📤 Share Teams",
 "다음 문제 →":"Next →","새 라운드 시작 →":"New round →","채점하기":"Grade","이번 라운드":"This round","누적 정답률":"Accuracy",
 "K리그 뉴스":"K League News","공식 소식":"Official News","언론 보도 헤드라인":"Media Headlines","이적":"Transfer","이적시장 콘텐츠":"Transfer Content",
 "소개":"About","개인정보처리방침":"Privacy Policy","문의하기":"Contact","축구창고 — 모든 콘텐츠는 무료입니다.":"ChukguChanggo — All content is free.",
-"홈으로":"Home","월드컵":"World Cup","한국시간 기준 · 매시 자동 갱신 · 출처: TheSportsDB":"Korea time · Auto-refresh hourly · Source: TheSportsDB"
+"홈으로":"Home","월드컵":"World Cup","한국시간 기준 · 출처: TheSportsDB":"Korea time · Source: TheSportsDB"
 };
 var EN_NODES=[]; // {n:노드, ko:원문} — 복귀용
 function markEN(nd){
@@ -4019,6 +4051,7 @@ scheduleHourly(loadHighlights);
   try{renderVote();}catch(e){}
   try{renderWeeklyPick();}catch(e){}
   try{renderTransferWindow();}catch(e){}
+  try{clubIconize();}catch(e){}
   try{loadNews();}catch(e){}
   try{loadKLeague();}catch(e){}
   try{loadKNews();}catch(e){}
