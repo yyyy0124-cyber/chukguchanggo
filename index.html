@@ -1171,6 +1171,9 @@ if(GA_ID){
           <span id="of-stamp" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:400;margin-left:8px">이번 여름 확정 이적</span>
         </div>
         <ul class="plist" id="official-live">
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.espn.com/soccer/story/_/id/49356683/manchester-united-sign-midfielder-youri-tielemans-aston-villa" target="_blank" rel="noopener"><b>유리 틸레만스: 아스톤 빌라 → 맨체스터 유나이티드</b></a><span class="pmeta2"><span class="feechip">£35m</span> · ESPN</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.espn.com/soccer/story/_/id/49354932/inside-manchester-united-summer-transfer-rebuild-santos-tielemans-bolster-midfield" target="_blank" rel="noopener"><b>안드레이 산투스: 첼시 → 맨체스터 유나이티드</b></a><span class="pmeta2"><span class="feechip">£50m</span> · ESPN</span></li>
+          <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.espn.com/soccer/story/_/id/49275192/real-madrid-sign-denzel-dumfries-inter-milan-four-year-contract" target="_blank" rel="noopener"><b>덴젤 덤프리스: 인테르 → 레알 마드리드</b></a><span class="pmeta2"><span class="feechip">£17m</span> · ESPN</span></li>
           <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13558090/elliot-anderson-to-man-city-midfielder-completes-record-breaking-lb116m-transfer-from-nottingham-forest" target="_blank" rel="noopener"><b>엘리엇 앤더슨: 노팅엄 → 맨체스터 시티 (영국 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£116m</span> · Sky</span></li>
           <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13559730/sandro-tonali-tottenham-sign-italy-midfielder-in-club-record-lb100m-deal-from-newcastle" target="_blank" rel="noopener"><b>산드로 토날리: 뉴캐슬 → 토트넘 (구단 역대 최고액)</b></a><span class="pmeta2"><span class="feechip">£100m</span> · Sky</span></li>
           <li><span class="klcat" style="background:#1d75a3;color:#fff">오피셜</span><a href="https://www.skysports.com/football/news/11095/13559479/mateus-fernandes-transfer-news-midfielder-set-for-medical-after-spurs-beat-man-utd-to-lb85m-deal" target="_blank" rel="noopener"><b>마테우스 페르난데스: 웨스트햄 → 토트넘</b></a><span class="pmeta2"><span class="feechip">£85m</span> · Sky</span></li>
@@ -1341,7 +1344,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0711-L</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0716-A</span></div>
   </div>
 </footer>
 
@@ -2969,6 +2972,34 @@ function clubIconize(){
     el.innerHTML=out; el.setAttribute("data-badged","1");
   }
 }
+
+// 오피셜 이적 보드 페이지네이션 — 10개 초과 시 페이지 분할 (맨 위 = 최신)
+function ofPager(){
+  var ul=document.getElementById("official-live"); if(!ul) return;
+  var old=document.getElementById("of-pager"); if(old) old.parentNode.removeChild(old);
+  var items=Array.prototype.slice.call(ul.children);
+  items.forEach(function(li){li.style.display="";});
+  var per=10; if(items.length<=per) return;
+  var pages=Math.ceil(items.length/per), cur=0;
+  var nav=document.createElement("div");
+  nav.id="of-pager";
+  nav.style.cssText="display:flex;justify-content:center;align-items:center;gap:14px;margin:10px 0 6px";
+  var bst="border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 16px";
+  nav.innerHTML='<button id="of-prev" style="'+bst+'">‹ 이전</button>'
+    +'<span id="of-pgno" style="font-size:12px;color:var(--sub);font-weight:700"></span>'
+    +'<button id="of-next" style="'+bst+'">다음 ›</button>';
+  ul.parentNode.insertBefore(nav, ul.nextSibling);
+  function show(p){
+    cur=Math.max(0,Math.min(pages-1,p));
+    items.forEach(function(li,i){ li.style.display=(i>=cur*per&&i<(cur+1)*per)?"":"none"; });
+    document.getElementById("of-pgno").textContent=(cur+1)+" / "+pages;
+    document.getElementById("of-prev").style.opacity=cur===0?".4":"1";
+    document.getElementById("of-next").style.opacity=cur===pages-1?".4":"1";
+  }
+  document.getElementById("of-prev").onclick=function(){show(cur-1);};
+  document.getElementById("of-next").onclick=function(){show(cur+1);};
+  show(0);
+}
 var FX_TAG_EN={"월드컵":"World Cup","EPL":"EPL","K리그1":"K League 1"};
 function fxT(ts){
   var d=new Date(ts.replace(" ","T")+(/Z$/.test(ts)?"":"Z"));
@@ -3448,6 +3479,7 @@ function renderIntlLive(items){
       translateNodes("#official-live .tr-t");
     }
     stamp("of-stamp",nowT()+" 업데이트");
+    try{ofPager();}catch(e){}
   }
 }
 function loadNews(){
@@ -4078,6 +4110,7 @@ scheduleHourly(loadHighlights);
   try{renderWeeklyPick();}catch(e){}
   try{renderTransferWindow();}catch(e){}
   try{clubIconize();}catch(e){}
+  try{ofPager();}catch(e){}
   try{loadNews();}catch(e){}
   try{loadKLeague();}catch(e){}
   try{loadKNews();}catch(e){}
