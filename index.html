@@ -1344,7 +1344,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0716-C</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0716-D</span></div>
   </div>
 </footer>
 
@@ -3852,7 +3852,12 @@ navTo=function(v){
 };
 (function(){
   var s=null; try{s=localStorage.getItem("lang");}catch(e){}
-  if(s==="en") setTimeout(function(){setLang("en");},200);
+  if(s==="en"){ setTimeout(function(){setLang("en");},200); return; }
+  if(s===null){
+    // 첫 방문: 브라우저 언어가 한국어가 아니면 영어를 기본으로
+    var nav=((navigator.languages&&navigator.languages[0])||navigator.language||"").toLowerCase();
+    if(nav&&nav.indexOf("ko")!==0) setTimeout(function(){setLang("en");},200);
+  }
 })();
 
 // ⑧-3 🧰 홈 도구 스포트라이트 + 바로가기 카드 (매일 자동 교체)
