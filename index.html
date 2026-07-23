@@ -1315,6 +1315,12 @@ if(GA_ID){
         <div style="text-align:right;margin-top:8px"><a href="#" onclick="return navTo('tools')" style="font-size:12px;font-weight:700;color:var(--pitch)">61종 전체 보기 →</a></div>
       </div>
 
+      <div class="box">
+        <h3>⏳ 개막 D-day</h3>
+        <div id="side-dday" data-notranslate style="font-size:12.5px;line-height:2"></div>
+        <div style="text-align:right;margin-top:8px"><a href="#" onclick="return navToolA('dday')" style="font-size:12px;font-weight:700;color:var(--pitch)">전체 일정 보기 →</a></div>
+      </div>
+
       <div class="box" id="fx-box" hidden>
         <h3>📅 경기 일정 · 결과</h3>
         <div id="fx-list" data-notranslate style="font-size:12px;line-height:1.9"></div>
@@ -1344,7 +1350,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0716-D</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0719-A</span></div>
   </div>
 </footer>
 
@@ -1624,6 +1630,19 @@ function renderDday(){
   });
 }
 renderDday();
+function renderSideDday(){
+  const el=document.getElementById("side-dday"); if(!el) return;
+  const now=new Date();
+  const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  el.innerHTML=LEAGUES.map(function(l){
+    const p=l.d.split("-").map(Number);
+    const diff=Math.round((Date.UTC(p[0],p[1]-1,p[2])-today)/86400000);
+    if(diff<0) return "";
+    const num=diff===0?"오늘!":"D-"+diff;
+    return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px dashed var(--line);padding:2px 0"><span>'+l.f+" "+l.n+'</span><b style="color:var(--pitch)">'+num+"</b></div>";
+  }).join("")||'<div style="color:var(--sub)">예정된 일정이 없습니다</div>';
+}
+renderSideDday();
 
 // ── 도구 4: 유니폼 사이즈 가이드 ───────────────────────
 // 일반 참고 기준 (브랜드별 상이) — [가슴둘레lo, hi, 아시아, US, EU, 남미(BR)]
@@ -3419,8 +3438,8 @@ var HOME_INTL=[],HOME_KR=[];
 function newsScore(n){
   var t=(n.t||"")+" "+(n.tag||"");
   var s=0;
-  if(/world cup|월드컵/i.test(t)) s+=5;                                  // 대회 빅이슈
-  if(/final|semi[- ]?final|결승|준결승|4강|8강/i.test(t)) s+=3;
+  if(/world cup|월드컵/i.test(t)) s-=1;                                  // 대회 빅이슈
+  if(/final|semi[- ]?final|결승|준결승|4강|8강/i.test(t)) s+=1;
   if(/손흥민|이강인|김민재|황희찬|이재성|국가대표|\bson\b|kang-in|min-jae/i.test(t)) s+=4; // 한국 관심사
   if(/official|completes?|signs?|done deal|오피셜|영입|이적/i.test(t)) s+=2;
   if(/record|역대|최고액|£\d|€\d/i.test(t)) s+=2;
@@ -3745,7 +3764,7 @@ var PRE_EN={
 "축구 팬을 위한 도구 · 뉴스 · 커뮤니티":"Tools · News · Community for football fans",
 "필요한 축구 도구, 전부":"Every football tool you need — all in the","창고":"Warehouse","에 있습니다":"",
 "축구 팬의":"The football fan's","축구팬들의":"The football fans'","를 열었습니다":"is now open","를 열었습니다.":"is now open.","창고 열어보기 →":"Open the Warehouse →","도구함 바로가기 →":"Go to Tools →",
-"📰 오늘 들어온 소식":"📰 Today's News","🧰 오늘의 도구":"🧰 Today's Tools","바로 쓰기 →":"Use now →","61종 전체 보기 →":"Browse all 61 →","오늘의 도구":"Tool of the Day","🧰 카테고리별 도구 찾기":"🧰 Browse Tools by Category","📚 창고에서 골라둔 글":"📚 Picked from the Warehouse","🔥 많이 꺼내 쓴 도구":"🔥 Most Used Tools","📖 함께 보면 좋은 글":"📖 Recommended Reads","📅 경기 일정 · 결과":"📅 Fixtures & Results","🎬 공식 하이라이트":"🎬 Official Highlights","🏆 이번 주 퀴즈 챌린지":"🏆 Weekly Quiz Challenge",
+"📰 오늘 들어온 소식":"📰 Today's News","🧰 오늘의 도구":"🧰 Today's Tools","바로 쓰기 →":"Use now →","61종 전체 보기 →":"Browse all 61 →","⏳ 개막 D-day":"⏳ Kickoff D-day","전체 일정 보기 →":"See all dates →","오늘의 도구":"Tool of the Day","🧰 카테고리별 도구 찾기":"🧰 Browse Tools by Category","📚 창고에서 골라둔 글":"📚 Picked from the Warehouse","🔥 많이 꺼내 쓴 도구":"🔥 Most Used Tools","📖 함께 보면 좋은 글":"📖 Recommended Reads","📅 경기 일정 · 결과":"📅 Fixtures & Results","🎬 공식 하이라이트":"🎬 Official Highlights","🏆 이번 주 퀴즈 챌린지":"🏆 Weekly Quiz Challenge",
 "🔎 도구 빠른 검색":"🔎 Quick Tool Search","⭐ 즐겨찾기":"⭐ Favorites","전체":"All","일간":"Daily","주간":"Weekly","월간":"Monthly",
 "도전하러 가기 →":"Take the challenge →","📤 기록 공유":"📤 Share Score","📤 결과 공유하기":"📤 Share Result","📤 팀 배정 공유하기":"📤 Share Teams",
 "다음 문제 →":"Next →","새 라운드 시작 →":"New round →","채점하기":"Grade","이번 라운드":"This round","누적 정답률":"Accuracy",
@@ -3909,6 +3928,7 @@ renderToolSpot();
       var onTab=document.querySelector(".rk-tab.on");
       renderRank(onTab&&onTab.dataset?onTab.dataset.p:"day");
     }catch(e){}
+    if(typeof renderSideDday==="function") renderSideDday();
     armMidnight();
   },next-now);
 })();
