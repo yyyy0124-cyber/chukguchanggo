@@ -557,7 +557,7 @@ if(GA_ID){
         </div>
         <h2 class="sec">📰 오늘 들어온 소식 <span id="hn-stamp" style="font-size:12px;color:var(--sub);font-weight:400">불러오는 중…</span></h2>
         <div id="home-news"><div class="nmain"><div class="skel" style="min-height:260px"></div><div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div></div></div></div>
-        <div class="note" style="margin:6px 0 22px">※ 사진은 기사 제공 이미지(RSS)를 사용하며, 없으면 대체 이미지가 표시됩니다. 클릭하면 원문 기사로 이동합니다.</div>
+        <div class="note" style="margin:6px 0 22px">※ 사진은 기사 제공 이미지(RSS)를 사용하며, 없으면 대체 이미지가 표시됩니다. 클릭하면 기사로 이동하며, 영어 기사는 한국어 자동 번역으로 열립니다.</div>
 
       </div>
 
@@ -1024,7 +1024,7 @@ if(GA_ID){
           <li><span class="pill">Sky</span><a href="https://www.skysports.com/football/news/11095/13559590/oliver-glasner-nottingham-forest-in-talks-to-replace-vitor-pereira-as-head-coach-with-ex-crystal-palace-boss" target="_blank" rel="noopener"><b>노팅엄, 페레이라와 결별 — 글라스너 선임 임박</b></a><span class="pmeta2">감독 인사</span></li>
           <li><span class="pill">Sky</span><a href="https://www.skysports.com/football/news/11095/13559666/mexico-vs-england-thomas-tuchels-side-face-a-huge-altitude-problem-by-playing-world-cup-round-of-16-at-7-000-feet" target="_blank" rel="noopener"><b>잉글랜드의 난제: 해발 2,200m 아스테카에서 열리는 멕시코전</b></a><span class="pmeta2">월드컵</span></li>
         </ul>
-        <div class="note" style="margin-bottom:22px">※ ESPN·스카이스포츠 공식 소식을 전해드립니다. 영어 제목은 한국어로 표시되며, 제목에 마우스를 올리면 영어 원문, 클릭하면 원문 기사로 이동합니다. 출처는 항상 함께 표기됩니다.</div>
+        <div class="note" style="margin-bottom:22px">※ ESPN·스카이스포츠 공식 소식을 전해드립니다. 영어 제목은 한국어로 표시되며, 제목에 마우스를 올리면 영어 원문, 클릭하면 기사로 이동하며, 영어 기사는 한국어 자동 번역으로 열립니다. 출처는 항상 함께 표기됩니다.</div>
 
         <h2 class="sec">해외축구 미디어 링크</h2>
         <div class="arts" style="margin-bottom:22px">
@@ -1345,7 +1345,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="#" onclick="return navTo('privacy')">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0719-C</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0719-D</span></div>
   </div>
 </footer>
 
@@ -3914,6 +3914,27 @@ function renderToolSpot(){
 }
 renderToolSpot();
 // 자정(00:00:05)마다 오늘의 도구·인기 도구 재배치 — 주간은 월요일, 월간은 1일 자정에 시드가 바뀌며 함께 반영
+// ── 영어 기사 자동 번역 링크 (한국어 UI에서만, 클릭 순간 translate.goog 로 전환) ──
+(function(){
+  var EN_SRC=["espn.com","espn.co.uk","skysports.com","bbc.co.uk","bbc.com","goal.com","theguardian.com","football365.com","90min.com","onefootball.com","fourfourtwo.com","athletic.com","theathletic.com"];
+  document.addEventListener("click",function(e){
+    try{
+      if((localStorage.getItem("lang")||"ko")!=="ko") return;
+      var a=e.target&&e.target.closest?e.target.closest('a[href^="http"]'):null;
+      if(!a) return;
+      var u=new URL(a.href), h=u.hostname;
+      if(h.indexOf("translate.goog")>-1) return;
+      var hit=EN_SRC.some(function(d){return h===d||h===("www."+d)||h.slice(-d.length-1)==="."+d;});
+      if(!hit) return;
+      u.hostname=h.replace(/-/g,"--").replace(/\./g,"-")+".translate.goog";
+      u.searchParams.set("_x_tr_sl","en");
+      u.searchParams.set("_x_tr_tl","ko");
+      u.searchParams.set("_x_tr_hl","ko");
+      a.href=u.toString();
+    }catch(_){}
+  },true);
+})();
+
 (function armMidnight(){
   var now=new Date();
   var next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5);
