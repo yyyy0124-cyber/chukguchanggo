@@ -1539,7 +1539,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-Q</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-R</span></div>
   </div>
 </footer>
 
@@ -4665,6 +4665,7 @@ function sgImgGuard(scope){
     (scope || document).querySelectorAll("img").forEach(function(im){
       if (!im.getAttribute("data-sg-guard")) { im.setAttribute("data-sg-guard","1");
         im.onerror = function(){ this.onerror = null; this.src = "hero.jpg"; };
+        if (im.complete && im.naturalWidth === 0) { im.onerror = null; im.src = "hero.jpg"; }
       }
     });
   } catch(e){}
@@ -4699,15 +4700,15 @@ var SG_YT_CHANNEL = "UCrnWcWwlBUSvYra46zPqK_w";
 function sgLoadVideos(){
   try {
     rss2json("https://www.youtube.com/feeds/videos.xml?channel_id=" + SG_YT_CHANNEL).then(function(res){
-      var items = (res && res.items) || [];
+      var items = Array.isArray(res) ? res : ((res && res.items) || []);
       if (!items.length) return;
       var fresh = [];
       items.slice(0, 10).forEach(function(it){
-        var link = String(it.link || "");
+        var link = String(it.link || it.l || "");
         var m = link.match(/[?&]v=([\w-]{6,})/) || link.match(/shorts\/([\w-]{6,})/);
         if (!m) return;
         var id = m[1];
-        fresh.push({ title: String(it.title || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", desc: String(it.title || "") });
+        fresh.push({ title: String(it.title || it.t || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", desc: String(it.title || it.t || "") });
       });
       if (!fresh.length) return;
       fresh.forEach(function(v2){
