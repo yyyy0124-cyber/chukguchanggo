@@ -633,13 +633,13 @@ if(GA_ID){
     <div class="wrap">
       <ul>
         <li><a href="#" data-nav="home" onclick="return navTo('home')">오늘의 축구</a></li>
-        <li><a href="#" onclick="return sgNavPlayers()">한국 선수</a></li>
         <li><a href="#" data-nav="intl" onclick="return navTo('intl')">해외축구</a></li>
         <li><a href="#" data-nav="transfer" onclick="return navTo('transfer')">이적시장</a></li>
         <li><a href="#" data-nav="tools" onclick="return navTo('tools')">축구 도구</a></li>
         <li class="sg-nav-more">
           <button id="sg-more-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="sg-more-menu" aria-label="더보기 메뉴 열기">더보기 ▾</button>
           <ul id="sg-more-menu" hidden>
+            <li><a href="#players" data-nav="players" onclick="return sgMoreGo('players')">🇰🇷 한국 선수</a></li>
             <li class="sg-md-sec"><a href="#" data-nav="domestic" onclick="return sgMoreGo('domestic')">대표팀</a></li>
             <li class="sg-md-sec"><a href="#" data-nav="mag" onclick="return sgMoreGo('mag')">축구 매거진</a></li>
             <li class="sg-md-sec"><a href="#" data-nav="part" onclick="return sgMoreGo('part')">커뮤니티</a></li>
@@ -653,13 +653,13 @@ if(GA_ID){
   <nav id="sg-bottomnav" aria-label="모바일 메뉴">
     <a href="#" data-nav="home" onclick="return navTo('home')"><span class="ic" aria-hidden="true">🏠</span><span>홈</span></a>
     <a href="#" data-nav="intl" onclick="return navTo('intl')"><span class="ic" aria-hidden="true">📰</span><span>뉴스</span></a>
-    <a href="#" onclick="return sgNavPlayers()"><span class="ic" aria-hidden="true">⚽</span><span>한국 선수</span></a>
     <a href="#" data-nav="tools" onclick="return navTo('tools')"><span class="ic" aria-hidden="true">🧰</span><span>도구</span></a>
     <button id="sg-sheet-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="sg-sheet" aria-label="전체 메뉴 열기"><span class="ic" aria-hidden="true">☰</span><span>더보기</span></button>
   </nav>
   <div id="sg-sheet-backdrop" hidden></div>
   <div id="sg-sheet" role="dialog" aria-modal="true" aria-label="전체 메뉴" hidden>
     <ul>
+      <li><a href="#" onclick="return sgSheetGo('players')">🇰🇷 한국 선수</a></li>
       <li><a href="#" onclick="return sgSheetGo('transfer')">🔁 이적시장</a></li>
       <li><a href="#" onclick="return sgSheetGo('domestic')">🇰🇷 대표팀</a></li>
       <li><a href="#" onclick="return sgSheetGo('mag')">📖 축구 매거진</a></li>
@@ -704,11 +704,6 @@ if(GA_ID){
         <div id="sg-videos-sec">
           <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🎬 최신 축구창고 영상</h2><div class="sg-secdesc">한국 선수와 해외축구 핵심 이슈를 빠르게 정리합니다.</div></div><a class="sg-more" href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener noreferrer">채널 전체 보기 →</a></div>
           <div class="sg-vgrid" id="sg-videos-grid"></div>
-        </div>
-        <!-- SG: 한국 선수 최신 소식 -->
-        <div id="sg-players-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수 소식</h2><div class="sg-secdesc">해외파 핵심 선수를 한눈에 — 관련 소식은 국내축구 탭에서</div></div><a class="sg-more" href="#players" onclick="return navTo('players')">선수 전체 보기 →</a></div>
-          <div class="sg-hscroll" id="sg-players-row"></div>
         </div>
         <!-- SG: 인기 축구 도구 -->
         <div id="sg-tools-sec">
@@ -1544,7 +1539,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-P</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-Q</span></div>
   </div>
 </footer>
 
@@ -4653,6 +4648,91 @@ try {
   }
 } catch(e){}
 if (typeof VIEW_NAMES !== "undefined") VIEW_NAMES.push("newsitem");
+
+// ═══════ SG: 폴백 이미지 + 영상 자동 최신화 (v0728-Q) ═══════
+var SG_FB = { transfer: "img/fb-transfer.jpg", goal: "img/fb-goal.jpg", match: "img/fb-match.jpg", net: "img/fb-net.jpg", record: "img/fb-record.jpg", sad: "img/fb-sad.jpg" };
+function sgFbImg(txt){
+  var t = String(txt || "");
+  if (/이적|영입|오피셜|계약|임대|방출|transfer|sign/i.test(t)) return SG_FB.transfer;
+  if (/골|득점|해트트릭|goal/i.test(t)) return SG_FB.goal;
+  if (/패배|탈락|부상|경질|참사/.test(t)) return SG_FB.sad;
+  if (/승리|경기|맞대결|격돌|리그|매치|더비|결승/.test(t)) return SG_FB.match;
+  var h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+  return [SG_FB.match, SG_FB.net, SG_FB.record][h % 3];
+}
+function sgImgGuard(scope){
+  try {
+    (scope || document).querySelectorAll("img").forEach(function(im){
+      if (!im.getAttribute("data-sg-guard")) { im.setAttribute("data-sg-guard","1");
+        im.onerror = function(){ this.onerror = null; this.src = "hero.jpg"; };
+      }
+    });
+  } catch(e){}
+}
+function sgRenderIssues(items){
+  var g = document.getElementById("sg-issues-grid");
+  if (!g || !items || !items.length) return;
+  g.innerHTML = items.slice(0, 3).map(function(it){
+    var t = String(it.title || it.t || "");
+    var u = it.link || it.l || it.u || "";
+    var src = it.source || it.src || it.tag || "";
+    return SGContentCard({ category: src || "뉴스", title: t, href: u || undefined, external: true, thumb: it.img || sgFbImg(t) });
+  }).join("");
+  sgImgGuard(g);
+}
+function sgRenderMag(){
+  var g = document.getElementById("sg-mag-grid");
+  if (!g || typeof ARTICLES === "undefined") return;
+  var keys = ["watch", "boots", "xg"].filter(function(k){ return ARTICLES[k]; });
+  if (!keys.length) { g.innerHTML = SGEmptyState({ message: "매거진 글이 아직 없습니다." }); return; }
+  g.innerHTML = keys.map(function(k){
+    var a = ARTICLES[k];
+    var tmp = document.createElement("div");
+    tmp.innerHTML = a.body || "";
+    var summ = (tmp.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">'
+      + SGContentCard({ category: a.cat || "매거진", title: a.t || k, summary: summ ? summ + "…" : null, thumb: sgFbImg((a.t || "") + k) }) + "</a>";
+  }).join("");
+  sgImgGuard(g);
+}
+var SG_YT_CHANNEL = "UCrnWcWwlBUSvYra46zPqK_w";
+function sgLoadVideos(){
+  try {
+    rss2json("https://www.youtube.com/feeds/videos.xml?channel_id=" + SG_YT_CHANNEL).then(function(res){
+      var items = (res && res.items) || [];
+      if (!items.length) return;
+      var fresh = [];
+      items.slice(0, 10).forEach(function(it){
+        var link = String(it.link || "");
+        var m = link.match(/[?&]v=([\w-]{6,})/) || link.match(/shorts\/([\w-]{6,})/);
+        if (!m) return;
+        var id = m[1];
+        fresh.push({ title: String(it.title || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", desc: String(it.title || "") });
+      });
+      if (!fresh.length) return;
+      fresh.forEach(function(v2){
+        var vid = v2.href.split("v=")[1];
+        if (!SG_VIDEOS.some(function(o){ return o.href.indexOf(vid) > -1; })) SG_VIDEOS.push(v2);
+      });
+      var g = document.getElementById("sg-videos-grid");
+      if (g) {
+        g.innerHTML = fresh.slice(0, 4).map(SGVideoCard).join("");
+        g.querySelectorAll("img").forEach(function(im){
+          im.onerror = function(){ this.onerror = null; this.src = this.src.replace("/oar2.jpg", "/hqdefault.jpg"); };
+        });
+      }
+    }).catch(function(){});
+  } catch(e){}
+}
+sgLoadVideos();
+(function sgVideoMidnight(){
+  try {
+    var now = new Date();
+    var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 30);
+    setTimeout(function(){ sgLoadVideos(); setInterval(sgLoadVideos, 86400000); }, next - now);
+  } catch(e){}
+})();
+try { sgRenderMag(); } catch(e){}
 
 (function armMidnight(){
   var now=new Date();
