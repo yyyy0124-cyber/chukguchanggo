@@ -497,6 +497,19 @@
   .sg-social a{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:12.5px;font-weight:700}
   .sg-social a:hover{background:var(--res-bg);text-decoration:none}
   @media(max-width:700px){.sg-cc-thumb{height:120px}.sg-pc-img{height:110px}}
+  /* ── SG 3단계: 홈 상단 ── */
+  .hero2{height:auto;min-height:280px}
+  .hero2 img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .hero2 .ht{position:relative;z-index:1;background:linear-gradient(180deg,rgba(12,35,64,.10) 0%,rgba(8,15,28,.72) 100%)}
+  .sg-hbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .sg-hbtns .hbtn{margin:0}
+  .sg-issues{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+  .sg-issues .sg-cc:first-child .sg-cc-thumb{height:232px}
+  .sg-vgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .sg-hscroll{display:grid;grid-auto-flow:column;grid-auto-columns:178px;gap:12px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .sg-hscroll>*{scroll-snap-align:start}
+  @media(max-width:860px){.sg-issues{grid-template-columns:1fr 1fr}.sg-issues .sg-cc:first-child{grid-column:1/-1}.sg-vgrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.sg-issues{grid-template-columns:1fr}.sg-hscroll{grid-auto-columns:150px}}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -583,10 +596,29 @@ if(GA_ID){
           <img src="hero.jpg" alt="축구공이 가득 쌓인 창고 통로" fetchpriority="high">
           <div class="ht">
             <span style="background:var(--accent);color:#3b2b00;font-size:12px;font-weight:800;padding:4px 12px;border-radius:99px;align-self:flex-start;letter-spacing:1px">⚽ FOOTBALL WAREHOUSE</span>
-            <h2 style="margin-top:10px">축구팬들의 <span style="color:var(--accent)">창고</span>를 열었습니다.</h2>
-            <p>엄선한 실속 도구 60여 종, 10분마다 채워지는 소식, 직접 쓴 가이드까지 — 회원가입 없이 전부 무료로 꺼내 쓰세요.</p>
-            <button class="hbtn" onclick="navTo('tools')">창고 열어보기 →</button>
+            <h2 style="margin-top:10px">한국 선수와 해외축구 핵심 이슈를 <span style="color:var(--accent)">1분</span> 안에</h2>
+            <p>손흥민·이강인·김민재·대한민국 대표팀 소식부터 축구 팬에게 필요한 무료 도구까지 한곳에서 만나보세요.</p>
+            <div class="sg-hbtns">
+              <button class="hbtn" onclick="return sgScrollTo('sg-videos-sec')">▶ 최신 영상 보기</button>
+              <button class="hbtn" onclick="return sgScrollTo('sg-issues-sec')">📰 오늘의 뉴스 보기</button>
+              <button class="hbtn" onclick="navTo('tools')">🧰 축구 도구 사용하기</button>
+            </div>
           </div>
+        </div>
+        <!-- SG: 오늘의 핵심 이슈 -->
+        <div id="sg-issues-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🔥 오늘의 핵심 이슈</h2><div class="sg-secdesc">지금 가장 중요한 축구 소식 3가지</div></div></div>
+          <div class="sg-issues" id="sg-issues-grid"></div>
+        </div>
+        <!-- SG: 최신 축구창고 영상 -->
+        <div id="sg-videos-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🎬 최신 축구창고 영상</h2><div class="sg-secdesc">한국 선수와 해외축구 핵심 이슈를 빠르게 정리합니다.</div></div><a class="sg-more" href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener noreferrer">채널 전체 보기 →</a></div>
+          <div class="sg-vgrid" id="sg-videos-grid"></div>
+        </div>
+        <!-- SG: 한국 선수 최신 소식 -->
+        <div id="sg-players-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수 소식</h2><div class="sg-secdesc">해외파 핵심 선수를 한눈에 — 관련 소식은 국내축구 탭에서</div></div><a class="sg-more" href="#" onclick="return navTo('domestic')">국내 소식 보기 →</a></div>
+          <div class="sg-hscroll" id="sg-players-row"></div>
         </div>
         <h2 class="sec">📰 오늘 들어온 소식 <span id="hn-stamp" style="font-size:12px;color:var(--sub);font-weight:400">불러오는 중…</span></h2>
         <div id="home-news"><div class="nmain"><div class="skel" style="min-height:260px"></div><div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div></div></div></div>
@@ -4050,6 +4082,77 @@ function SG_selfTest(){
 if (location.search.indexOf("sgtest=1") > -1) {
   try { console.log("[SG]", SG_selfTest()); } catch(e){ console.error("SG test err", e); }
 }
+
+// ═══════ SG 3단계: 홈 상단 데이터·렌더러 (v0728-B) ═══════
+// 최신 축구창고 영상 — 관리: 아래 배열에 항목 추가/삭제 (href 없는 항목은 렌더되지 않음)
+// 전 항목 실제 채널 영상 (2026-07-28 채널에서 수집)
+var SG_VIDEOS = [
+  { title: "벤투·포옛·마르티네스·모레노…누가 한국 감독이 돼야 할까?", platform: "youtube",
+    href: "https://www.youtube.com/shorts/2-TaaMlBL24", thumb: "https://i.ytimg.com/vi/2-TaaMlBL24/oar2.jpg",
+    desc: "차기 대표팀 감독 후보 정리" },
+  { title: "박지성이 직접 나섰다…대한축구협회 선거제도 개혁 시작", platform: "youtube",
+    href: "https://www.youtube.com/shorts/VLQBCnM2Gt0", thumb: "https://i.ytimg.com/vi/VLQBCnM2Gt0/oar2.jpg",
+    desc: "축구협회 개혁 이슈" },
+  { title: "손흥민 또 골! LAFC 복귀 후 3경기 연속 득점", platform: "youtube",
+    href: "https://www.youtube.com/shorts/ABGagb7cTxI", thumb: "https://i.ytimg.com/vi/ABGagb7cTxI/oar2.jpg",
+    desc: "손흥민 연속골 소식" },
+  { title: "이강인, 아틀레티코 마드리드 공식 입단! 라리가 복귀 확정", platform: "youtube",
+    href: "https://www.youtube.com/shorts/LDsqWDd9dE4", thumb: "https://i.ytimg.com/vi/LDsqWDd9dE4/oar2.jpg",
+    desc: "이강인 이적 오피셜" }
+];
+// 한국 선수 — 소속팀은 프로젝트 데이터로 검증된 선수만 표기(미확인 정보 미표시 원칙). 상세 페이지 미구현 → 링크 없음
+var SG_PLAYERS = [
+  { name: "손흥민", nameEn: "Son Heung-min", team: "LAFC", position: "FW" },
+  { name: "이강인", nameEn: "Lee Kang-in", team: "아틀레티코 마드리드", position: "MF" },
+  { name: "김민재", nameEn: "Kim Min-jae", position: "DF" },
+  { name: "황희찬", nameEn: "Hwang Hee-chan", position: "FW" },
+  { name: "황인범", nameEn: "Hwang In-beom", position: "MF" },
+  { name: "양민혁", nameEn: "Yang Min-hyeok", team: "토트넘", position: "FW" }
+];
+function sgScrollTo(id){
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  return false;
+}
+function sgRenderVideos(){
+  var grid = document.getElementById("sg-videos-grid");
+  if (!grid) return;
+  var list = SG_VIDEOS.filter(function(x){ return x && x.href; });
+  if (!list.length) {
+    grid.innerHTML = SGEmptyState({ message: "등록된 영상이 아직 없습니다.",
+      ctaHref: "https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0",
+      ctaLabel: "유튜브 채널 보기", external: true });
+    return;
+  }
+  grid.innerHTML = list.map(SGVideoCard).join("");
+}
+function sgRenderPlayers(){
+  var row = document.getElementById("sg-players-row");
+  if (!row) return;
+  if (!SG_PLAYERS.length) { row.innerHTML = SGEmptyState({ message: "선수 정보가 아직 없습니다." }); return; }
+  row.innerHTML = SG_PLAYERS.map(SGPlayerCard).join("");
+}
+function sgRenderIssues(items){
+  var sec = document.getElementById("sg-issues-grid");
+  if (!sec) return;
+  if (!items || !items.length) {
+    sec.innerHTML = SGEmptyState({ message: "뉴스를 불러오는 중이거나 아직 소식이 없습니다." });
+    return;
+  }
+  sec.innerHTML = items.slice(0, 3).map(function(n){
+    return SGContentCard({ category: n.tag || "뉴스", title: n.t, thumb: n.img || null, href: n.l, external: true });
+  }).join("");
+}
+// 기존 함수 무수정 확장: 뉴스 렌더 시 핵심 이슈도 함께 갱신
+if (typeof renderHomeNewsLive === "function") {
+  var _sgOrigRHNL = renderHomeNewsLive;
+  renderHomeNewsLive = function(items){
+    _sgOrigRHNL(items);
+    try { sgRenderIssues(items); } catch (e) {}
+  };
+}
+// 초기 렌더 (뉴스 도착 전엔 Empty State)
+try { sgRenderIssues(null); sgRenderVideos(); sgRenderPlayers(); } catch (e) {}
 
 (function armMidnight(){
   var now=new Date();
