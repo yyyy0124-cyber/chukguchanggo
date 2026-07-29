@@ -464,6 +464,39 @@
   #board-ui textarea{width:100%;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
     font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);resize:vertical;min-height:110px}
   @media(max-width:600px){.bwho{display:none}}
+  /* ── SG 공통 컴포넌트 (홈 개편 준비) — 기존 토큰 재사용 ── */
+  :root{--sg-radius:12px;--sg-shadow:0 2px 10px rgba(0,0,0,.06)}
+  .sg-sechead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:26px 0 12px}
+  .sg-secdesc{color:var(--sub);font-size:12.5px;margin-top:3px}
+  .sg-more{font-size:12.5px;font-weight:700;color:var(--pitch);white-space:nowrap}
+  .sg-cc,.sg-vc,.sg-pc{display:block;background:var(--card);border:1px solid var(--line);border-radius:var(--sg-radius);overflow:hidden;box-shadow:var(--sg-shadow)}
+  a.sg-cc:hover,a.sg-vc:hover,a.sg-pc:hover{background:var(--res-bg);text-decoration:none}
+  .sg-cc-thumb{width:100%;height:150px;object-fit:cover;display:block}
+  .sg-vc-thumb{width:100%;aspect-ratio:9/16;object-fit:cover;display:block}
+  .sg-pc-img{width:100%;height:140px;object-fit:cover;display:block}
+  .sg-ph{display:flex;align-items:center;justify-content:center;font-size:34px;background:linear-gradient(135deg,var(--ad1),var(--ad2));color:var(--ad-text)}
+  .sg-cc-body,.sg-vc-body,.sg-pc-body{padding:11px 13px}
+  .sg-cc-body b,.sg-vc-body b{display:block;font-size:14px;line-height:1.45;margin:4px 0 2px}
+  .sg-cc-body p,.sg-vc-body p{font-size:12.5px;color:var(--sub);margin:3px 0;line-height:1.5}
+  .sg-cat{font-size:11px;font-weight:800;color:var(--pitch);letter-spacing:.3px}
+  .sg-date{color:var(--sub);font-size:11px}
+  .sg-pc-body b{font-size:15px}
+  .sg-pc-en{display:block;color:var(--sub);font-size:11px;margin-top:1px}
+  .sg-pc-meta{font-size:12px;color:var(--sub);margin-top:4px}
+  .sg-tc{display:flex;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--sg-radius);padding:11px 13px}
+  .sg-tc:hover{background:var(--res-bg);text-decoration:none}
+  .sg-tc-ic{font-size:22px}
+  .sg-tc b{display:block;font-size:13.5px}
+  .sg-tc small{color:var(--sub);font-size:11.5px}
+  .sg-badge{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;letter-spacing:.3px}
+  .sg-empty{text-align:center;background:var(--card);border:1px dashed var(--line);border-radius:var(--sg-radius);padding:26px 16px;color:var(--sub)}
+  .sg-empty-ic{font-size:28px;margin-bottom:6px}
+  .sg-empty p{font-size:13px;margin:0 0 10px}
+  .sg-empty-cta{display:inline-block;background:var(--accent);color:#3b2b00;font-weight:800;font-size:12.5px;padding:8px 18px;border-radius:99px}
+  .sg-social{display:flex;flex-wrap:wrap;gap:8px}
+  .sg-social a{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:12.5px;font-weight:700}
+  .sg-social a:hover{background:var(--res-bg);text-decoration:none}
+  @media(max-width:700px){.sg-cc-thumb{height:120px}.sg-pc-img{height:110px}}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -1348,7 +1381,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0725-B</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-A</span></div>
   </div>
 </footer>
 
@@ -3917,6 +3950,107 @@ function renderToolSpot(){
 }
 renderToolSpot();
 // 자정(00:00:05)마다 오늘의 도구·인기 도구 재배치 — 주간은 월요일, 월간은 1일 자정에 시드가 바뀌며 함께 반영
+// ═══════════ SG 공통 컴포넌트 (홈 개편 준비 · v0728-A) ═══════════
+// 이 블록은 컴포넌트 정의만 담는다. 아직 어떤 뷰에도 렌더링하지 않는다.
+var SG_TRANSFER_STATUS = {
+  official:    { label: "오피셜",     bg: "#1d75a3", fg: "#fff" },
+  likely:      { label: "유력",       bg: "#0e7a3d", fg: "#fff" },
+  negotiating: { label: "협상 중",    bg: "#b45309", fg: "#fff" },
+  interest:    { label: "관심",       bg: "#6d28d9", fg: "#fff" },
+  rumor:       { label: "루머",       bg: "#6b7280", fg: "#fff" },
+  unknown:     { label: "상태 미확인", bg: "#e5e7eb", fg: "#374151" }
+};
+var SG_SOCIAL_PLATFORMS = [
+  { key: "youtube",    label: "YouTube",      url: "https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" },
+  { key: "instagram",  label: "Instagram",    url: "https://www.instagram.com/chukguchanggo/" },
+  { key: "naver_clip", label: "네이버 클립",  url: "https://clip.naver.com/@chukguchanggo" },
+  { key: "naver_blog", label: "네이버 블로그", url: "https://blog.naver.com/48975_" }
+];
+function sgExtAttr(external){ return external ? ' target="_blank" rel="noopener noreferrer"' : ""; }
+function sgThumb(src, alt, cls){
+  if (src) return '<img class="' + cls + '" src="' + escHtml(src) + '" alt="' + escHtml(alt || "") + '" loading="lazy">';
+  return '<div class="' + cls + ' sg-ph" role="img" aria-label="' + escHtml(alt || "이미지 준비 중") + '">⚽</div>';
+}
+function SGSectionHeader(o){
+  var more = o.moreHref
+    ? '<a class="sg-more" href="' + escHtml(o.moreHref) + '"' + sgExtAttr(o.external) + '>' + escHtml(o.moreLabel || "전체 보기") + " →</a>" : "";
+  return '<div class="sg-sechead"><div><h2 class="sec" style="margin:0">' + escHtml(o.title) + "</h2>"
+    + (o.desc ? '<div class="sg-secdesc">' + escHtml(o.desc) + "</div>" : "") + "</div>" + more + "</div>";
+}
+function SGContentCard(c){
+  var inner = sgThumb(c.thumb, c.title, "sg-cc-thumb")
+    + '<div class="sg-cc-body"><span class="sg-cat">' + escHtml(c.category || "") + "</span>"
+    + "<b>" + escHtml(c.title) + "</b>"
+    + (c.summary ? "<p>" + escHtml(c.summary) + "</p>" : "")
+    + (c.date ? '<small class="sg-date">' + escHtml(c.date) + "</small>" : "") + "</div>";
+  return c.href
+    ? '<a class="sg-cc" href="' + escHtml(c.href) + '"' + sgExtAttr(c.external) + ">" + inner + "</a>"
+    : '<div class="sg-cc">' + inner + "</div>";
+}
+function SGVideoCard(vd){
+  var plat = { youtube: "▶ YouTube", instagram: "◎ Reels", naver_clip: "N 클립" }[vd.platform] || escHtml(vd.platform || "");
+  var inner = sgThumb(vd.thumb, vd.title, "sg-vc-thumb")
+    + '<div class="sg-vc-body"><span class="sg-cat">' + plat + "</span>"
+    + "<b>" + escHtml(vd.title) + "</b>"
+    + (vd.desc ? "<p>" + escHtml(vd.desc) + "</p>" : "")
+    + (vd.date ? '<small class="sg-date">' + escHtml(vd.date) + "</small>" : "") + "</div>";
+  return vd.href
+    ? '<a class="sg-vc" href="' + escHtml(vd.href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
+    : '<div class="sg-vc">' + inner + "</div>";
+}
+function SGPlayerCard(p){
+  var inner = sgThumb(p.img, p.name, "sg-pc-img")
+    + '<div class="sg-pc-body"><b>' + escHtml(p.name) + "</b>"
+    + (p.nameEn ? '<small class="sg-pc-en">' + escHtml(p.nameEn) + "</small>" : "")
+    + '<div class="sg-pc-meta">' + escHtml([p.team, p.position].filter(Boolean).join(" · ")) + "</div></div>";
+  return p.href
+    ? '<a class="sg-pc" href="' + escHtml(p.href) + '">' + inner + "</a>"
+    : '<div class="sg-pc">' + inner + "</div>";
+}
+function SGToolCard(t){
+  return '<a class="sg-tc" href="#' + escHtml(t.id) + '" onclick="return navToolA(&quot;' + escHtml(t.id) + '&quot;)">'
+    + '<span class="sg-tc-ic">' + (t.icon || "🧰") + "</span><span><b>" + escHtml(t.name) + "</b>"
+    + (t.desc ? "<small>" + escHtml(t.desc) + "</small>" : "") + "</span></a>";
+}
+function SGTransferBadge(status){
+  var st = SG_TRANSFER_STATUS[status] || SG_TRANSFER_STATUS.unknown;
+  return '<span class="sg-badge" style="background:' + st.bg + ";color:" + st.fg + '">' + st.label + "</span>";
+}
+function SGEmptyState(o){
+  o = o || {};
+  return '<div class="sg-empty"><div class="sg-empty-ic">📭</div><p>' + escHtml(o.message || "표시할 내용이 아직 없습니다.") + "</p>"
+    + (o.ctaHref ? '<a class="sg-empty-cta" href="' + escHtml(o.ctaHref) + '"' + sgExtAttr(o.external) + ">" + escHtml(o.ctaLabel || "더 보기") + "</a>" : "") + "</div>";
+}
+function SGSocialLinks(platforms){
+  var list = (platforms || SG_SOCIAL_PLATFORMS).filter(function(p){ return p && p.url; });
+  if (!list.length) return SGEmptyState({ message: "연결된 채널이 없습니다." });
+  return '<div class="sg-social">' + list.map(function(p){
+    return '<a href="' + escHtml(p.url) + '" target="_blank" rel="noopener noreferrer">' + escHtml(p.label) + "</a>";
+  }).join("") + "</div>";
+}
+function SG_selfTest(){
+  var results = [], box = document.createElement("div");
+  function t(name, fn){
+    try { var h = fn(); box.innerHTML = h; results.push({ name: name, ok: !!(h && box.firstChild) }); }
+    catch(e){ results.push({ name: name, ok: false, err: String(e) }); }
+  }
+  t("SectionHeader", function(){ return SGSectionHeader({ title: "테스트", desc: "설명", moreHref: "#tools" }); });
+  t("ContentCard", function(){ return SGContentCard({ category: "뉴스", title: "제목", href: "https://example.com", external: true }); });
+  t("ContentCard-noURL", function(){ return SGContentCard({ category: "뉴스", title: "제목만" }); });
+  t("VideoCard", function(){ return SGVideoCard({ title: "영상", platform: "youtube" }); });
+  t("PlayerCard", function(){ return SGPlayerCard({ name: "선수", team: "팀", position: "MF" }); });
+  t("ToolCard", function(){ return SGToolCard({ id: "kickoff", name: "킥오프 변환기", icon: "🕐" }); });
+  t("Badge-all", function(){ return Object.keys(SG_TRANSFER_STATUS).map(SGTransferBadge).join(""); });
+  t("EmptyState", function(){ return SGEmptyState({ message: "없음", ctaHref: "/links", ctaLabel: "채널 보기" }); });
+  t("SocialLinks", function(){ return SGSocialLinks(); });
+  t("SocialLinks-empty", function(){ return SGSocialLinks([]); });
+  var fail = results.filter(function(r){ return !r.ok; });
+  return { pass: results.length - fail.length, fail: fail.length, detail: results };
+}
+if (location.search.indexOf("sgtest=1") > -1) {
+  try { console.log("[SG]", SG_selfTest()); } catch(e){ console.error("SG test err", e); }
+}
+
 (function armMidnight(){
   var now=new Date();
   var next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5);
