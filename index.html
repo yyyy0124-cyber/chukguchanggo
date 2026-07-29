@@ -552,6 +552,17 @@ nav a:focus-visible,#sg-more-btn:focus-visible,#sg-bottomnav a:focus-visible,#sg
 #sg-sheet a{display:block;padding:14px 22px;min-height:48px;box-sizing:border-box;font-weight:600;color:var(--ink)}
 #sg-sheet a:hover{background:rgba(0,0,0,.06)}
 #sg-sheet-backdrop[hidden],#sg-sheet[hidden]{display:none}
+/* ═══ SG 6단계: 한국 선수 허브·상세 (v0728-G) ═══ */
+.sg-pc-link{display:block;color:inherit}
+.sg-phub-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.sg-phub-top{display:block;color:inherit}
+.sg-phub-card .sg-pc-en{display:block;color:var(--muted,#6b7280)}
+.sg-phub-latest{display:block;font-size:13px;color:inherit;border-top:1px dashed var(--line);padding-top:8px;margin-top:4px}
+.sg-pd{padding-bottom:30px}
+.sg-crumb{font-size:13px;color:var(--muted,#6b7280);margin:14px 0 4px}
+.sg-pd-head{display:flex;gap:16px;align-items:center;margin:12px 0 4px}
+.sg-pd-head .sg-pd-img{width:84px;height:84px;font-size:36px;flex:none}
+.sg-pd-meta{font-size:13px;color:var(--muted,#6b7280);margin-top:3px}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -687,7 +698,7 @@ if(GA_ID){
         </div>
         <!-- SG: 한국 선수 최신 소식 -->
         <div id="sg-players-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수 소식</h2><div class="sg-secdesc">해외파 핵심 선수를 한눈에 — 관련 소식은 국내축구 탭에서</div></div><a class="sg-more" href="#" onclick="return navTo('domestic')">국내 소식 보기 →</a></div>
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수 소식</h2><div class="sg-secdesc">해외파 핵심 선수를 한눈에 — 관련 소식은 국내축구 탭에서</div></div><a class="sg-more" href="#players" onclick="return navTo('players')">선수 전체 보기 →</a></div>
           <div class="sg-hscroll" id="sg-players-row"></div>
         </div>
         <!-- SG: 인기 축구 도구 -->
@@ -1405,7 +1416,16 @@ if(GA_ID){
         </section>
       </div>
       <!-- ════════════ [뷰: 소개·개인정보처리방침·문의] 애드센스 심사 필수 페이지 ════════════ -->
-      <div data-view="about" hidden>
+      <!-- SG: 한국 선수 허브 -->
+    <div data-view="players" hidden>
+      <div class="wrap">
+        <div class="sg-sechead" style="margin-top:18px"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수</h2><div class="sg-secdesc">축구창고가 팔로우하는 한국 선수 소식 허브</div></div></div>
+        <div class="sg-tgrid" id="sg-phub-grid"></div>
+      </div>
+    </div>
+    <!-- SG: 선수 상세 -->
+    <div data-view="player" hidden id="sg-player-detail"></div>
+    <div data-view="about" hidden>
         <article class="article-body">
           <h1>축구창고 소개</h1>
           <div class="ameta">시행일 2026. 7. 8.</div>
@@ -1506,7 +1526,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-F</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-G</span></div>
   </div>
 </footer>
 
@@ -4194,14 +4214,17 @@ var SG_VIDEOS = [
     desc: "이강인 이적 오피셜" }
 ];
 // 한국 선수 — 소속팀은 프로젝트 데이터로 검증된 선수만 표기(미확인 정보 미표시 원칙). 상세 페이지 미구현 → 링크 없음
-var SG_PLAYERS = [
-  { name: "손흥민", nameEn: "Son Heung-min", team: "LAFC", position: "FW" },
-  { name: "이강인", nameEn: "Lee Kang-in", team: "아틀레티코 마드리드", position: "MF" },
-  { name: "김민재", nameEn: "Kim Min-jae", position: "DF" },
-  { name: "황희찬", nameEn: "Hwang Hee-chan", position: "FW" },
-  { name: "황인범", nameEn: "Hwang In-beom", position: "MF" },
-  { name: "양민혁", nameEn: "Yang Min-hyeok", team: "토트넘", position: "FW" }
+/*SG_PLAYERS_DB_JSON*/
+var SG_PLAYERS_DB = [
+  { "id": "son-heung-min", "slug": "son-heung-min", "nameKo": "손흥민", "nameEn": "Son Heung-min", "team": "LAFC", "position": "FW", "relatedVideoIds": ["ABGagb7cTxI"], "relatedArticleIds": [] },
+  { "id": "lee-kang-in", "slug": "lee-kang-in", "nameKo": "이강인", "nameEn": "Lee Kang-in", "team": "아틀레티코 마드리드", "position": "MF", "relatedVideoIds": ["LDsqWDd9dE4"], "relatedArticleIds": [] },
+  { "id": "kim-min-jae", "slug": "kim-min-jae", "nameKo": "김민재", "nameEn": "Kim Min-jae", "position": "DF", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "hwang-hee-chan", "slug": "hwang-hee-chan", "nameKo": "황희찬", "nameEn": "Hwang Hee-chan", "position": "FW", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "hwang-in-beom", "slug": "hwang-in-beom", "nameKo": "황인범", "nameEn": "Hwang In-beom", "position": "MF", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "yang-min-hyeok", "slug": "yang-min-hyeok", "nameKo": "양민혁", "nameEn": "Yang Min-hyeok", "team": "토트넘", "position": "FW", "relatedVideoIds": [], "relatedArticleIds": [] }
 ];
+/*END_SG_PLAYERS_DB_JSON*/
+var SG_PLAYERS = SG_PLAYERS_DB.map(function(p){ return { name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }; });
 function sgScrollTo(id){
   var el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -4380,6 +4403,130 @@ sgSyncAria();
     sgSyncAria();
   } catch(e){}
 })();
+
+// ═══════ SG 6단계: 한국 선수 허브·상세 (v0728-G) ═══════
+function sgPlayerBySlug(sl){ for (var i = 0; i < SG_PLAYERS_DB.length; i++) if (SG_PLAYERS_DB[i].slug === sl) return SG_PLAYERS_DB[i]; return null; }
+function sgVideoById(id){ return SG_VIDEOS.filter(function(vd){ return vd.href.indexOf(id) > -1; })[0] || null; }
+function sgLatestVideoFor(p){
+  var ids = p.relatedVideoIds || [];
+  for (var i = 0; i < ids.length; i++) { var vd = sgVideoById(ids[i]); if (vd) return vd; }
+  return null;
+}
+function sgSetMetaDesc(txt){
+  var m = document.querySelector('meta[name="description"]'); if (!m) return;
+  if (!m.getAttribute("data-sg-default")) m.setAttribute("data-sg-default", m.getAttribute("content") || "");
+  m.setAttribute("content", txt || m.getAttribute("data-sg-default"));
+}
+function sgRenderPlayers(){
+  var g = document.getElementById("sg-players-row");
+  if (!g) return;
+  g.innerHTML = SG_PLAYERS_DB.map(function(p){
+    return '<a href="#player-' + p.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+      + SGPlayerCard({ name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }) + "</a>";
+  }).join("");
+}
+function sgRenderPlayersHub(){
+  var g = document.getElementById("sg-phub-grid");
+  if (!g) return;
+  g.innerHTML = SG_PLAYERS_DB.map(function(p){
+    var meta = [p.team, p.position].filter(Boolean).join(" · ");
+    var vd = sgLatestVideoFor(p);
+    return '<div class="sg-phub-card">'
+      + '<a href="#player-' + p.slug + '" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" class="sg-phub-top" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+      + '<div class="sg-pc-img sg-ph" role="img" aria-label="' + escHtml(p.nameKo) + ' (' + escHtml(p.nameEn) + ') 프로필 이미지 준비 중">⚽</div>'
+      + "<b>" + escHtml(p.nameKo) + '</b><small class="sg-pc-en">' + escHtml(p.nameEn) + "</small>"
+      + (meta ? '<div class="sg-pd-meta">' + escHtml(meta) + "</div>" : "")
+      + "</a>"
+      + (vd ? '<a class="sg-phub-latest" href="' + escHtml(vd.href) + '" target="_blank" rel="noopener noreferrer">▶ ' + escHtml(vd.title) + "</a>" : "")
+      + '<a class="sg-more" href="#player-' + p.slug + '" onclick="return openPlayer(&quot;' + p.slug + '&quot;)">상세 보기 →</a>'
+      + "</div>";
+  }).join("");
+}
+function openPlayer(slug){
+  var p = sgPlayerBySlug(slug);
+  if (!p) return navTo("home");
+  var box = document.getElementById("sg-player-detail");
+  if (!box) return false;
+  var meta = [p.team, p.position].filter(Boolean).join(" · ");
+  var html = '<div class="wrap sg-pd">';
+  html += '<nav class="sg-crumb" aria-label="현재 위치"><a href="#" onclick="return navTo(&quot;home&quot;)">홈</a> › <a href="#players" onclick="return navTo(&quot;players&quot;)">한국 선수</a> › <span aria-current="page">' + escHtml(p.nameKo) + "</span></nav>";
+  html += '<div class="sg-pd-head"><div class="sg-pc-img sg-ph sg-pd-img" role="img" aria-label="' + escHtml(p.nameKo) + ' (' + escHtml(p.nameEn) + ') 프로필 이미지 준비 중">⚽</div>'
+    + '<div><h2 style="margin:0">' + escHtml(p.nameKo) + '</h2><div class="sg-pc-en">' + escHtml(p.nameEn) + "</div>"
+    + (meta ? '<div class="sg-pd-meta">' + escHtml(meta) + "</div>" : "") + "</div></div>";
+  var vids = (p.relatedVideoIds || []).map(sgVideoById).filter(Boolean);
+  html += '<h3 class="sec">📺 최신 축구창고 영상</h3>';
+  if (vids.length) html += '<div class="sg-vgrid">' + vids.map(SGVideoCard).join("") + "</div>";
+  else html += SGEmptyState({ message: "아직 " + p.nameKo + " 관련 축구창고 영상이 없습니다. 새 영상이 올라오면 이곳에 연결됩니다." });
+  html += '<h3 class="sec">📰 최신 관련 뉴스</h3><div id="sg-pd-news"></div>';
+  var arts = (p.relatedArticleIds || []).filter(function(k){ return typeof ARTICLES !== "undefined" && ARTICLES[k]; });
+  if (arts.length) {
+    html += '<h3 class="sec">📖 관련 매거진</h3><div class="sg-mgrid">' + arts.map(function(k){
+      var a = ARTICLES[k];
+      return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">' + SGContentCard({ category: a.cat || "매거진", title: a.t || k }) + "</a>";
+    }).join("") + "</div>";
+  }
+  var others = SG_PLAYERS_DB.filter(function(o){ return o.slug !== p.slug; });
+  html += '<h3 class="sec">👥 다른 한국 선수</h3><div class="sg-hscroll">' + others.map(function(o){
+    return '<a href="#player-' + o.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + o.slug + '&quot;)" aria-label="' + escHtml(o.nameKo) + ' 선수 상세 페이지">'
+      + SGPlayerCard({ name: o.nameKo, nameEn: o.nameEn, team: o.team, position: o.position }) + "</a>";
+  }).join("") + "</div>";
+  html += '<h3 class="sec">📣 축구창고에서 ' + escHtml(p.nameKo) + ' 소식 받기</h3>' + SGSocialLinks();
+  html += "</div>";
+  box.innerHTML = html;
+  navTo("player");
+  try { history.replaceState(null, "", "#player-" + p.slug); } catch(e){}
+  document.title = p.nameKo + " 최신 소식·영상 | 축구창고";
+  sgSetMetaDesc(p.nameKo + "(" + p.nameEn + ") 최신 소식·영상·뉴스 모음 | 축구창고");
+  sgFillPlayerNews(p);
+  window.scrollTo({ top: 0 });
+  return false;
+}
+function sgFillPlayerNews(p){
+  var box = document.getElementById("sg-pd-news"); if (!box) return;
+  var items = window.SG_NEWS_CACHE || [];
+  var hits = items.filter(function(it){
+    var t = String(it.title || it.t || "");
+    return t.indexOf(p.nameKo) > -1 || (p.nameEn && t.toLowerCase().indexOf(p.nameEn.toLowerCase()) > -1);
+  }).slice(0, 5);
+  if (!hits.length) {
+    box.innerHTML = SGEmptyState({ message: "지금 수집된 뉴스 중 " + p.nameKo + " 관련 기사가 없습니다." })
+      + '<div style="text-align:center;margin-top:10px"><a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">축구 뉴스 전체 보기</a></div>';
+    return;
+  }
+  box.innerHTML = '<div class="sg-trlist">' + hits.map(function(it){
+    var u = it.link || it.u || it.url || "", src = it.source || it.src || it.m || "";
+    if (!u) return "";
+    return '<div class="sg-tr"><a href="' + escHtml(u) + '" target="_blank" rel="noopener noreferrer"><b>' + escHtml(String(it.title || it.t || "")) + "</b></a>"
+      + (src ? '<small class="sg-date">출처: ' + escHtml(String(src)) + " · 원문 보기</small>" : "") + "</div>";
+  }).join("") + "</div>";
+}
+if (typeof renderHomeNewsLive === "function") {
+  var _sgPrevRHNL6 = renderHomeNewsLive;
+  renderHomeNewsLive = function(items){ try { if (items && items.length) window.SG_NEWS_CACHE = items; } catch(e){} return _sgPrevRHNL6(items); };
+}
+if (typeof VIEW_NAMES !== "undefined") { VIEW_NAMES.push("players"); VIEW_NAMES.push("player"); }
+if (typeof routeTo === "function") {
+  var _sgOrigRouteTo = routeTo;
+  routeTo = function(h){
+    if (h && h.indexOf("player-") === 0 && sgPlayerBySlug(h.slice(7))) return openPlayer(h.slice(7));
+    return _sgOrigRouteTo(h);
+  };
+}
+if (typeof navTo === "function") {
+  var SG_DEFAULT_TITLE = document.title;
+  var _sgNavTo6 = navTo;
+  navTo = function(vw){
+    var r = _sgNavTo6(vw);
+    if (vw !== "player") { try { document.title = SG_DEFAULT_TITLE; sgSetMetaDesc(null); } catch(e){} }
+    return r;
+  };
+}
+try { sgRenderPlayers(); sgRenderPlayersHub(); } catch(e){}
+try {
+  var _h0 = (location.hash || "").replace("#", "");
+  if (_h0.indexOf("player-") === 0 && sgPlayerBySlug(_h0.slice(7))) openPlayer(_h0.slice(7));
+  else if (_h0 === "players") navTo("players");
+} catch(e){}
 
 (function armMidnight(){
   var now=new Date();
