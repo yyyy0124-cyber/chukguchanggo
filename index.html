@@ -541,7 +541,7 @@ nav a:focus-visible,#sg-more-btn:focus-visible,#sg-bottomnav a:focus-visible,#sg
 @media(max-width:700px){
   nav[aria-label="주요 메뉴"]{display:none}
   body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
-  #sg-bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:90;display:flex;background:var(--green-2);box-shadow:0 -2px 10px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom)}
+  #sg-bottomnav{position:fixed;top:auto;left:0;right:0;bottom:0;z-index:90;display:flex;background:var(--green-2);box-shadow:0 -2px 10px rgba(0,0,0,.25);padding-bottom:env(safe-area-inset-bottom)}
   #sg-bottomnav a,#sg-bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;padding:6px 2px;background:none;border:0;color:#fff;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
   #sg-bottomnav .ic{font-size:19px;line-height:1}
   #sg-bottomnav a.on{background:rgba(255,255,255,.18);color:var(--accent)}
@@ -1506,7 +1506,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-E</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-F</span></div>
   </div>
 </footer>
 
@@ -4321,7 +4321,7 @@ function sgNavPlayers(){ navTo("home"); setTimeout(function(){ try{ sgScrollTo("
 (function sgMoreMenu(){
   var btn = document.getElementById("sg-more-btn"), menu = document.getElementById("sg-more-menu");
   if (!btn || !menu) return;
-  function open(){ menu.hidden = false; btn.setAttribute("aria-expanded","true"); var f = menu.querySelector("a"); if (f) f.focus(); }
+  function open(){ menu.hidden = false; btn.setAttribute("aria-expanded","true"); var f = Array.prototype.find.call(menu.querySelectorAll("a"), function(x){ return x.offsetParent !== null; }); if (f) f.focus(); }
   function close(back){ menu.hidden = true; btn.setAttribute("aria-expanded","false"); if (back) btn.focus(); }
   btn.addEventListener("click", function(e){ e.stopPropagation(); if (menu.hidden) open(); else close(false); });
   document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !menu.hidden) close(true); });
@@ -4366,6 +4366,20 @@ if (typeof navTo === "function") {
   };
 }
 sgSyncAria();
+(function sgInitActive(){
+  try {
+    if (document.querySelector("nav a.on")) { sgSyncAria(); return; }
+    var h = (location.hash || "").replace("#", "");
+    var cur;
+    if (typeof VIEW_NAMES !== "undefined" && VIEW_NAMES.indexOf(h) > -1) cur = h;
+    else if (h && document.getElementById(h)) cur = "tools";
+    else cur = "home";
+    document.querySelectorAll("nav a[data-nav]").forEach(function(a){
+      a.classList.toggle("on", a.dataset.nav === cur);
+    });
+    sgSyncAria();
+  } catch(e){}
+})();
 
 (function armMidnight(){
   var now=new Date();
