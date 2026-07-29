@@ -2,5 +2,4 @@
 User-agent: *
 Allow: /
 
-# ⚠️ 배포 후: YOUR-DOMAIN 을 실제 주소로 바꾸세요
 Sitemap: https://chukguchanggo.com/sitemap.xml
