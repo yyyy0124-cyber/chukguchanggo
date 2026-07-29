@@ -517,6 +517,16 @@
   .sg-cc,.sg-vc,.sg-pc{min-width:0}
   @media(max-width:860px){.sg-issues{grid-template-columns:repeat(2,minmax(0,1fr))}.sg-vgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:560px){.sg-issues{grid-template-columns:minmax(0,1fr)}}
+  /* SG 4단계: 홈 중·하단 */
+  .sg-tgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .sg-mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .sg-trlist{background:var(--card);border:1px solid var(--line);border-radius:var(--sg-radius);overflow:hidden}
+  .sg-tr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .sg-tr:last-child{border-bottom:none}
+  .sg-tr b{font-weight:600}
+  .sg-tr .sg-date{margin-left:auto;white-space:nowrap}
+  @media(max-width:860px){.sg-tgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.sg-mgrid{grid-template-columns:minmax(0,1fr)}}
+  @media(max-width:560px){.sg-tgrid{grid-template-columns:minmax(0,1fr)}.sg-tr{flex-wrap:wrap}}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -627,9 +637,32 @@ if(GA_ID){
           <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🇰🇷 한국 선수 소식</h2><div class="sg-secdesc">해외파 핵심 선수를 한눈에 — 관련 소식은 국내축구 탭에서</div></div><a class="sg-more" href="#" onclick="return navTo('domestic')">국내 소식 보기 →</a></div>
           <div class="sg-hscroll" id="sg-players-row"></div>
         </div>
-        <h2 class="sec">📰 오늘 들어온 소식 <span id="hn-stamp" style="font-size:12px;color:var(--sub);font-weight:400">불러오는 중…</span></h2>
-        <div id="home-news"><div class="nmain"><div class="skel" style="min-height:260px"></div><div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div><div class="skel skel-row"></div></div></div></div>
-        <div class="note" style="margin:6px 0 22px">※ 사진은 기사 제공 이미지(RSS)를 사용하며, 없으면 대체 이미지가 표시됩니다. 클릭하면 기사로 이동합니다. 영어 기사는 브라우저 번역 기능(크롬: 우클릭 → '한국어(으)로 번역')으로 편하게 읽을 수 있습니다.</div>
+        <!-- SG: 인기 축구 도구 -->
+        <div id="sg-tools-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🧰 인기 축구 도구</h2><div class="sg-secdesc">홈에서는 대표 6종만 — 전체 61종은 도구함에서</div></div></div>
+          <div class="sg-tgrid" id="sg-tools-grid"></div>
+          <div style="text-align:center;margin:14px 0 4px"><button class="hbtn" onclick="navTo('tools')">전체 축구 도구 보기 →</button></div>
+        </div>
+        <!-- SG: 이적시장 -->
+        <div id="sg-transfer-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🔁 이적시장</h2><div class="sg-secdesc">검수된 최신 오피셜 이적</div></div><a class="sg-more" href="#" onclick="return navTo('transfer')">이적시장 전체 보기 →</a></div>
+          <div class="sg-trlist" id="sg-transfer-list"></div>
+        </div>
+        <!-- SG: 축구 매거진 -->
+        <div id="sg-mag-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">📖 축구 매거진</h2><div class="sg-secdesc">축구창고가 직접 쓴 가이드와 분석</div></div><a class="sg-more" href="#" onclick="return navTo('mag')">매거진 전체 보기 →</a></div>
+          <div class="sg-mgrid" id="sg-mag-grid"></div>
+        </div>
+        <!-- SG: 커뮤니티 -->
+        <div id="sg-comm-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">💬 커뮤니티</h2><div class="sg-secdesc">축구 팬들과 자유롭게 이야기하는 공간</div></div></div>
+          <div id="sg-comm-list"></div>
+        </div>
+        <!-- SG: SNS 팔로우 -->
+        <div id="sg-sns-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">📣 축구창고 팔로우</h2><div class="sg-secdesc">매일 축구 핵심 이슈를 가장 빠르게 만나보세요.</div></div></div>
+          <div id="sg-sns-links"></div>
+        </div>
 
       </div>
 
@@ -1420,7 +1453,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-C</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-D</span></div>
   </div>
 </footer>
 
@@ -4160,6 +4193,75 @@ if (typeof renderHomeNewsLive === "function") {
 }
 // 초기 렌더 (뉴스 도착 전엔 Empty State)
 try { sgRenderIssues(null); sgRenderVideos(); sgRenderPlayers(); } catch (e) {}
+
+// ═══════ SG 4단계: 홈 중·하단 렌더러 (v0728-D) ═══════
+// 인기 도구 6종 — 전부 실존 도구 id (정적 5 + 미니 1), 로직 무변경·카드 진입만
+var SG_POPULAR_TOOLS = [
+  { id: "kickoff",      icon: "🕐", name: "킥오프 한국시간 변환기", desc: "현지 킥오프를 한국시간으로" },
+  { id: "boot-size",    icon: "⚽", name: "축구화 사이즈 변환기",   desc: "발 길이(mm)로 EU·UK·US 확인" },
+  { id: "fee-convert",  icon: "💱", name: "이적료 원화 환산기",     desc: "€m·£m를 억 원으로 (실시간 환율)" },
+  { id: "points-sim",   icon: "📊", name: "승점 시뮬레이터",        desc: "남은 경기 결과별 승점 계산" },
+  { id: "uniform",      icon: "👕", name: "유니폼 사이즈 가이드",   desc: "가슴둘레로 사이즈 찾기" },
+  { id: "futsal-split", icon: "🤝", name: "풋살 팀 나누기",         desc: "공평한 팀 배정과 회비 1/N" }
+];
+function sgRenderTools(){
+  var g = document.getElementById("sg-tools-grid");
+  if (g) g.innerHTML = SG_POPULAR_TOOLS.map(SGToolCard).join("");
+}
+// 이적시장 — 기존 검수 오피셜 목록(#official-live)에서 상위 4건 재사용. 상태는 원본 칩 텍스트 기준(임의 판단 없음)
+function sgRenderTransfers(){
+  var box = document.getElementById("sg-transfer-list");
+  if (!box) return;
+  var lis = document.querySelectorAll("#official-live li");
+  var rows = [];
+  for (var i = 0; i < lis.length && rows.length < 4; i++) {
+    var li = lis[i];
+    var b = li.querySelector("b"), a = li.querySelector("a");
+    if (!b || !a) continue;
+    var chip = li.querySelector(".klcat");
+    var st = chip && chip.textContent.indexOf("오피셜") > -1 ? "official" : "unknown";
+    var fee = li.querySelector(".feechip");
+    rows.push('<div class="sg-tr">' + SGTransferBadge(st)
+      + '<a href="' + escHtml(a.getAttribute("href") || "#") + '" target="_blank" rel="noopener noreferrer"><b>'
+      + escHtml(b.textContent) + "</b></a>"
+      + (fee ? '<small class="sg-date">' + escHtml(fee.textContent) + "</small>" : "") + "</div>");
+  }
+  if (!rows.length) {
+    box.innerHTML = "";
+    box.style.border = "none";
+    box.insertAdjacentHTML("beforeend", SGEmptyState({ message: "표시할 이적 소식이 아직 없습니다." }));
+    return;
+  }
+  box.innerHTML = rows.join("");
+}
+// 매거진 — 기존 ARTICLES 데이터 재사용 (t=제목, cat=카테고리, body=본문). 발행일·읽기시간 데이터 없음 → 미표시
+function sgRenderMag(){
+  var g = document.getElementById("sg-mag-grid");
+  if (!g || typeof ARTICLES === "undefined") return;
+  var keys = ["watch", "boots", "xg"].filter(function(k){ return ARTICLES[k]; });
+  if (!keys.length) { g.innerHTML = SGEmptyState({ message: "매거진 글이 아직 없습니다." }); return; }
+  g.innerHTML = keys.map(function(k){
+    var a = ARTICLES[k];
+    var tmp = document.createElement("div");
+    tmp.innerHTML = a.body || "";
+    var summ = (tmp.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">'
+      + SGContentCard({ category: a.cat || "매거진", title: a.t || k, summary: summ ? summ + "…" : null }) + "</a>";
+  }).join("");
+}
+// 커뮤니티 — 게시물 데이터는 토론방 진입 시 로드되는 구조(기능 재구현 금지 원칙) → 홈에서는 안내+이동 버튼
+function sgRenderComm(){
+  var box = document.getElementById("sg-comm-list");
+  if (!box) return;
+  box.innerHTML = '<div class="sg-empty"><div class="sg-empty-ic">💬</div>'
+    + "<p>실시간 채팅과 게시판은 축구토론방에서 이용할 수 있습니다.</p>"
+    + '<a class="sg-empty-cta" href="#" onclick="return navTo(&quot;part&quot;)">커뮤니티 가기</a></div>';
+}
+function sgRenderSNS(){
+  var box = document.getElementById("sg-sns-links");
+  if (box) box.innerHTML = SGSocialLinks();
+}
+try { sgRenderTools(); sgRenderTransfers(); sgRenderMag(); sgRenderComm(); sgRenderSNS(); } catch (e) {}
 
 (function armMidnight(){
   var now=new Date();
