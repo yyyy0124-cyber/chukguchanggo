@@ -563,6 +563,11 @@ nav a:focus-visible,#sg-more-btn:focus-visible,#sg-bottomnav a:focus-visible,#sg
 .sg-pd-head{display:flex;gap:16px;align-items:center;margin:12px 0 4px}
 .sg-pd-head .sg-pd-img{width:84px;height:84px;font-size:36px;flex:none}
 .sg-pd-meta{font-size:13px;color:var(--muted,#6b7280);margin-top:3px}
+/* ═══ SG 7단계: 뉴스 브리지 페이지 (v0728-I) ═══ */
+.sg-nd-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0 4px;font-size:13px;color:var(--muted,#6b7280)}
+.sg-nd-title{margin:8px 0 12px;line-height:1.35}
+.sg-nd-img{max-width:100%;border-radius:12px;margin:4px 0 10px}
+.sg-nd-note{background:var(--bg,#f6f7f4);border:1px dashed var(--line);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--muted,#6b7280)}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -1425,6 +1430,8 @@ if(GA_ID){
     </div>
     <!-- SG: 선수 상세 -->
     <div data-view="player" hidden id="sg-player-detail"></div>
+    <!-- SG: 뉴스 내부 요약(브리지) -->
+    <div data-view="newsitem" hidden id="sg-news-detail"></div>
     <div data-view="about" hidden>
         <article class="article-body">
           <h1>축구창고 소개</h1>
@@ -1526,7 +1533,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-H</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-I</span></div>
   </div>
 </footer>
 
@@ -4527,6 +4534,111 @@ try {
   if (_h0.indexOf("player-") === 0 && sgPlayerBySlug(_h0.slice(7))) openPlayer(_h0.slice(7));
   else if (_h0 === "players") navTo("players");
 } catch(e){}
+
+// ═══════ SG 7단계: 뉴스 내부 요약(브리지) 페이지 (v0728-I) ═══════
+/* SGNewsItem 데이터 타입 (향후 저장/백엔드 확장용 계약):
+   { t: 제목(필수), u: 원문 URL(필수), src: 출처 언론사, cat: 카테고리,
+     d: 발행 타임스탬프(ms), img: 대표 이미지 URL,
+     summary: 핵심 요약 — 실제 데이터가 있을 때만, 자동 생성 금지,
+     why: 왜 중요한지 — 실제 데이터가 있을 때만, 임의 해석 금지,
+     relatedArticleIds: [매거진 키] }
+   현재 RSS 파이프라인은 t/l/tag/img/d만 제공 → summary·why는 렌더러가 지원하되 표시되지 않음 */
+function sgFindCachedNews(u){
+  var c = window.SG_NEWS_CACHE || [];
+  for (var i = 0; i < c.length; i++) if (c[i].l === u) return c[i];
+  return null;
+}
+function sgNewsMatchPlayers(t){
+  if (typeof SG_PLAYERS_DB === "undefined") return [];
+  var low = String(t).toLowerCase();
+  return SG_PLAYERS_DB.filter(function(p){
+    return t.indexOf(p.nameKo) > -1 || (p.nameEn && low.indexOf(p.nameEn.toLowerCase()) > -1);
+  });
+}
+function sgFmtDate(d){
+  var x = new Date(d);
+  if (isNaN(x.getTime())) return "";
+  function p2(n){ return n < 10 ? "0" + n : "" + n; }
+  return x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate());
+}
+function openNewsView(item){
+  var box = document.getElementById("sg-news-detail");
+  if (!box || !item || !item.t || !/^https?:/.test(item.u || "")) return false;
+  var cached = sgFindCachedNews(item.u) || {};
+  var src = item.src || cached.tag || "";
+  var d = item.d || cached.d || null;
+  var img = item.img || cached.img || "";
+  var html = '<div class="wrap sg-pd">';
+  html += '<nav class="sg-crumb" aria-label="현재 위치"><a href="#" onclick="return navTo(&quot;home&quot;)">홈</a> › <span aria-current="page">기사</span></nav>';
+  var chips = [];
+  if (item.cat) chips.push('<span class="pill">' + escHtml(item.cat) + "</span>");
+  if (src) chips.push('<span class="sg-nd-src">출처: ' + escHtml(src) + "</span>");
+  var ds = d ? sgFmtDate(d) : "";
+  if (ds) chips.push('<span class="sg-nd-date">' + ds + "</span>");
+  if (chips.length) html += '<div class="sg-nd-chips">' + chips.join(" ") + "</div>";
+  html += '<h2 class="sg-nd-title">' + escHtml(item.t) + "</h2>";
+  if (img) html += '<img class="sg-nd-img" src="' + escHtml(img) + '" alt="기사 대표 이미지 (' + escHtml(src || "출처 제공") + ')" loading="lazy">';
+  if (item.summary) html += '<h3 class="sec">핵심 요약</h3><p>' + escHtml(item.summary) + "</p>";
+  if (item.why) html += '<h3 class="sec">왜 중요한가</h3><p>' + escHtml(item.why) + "</p>";
+  if (!item.summary) html += '<p class="sg-nd-note">저작권 보호를 위해 기사 본문은 제공하지 않습니다. 전체 내용은 아래 원문에서 확인해 주세요.</p>';
+  html += '<p><a class="hbtn" href="' + escHtml(item.u) + '" target="_blank" rel="noopener noreferrer">원문 기사 보기 ↗' + (src ? " (" + escHtml(src) + " · 외부 사이트로 이동)" : " (외부 사이트로 이동)") + "</a></p>";
+  var players = sgNewsMatchPlayers(item.t);
+  if (players.length) {
+    html += '<h3 class="sec">👤 관련 선수</h3><div class="sg-hscroll">' + players.map(function(p){
+      return '<a href="#player-' + p.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+        + SGPlayerCard({ name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }) + "</a>";
+    }).join("") + "</div>";
+    var vids = [];
+    players.forEach(function(p){ (p.relatedVideoIds || []).forEach(function(id){ var vd = sgVideoById(id); if (vd && vids.indexOf(vd) === -1) vids.push(vd); }); });
+    if (vids.length) html += '<h3 class="sec">📺 관련 축구창고 영상</h3><div class="sg-vgrid">' + vids.map(SGVideoCard).join("") + "</div>";
+  }
+  var arts = (item.relatedArticleIds || []).filter(function(k){ return typeof ARTICLES !== "undefined" && ARTICLES[k]; });
+  if (arts.length) {
+    html += '<h3 class="sec">📖 관련 매거진</h3><div class="sg-mgrid">' + arts.map(function(k){
+      var a = ARTICLES[k];
+      return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">' + SGContentCard({ category: a.cat || "매거진", title: a.t || k }) + "</a>";
+    }).join("") + "</div>";
+  }
+  html += '<p style="margin-top:16px"><a class="hbtn" href="#" onclick="return navTo(&quot;intl&quot;)">해외축구 뉴스 목록</a> <a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">국내축구 뉴스 목록</a></p>';
+  html += "</div>";
+  box.innerHTML = html;
+  navTo("newsitem");
+  try { history.replaceState(null, "", "#newsitem"); } catch(e){}
+  window.scrollTo({ top: 0 });
+  return false;
+}
+document.addEventListener("click", function(e){
+  var t = e.target;
+  var a = t && t.closest ? t.closest('a[href^="http"]') : null;
+  if (!a) return;
+  if (a.closest("#sg-news-detail")) return;
+  var host = a.closest("#intl-hero, #news-live, #dom-hero, #knews-live, #kl-board, #sg-issues-grid, #sg-pd-news");
+  if (!host) return;
+  var li = a.closest("li") || a.closest(".sg-tr") || a;
+  var title = a.getAttribute("title") || "";
+  if (title.indexOf("원문: ") === 0) title = title.slice(4);
+  if (!title) { var b = a.querySelector("b"); title = (b ? b.textContent : a.textContent) || ""; }
+  title = title.replace(/\s+/g, " ").trim();
+  if (!title) return;
+  var pill = li.querySelector ? li.querySelector(".pill") : null;
+  var pm = li.querySelector ? li.querySelector(".pmeta2") : null;
+  var src = pm ? pm.textContent.trim() : (pill ? pill.textContent.trim() : "");
+  var cat = pm && pill ? pill.textContent.trim() : "";
+  e.preventDefault();
+  e.stopPropagation();
+  openNewsView({ t: title, u: a.href, src: src, cat: cat });
+}, true);
+try {
+  if ((location.hash || "") === "#newsitem") {
+    var _nb = document.getElementById("sg-news-detail");
+    if (_nb && !_nb.innerHTML) {
+      _nb.innerHTML = '<div class="wrap sg-pd">' + SGEmptyState({ message: "기사 정보가 만료되었습니다. 뉴스 목록에서 다시 선택해 주세요." })
+        + '<p style="text-align:center"><a class="hbtn" href="#" onclick="return navTo(&quot;intl&quot;)">해외축구 뉴스</a> <a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">국내축구 뉴스</a></p></div>';
+      navTo("newsitem");
+    }
+  }
+} catch(e){}
+if (typeof VIEW_NAMES !== "undefined") VIEW_NAMES.push("newsitem");
 
 (function armMidnight(){
   var now=new Date();
