@@ -1526,7 +1526,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-G</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-H</span></div>
   </div>
 </footer>
 
@@ -4494,7 +4494,7 @@ function sgFillPlayerNews(p){
     return;
   }
   box.innerHTML = '<div class="sg-trlist">' + hits.map(function(it){
-    var u = it.link || it.u || it.url || "", src = it.source || it.src || it.m || "";
+    var u = it.link || it.l || it.u || it.url || "", src = it.source || it.src || it.tag || it.m || "";
     if (!u) return "";
     return '<div class="sg-tr"><a href="' + escHtml(u) + '" target="_blank" rel="noopener noreferrer"><b>' + escHtml(String(it.title || it.t || "")) + "</b></a>"
       + (src ? '<small class="sg-date">출처: ' + escHtml(String(src)) + " · 원문 보기</small>" : "") + "</div>";
