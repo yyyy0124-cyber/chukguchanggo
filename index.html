@@ -510,6 +510,13 @@
   .sg-hscroll>*{scroll-snap-align:start}
   @media(max-width:860px){.sg-issues{grid-template-columns:1fr 1fr}.sg-issues .sg-cc:first-child{grid-column:1/-1}.sg-vgrid{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:560px){.sg-issues{grid-template-columns:1fr}.sg-hscroll{grid-auto-columns:150px}}
+  /* SG 오버플로 수정 */
+  .layout>main{min-width:0}
+  .sg-issues{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr)}
+  .sg-vgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .sg-cc,.sg-vc,.sg-pc{min-width:0}
+  @media(max-width:860px){.sg-issues{grid-template-columns:repeat(2,minmax(0,1fr))}.sg-vgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){.sg-issues{grid-template-columns:minmax(0,1fr)}}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -1413,7 +1420,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-A</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-C</span></div>
   </div>
 </footer>
 
