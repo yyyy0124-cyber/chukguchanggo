@@ -575,6 +575,9 @@ nav a:focus-visible,#sg-more-btn:focus-visible,#sg-bottomnav a:focus-visible,#sg
 /* ═══ SG 8단계: 최종 점검 보정 (v0728-K) ═══ */
 select{max-width:100%}
 .field{min-width:0}
+/* ═══ SG: 뉴스 썸네일 (v0728-X) ═══ */
+.sg-nthumb{width:76px;height:50px;object-fit:cover;border-radius:8px;float:right;margin:2px 0 2px 10px;background:var(--bg,#eee)}
+@media(max-width:560px){.sg-nthumb{width:64px;height:44px}}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -1541,7 +1544,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-W</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-X</span></div>
   </div>
 </footer>
 
@@ -3716,7 +3719,7 @@ function extractFee(t){
 }
 var OF_SEED_HTML=null;
 function liIntl(n,meta){
-  return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)
+  return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)
     +'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
     +'<b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a>'
     +'<span class="pmeta2">'+(meta||lgDetect(n.t))+'</span></li>';
@@ -3746,7 +3749,7 @@ function renderIntlLive(items){
   var wcItems=items.filter(function(n){return /world cup/i.test(n.t)||lgDetect(n.t)==="월드컵";}).slice(0,8);
   if(wc&&wcItems.length){
     wc.innerHTML=wcItems.map(function(n){
-      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
+      return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
     }).join("");
     translateNodes("#wc-board .tr-t");
     stamp("wc-stamp",nowT());
@@ -3759,7 +3762,7 @@ function renderIntlLive(items){
   var tl=document.getElementById("transfer-live");
   if(tl&&trItems.length){
     tl.innerHTML=trItems.map(function(n){
-      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
+      return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
     }).join("");
     translateNodes("#transfer-live .tr-t");
     stamp("tr-stamp",nowT()+" 업데이트");
@@ -3787,7 +3790,7 @@ function loadNews(){
       .catch(function(){
         return rss2json(f.url).then(function(arr){
           return arr.map(function(n){n.tag=f.tag;return n;})
-            .filter(function(n){return /football|soccer/i.test(n.l) || /[가-힣]/.test(n.t);});
+            .map(function(n){ n.t = String(n.t || "").replace(/\s*-\s*[^-]{2,30}$/, ""); return n; }).filter(function(n){return /football|soccer/i.test(n.l) || /[가-힣]/.test(n.t);});
         });
       })
       .catch(function(){
@@ -4587,7 +4590,7 @@ function openNewsView(item){
   var cached = sgFindCachedNews(item.u) || {};
   var src = item.src || cached.tag || "";
   var d = item.d || cached.d || null;
-  var img = item.img || cached.img || "";
+  var img = item.img || cached.img || sgFbImg(item.t);
   var html = '<div class="wrap sg-pd">';
   html += '<nav class="sg-crumb" aria-label="현재 위치"><a href="#" onclick="return navTo(&quot;home&quot;)">홈</a> › <span aria-current="page">기사</span></nav>';
   var chips = [];
@@ -4750,6 +4753,40 @@ sgLoadVideos();
   } catch(e){}
 })();
 try { sgRenderMag(); } catch(e){}
+
+// ═══════ SG: 트랜스퍼마르크트 이적 뉴스 (v0728-X) ═══════
+function sgLoadTM(){
+  try {
+    rss2json("https://www.transfermarkt.com/rss/news").then(function(res){
+      var items = Array.isArray(res) ? res : ((res && res.items) || []);
+      var ul = document.getElementById("official-live");
+      if (!ul || !items.length) return;
+      var have = {};
+      ul.querySelectorAll("a").forEach(function(a){ have[a.href] = 1; });
+      var html = "";
+      items.slice(0, 8).forEach(function(it){
+        var tt = String(it.t || it.title || "");
+        var l = String(it.l || it.link || "");
+        if (!tt || !l || have[l]) return;
+        var cls = OFFICIAL_RE.test(tt) ? "오피셜" : (RUMOUR_RE.test(tt) ? "루머" : "이적");
+        html += '<li><span class="klcat">' + cls + '</span><a href="' + escHtml(l) + '" target="_blank" rel="noopener"><b class="tr-t" data-en="' + escHtml(tt) + '">' + escHtml(tt) + '</b></a><span class="pmeta2">Transfermarkt</span></li>';
+      });
+      if (html) {
+        ul.insertAdjacentHTML("beforeend", html);
+        try { translateNodes("#official-live .tr-t"); } catch(e){}
+      }
+    }).catch(function(){});
+  } catch(e){}
+}
+sgLoadTM();
+document.addEventListener("error", function(e){
+  var im = e.target;
+  if (im && im.classList && im.classList.contains("sg-nthumb")) {
+    if (im.getAttribute("data-fb")) return;
+    im.setAttribute("data-fb", "1");
+    im.src = sgFbImg(im.alt || "");
+  }
+}, true);
 
 (function armMidnight(){
   var now=new Date();
