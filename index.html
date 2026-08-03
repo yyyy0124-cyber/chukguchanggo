@@ -1541,7 +1541,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-U</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-V</span></div>
   </div>
 </footer>
 
@@ -3563,9 +3563,9 @@ function translateNodes(sel){
 
 // ③ RSS 파서 + 리그 자동 분류
 var FEEDS=[
-  {tag:"ESPN",url:"https://www.espn.com/espn/rss/soccer/news"},
-  {tag:"Sky",url:"https://www.skysports.com/rss/11095"},
-  {tag:"BBC",url:"https://feeds.bbci.co.uk/sport/football/rss.xml"}
+  {tag:"해외축구",url:"https://news.google.com/rss/search?q="+encodeURIComponent("해외축구")+"&hl=ko&gl=KR&ceid=KR:ko"},
+  {tag:"EPL",url:"https://news.google.com/rss/search?q="+encodeURIComponent("프리미어리그")+"&hl=ko&gl=KR&ceid=KR:ko"},
+  {tag:"유럽축구",url:"https://news.google.com/rss/search?q="+encodeURIComponent("라리가 OR 챔피언스리그 OR 분데스리가")+"&hl=ko&gl=KR&ceid=KR:ko"}
 ];
 var LG_MAP=[
   [/arsenal|chelsea|liverpool|man (city|utd|united)|manchester|tottenham|spurs|newcastle|everton|west ham|aston villa|premier league|epl/i,"EPL"],
@@ -3708,6 +3708,8 @@ function setTabHero(slot,items){
 // ⑤ 해외축구 보드 + 월드컵 + 이적 + 오피셜 자동 감지
 var OFFICIAL_RE=/\b(completes?|signs?|confirmed?|done deal|joins?|agrees? deal|seals?|unveil(s|ed)?|announce(s|d)?)\b/i;
 var RUMOUR_RE=/\b(in talks|close in|closing in|target(s|ed)?|linked|interest(ed)?|considering|monitor(s|ing)?|could|rumou?r|want(s|ed)?|eye(s|ing)?|bid|offer(ed)?|race|battle)\b/i;
+OFFICIAL_RE=new RegExp(OFFICIAL_RE.source+"|오피셜|공식 ?발표|영입 ?완료|이적 ?완료|입단","i");
+RUMOUR_RE=new RegExp(RUMOUR_RE.source+"|루머|이적설|영입설|관심|협상|접촉|추진|임박|유력","i");
 function extractFee(t){
   var m=t.match(/[£€]\s?(\d+(?:\.\d+)?)\s?m\b/i);
   return m?(t.match(/[£€]/)[0]+m[1]+"m"):"";
