@@ -1541,7 +1541,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-V</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-W</span></div>
   </div>
 </footer>
 
@@ -3603,7 +3603,7 @@ function parseRss(txt,tag){
   return [].slice.call(xml.querySelectorAll("item")).map(function(it){
     var g=function(t){var n=it.querySelector(t);return n?n.textContent.trim():"";};
     return {t:g("title"),l:g("link"),d:new Date(g("pubDate")||Date.now()).getTime(),img:rssImg(it),tag:tag};
-  }).filter(function(n){return n.t&&n.l&&/football|soccer/i.test(n.l)&&notWomen(n);});
+  }).filter(function(n){return n.t&&n.l&&(/football|soccer/i.test(n.l)||/[가-힣]/.test(n.t))&&notWomen(n);});
 }
 
 // ④ 홈 히어로 캐러셀 (3초 회전, 마우스 올리면 정지) + 헤드라인 리스트
@@ -3787,7 +3787,7 @@ function loadNews(){
       .catch(function(){
         return rss2json(f.url).then(function(arr){
           return arr.map(function(n){n.tag=f.tag;return n;})
-            .filter(function(n){return /football|soccer/i.test(n.l);});
+            .filter(function(n){return /football|soccer/i.test(n.l) || /[가-힣]/.test(n.t);});
         });
       })
       .catch(function(){
