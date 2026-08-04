@@ -1555,7 +1555,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-B</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-C</span></div>
   </div>
 </footer>
 
@@ -4836,6 +4836,26 @@ function sgDecorateNews(root){
 })();
 
 // ═══════ SG: TM 자동 수집 이적 표시 (v0729-A) ═══════
+function sgKoClub(n){
+  n = String(n || "").trim();
+  if (typeof FX_KO === "undefined") return null;
+  if (FX_KO[n]) return FX_KO[n];
+  var st = n.replace(/^(FC|AFC|SC|CF|AC|RC|KV|KVC|VfB|VfL)\s+/i, "").replace(/\s+(FC|AFC|SC|CF|AC|KV|Enschede|Alsace)$/i, "").trim();
+  if (FX_KO[st]) return FX_KO[st];
+  var keys = Object.keys(FX_KO);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].length > 3 && n.indexOf(keys[i]) > -1) return FX_KO[keys[i]];
+  }
+  return null;
+}
+function sgKoFee(f){
+  f = String(f || "");
+  var m = f.match(/([\d.,]+)\s*mil\.\s*€/i);
+  if (m) return Math.round(parseFloat(m[1].replace(",", ".")) * 100) + "만 €";
+  m = f.match(/([\d.,]+)\s*k\s*€/i);
+  if (m) return Math.round(parseFloat(m[1].replace(",", "")) / 10) + "만 €";
+  return f;
+}
 function sgLoadTMTable(){
   try {
     fetch("transfer/tm.json?d=" + Math.floor(Date.now() / 3600000), { cache: "no-store" })
@@ -4849,13 +4869,18 @@ function sgLoadTMTable(){
         j.items.slice(0, 10).forEach(function(it){
           if (!it.name || !it.to) return;
           if (exist.indexOf(it.name) > -1) return;
-          var fee = String(it.fee || "");
-          var lab = /임대/.test(fee) ? "임대" : "오피셜";
-          html += '<li><span class="klcat">' + lab + '</span><a href="' + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + '" target="_blank" rel="noopener"><b>' + escHtml(it.name) + ": " + escHtml(it.from || "?") + " → " + escHtml(it.to) + "</b></a>" + (fee ? '<span class="pmeta2">' + escHtml(fee) + "</span>" : "") + "</li>";
+          var fee = sgKoFee(it.fee);
+          var lab = /임대/.test(String(it.fee || "")) ? "임대" : "오피셜";
+          var fromKo = sgKoClub(it.from), toKo = sgKoClub(it.to);
+          var nameH = "<span class=\"tr-t\" data-en=\"" + escHtml(it.name) + "\">" + escHtml(it.name) + "</span>";
+          var fromH = fromKo ? escHtml(fromKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.from) + "\">" + escHtml(it.from) + "</span>";
+          var toH = toKo ? escHtml(toKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.to) + "\">" + escHtml(it.to) + "</span>";
+          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + fromH + " → " + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
         });
         if (html) {
           ul.insertAdjacentHTML("afterbegin", html);
           if (j.updated) { window.__tmStamp = "Transfermarkt 자동 수집 " + String(j.updated).slice(0, 16) + " + 수기 검수"; try { stamp("of-stamp", window.__tmStamp); } catch(e){} }
+          try { translateNodes("#official-live .tr-t"); } catch(e){}
           try { sgRenderTransfers(); } catch(e){}
         }
       }).catch(function(){});
