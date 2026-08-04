@@ -1555,7 +1555,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-D</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-E</span></div>
   </div>
 </footer>
 
@@ -4786,6 +4786,7 @@ function sgLoadTM(){
       if (html) {
         ul.insertAdjacentHTML("beforeend", html);
         try { translateNodes("#official-live .tr-t"); } catch(e){}
+          try { sgFillBadges(); } catch(e){}
       }
     }).catch(function(){});
   } catch(e){}
@@ -4856,6 +4857,34 @@ function sgKoFee(f){
   if (m) return Math.round(parseFloat(m[1].replace(",", "")) / 10) + "만 €";
   return f;
 }
+function sgFillBadges(){
+  var spans = document.querySelectorAll("#official-live .sg-club:not([data-bdg])");
+  var i = 0;
+  function next(){
+    if (i >= spans.length) return;
+    var sp = spans[i++];
+    sp.setAttribute("data-bdg", "1");
+    var club = sp.getAttribute("data-club") || "";
+    var ic = iconFor(club);
+    if (ic) { sp.insertAdjacentHTML("afterbegin", ic); next(); return; }
+    var key = "sgBadge:" + club;
+    var cached = null;
+    try { cached = localStorage.getItem(key); } catch(e){}
+    if (cached === "none") { next(); return; }
+    if (cached) { sp.insertAdjacentHTML("afterbegin", "<img class=\"fxbdg\" src=\"" + cached + "\" alt=\"\" loading=\"lazy\">"); next(); return; }
+    fetch("https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=" + encodeURIComponent(club))
+      .then(function(r2){ return r2.ok ? r2.json() : null; })
+      .then(function(j){
+        var b = j && j.teams && j.teams[0] && (j.teams[0].strBadge || j.teams[0].strTeamBadge);
+        if (b) {
+          try { localStorage.setItem(key, b); } catch(e){}
+          sp.insertAdjacentHTML("afterbegin", "<img class=\"fxbdg\" src=\"" + b + "\" alt=\"\" loading=\"lazy\">");
+        } else { try { localStorage.setItem(key, "none"); } catch(e){} }
+        next();
+      }).catch(function(){ next(); });
+  }
+  next();
+}
 function sgLoadTMTable(){
   try {
     fetch("transfer/tm.json?d=" + Math.floor(Date.now() / 3600000), { cache: "no-store" })
@@ -4873,9 +4902,9 @@ function sgLoadTMTable(){
           var lab = /임대/.test(String(it.fee || "")) ? "임대" : "오피셜";
           var fromKo = sgKoClub(it.from), toKo = sgKoClub(it.to);
           var nameH = "<span class=\"tr-t\" data-en=\"" + escHtml(it.name) + "\">" + escHtml(it.name) + "</span>";
-          var fromH = fromKo ? escHtml(fromKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.from) + "\">" + escHtml(it.from) + "</span>";
-          var toH = toKo ? escHtml(toKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.to) + "\">" + escHtml(it.to) + "</span>";
-          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + iconFor(it.from) + fromH + " → " + iconFor(it.to) + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
+          var fromH = "<span class=\"sg-club\" data-club=\"" + escHtml(it.from) + "\">" + (fromKo ? escHtml(fromKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.from) + "\">" + escHtml(it.from) + "</span>") + "</span>";
+          var toH = "<span class=\"sg-club\" data-club=\"" + escHtml(it.to) + "\">" + (toKo ? escHtml(toKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.to) + "\">" + escHtml(it.to) + "</span>") + "</span>";
+          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + fromH + " → " + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
         });
         if (html) {
           ul.insertAdjacentHTML("afterbegin", html);
