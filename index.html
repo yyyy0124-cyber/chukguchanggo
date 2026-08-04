@@ -1555,7 +1555,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-A</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-B</span></div>
   </div>
 </footer>
 
@@ -3789,7 +3789,7 @@ function renderIntlLive(items){
       }).join("");
       translateNodes("#official-live .tr-t");
     }
-    stamp("of-stamp","수기 검수 목록 · 마지막 검수 2026.7.30");
+    stamp("of-stamp", window.__tmStamp || "수기 검수 목록 · 마지막 검수 2026.7.30");
     try{ofPager();}catch(e){}
   }
 }
@@ -4810,7 +4810,7 @@ function sgDecorateNews(root){
       li.setAttribute("data-sgdec", "1");
       var pm = li.querySelector(".pmeta2");
       if (pm) {
-        var fee = (pm.textContent.match(/[£€$]\s?[\d.,]+m?|[\d.,]+\s*(?:만|억)?\s*€|임대|자유이적/i) || [])[0] || "";
+        var fee = (pm.textContent.match(/[£€$]\s?[\d.,]+m?\b|\d[\d.,]*\s*(?:mil\.|k|만|억)?\s*€|임대|자유이적/i) || [])[0] || "";
         pm.textContent = fee;
         if (!fee) pm.style.display = "none";
       }
@@ -4855,7 +4855,7 @@ function sgLoadTMTable(){
         });
         if (html) {
           ul.insertAdjacentHTML("afterbegin", html);
-          if (j.updated) { try { stamp("of-stamp", "Transfermarkt 자동 수집 " + String(j.updated).slice(0, 16) + " + 수기 검수"); } catch(e){} }
+          if (j.updated) { window.__tmStamp = "Transfermarkt 자동 수집 " + String(j.updated).slice(0, 16) + " + 수기 검수"; try { stamp("of-stamp", window.__tmStamp); } catch(e){} }
           try { sgRenderTransfers(); } catch(e){}
         }
       }).catch(function(){});
