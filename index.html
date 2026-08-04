@@ -578,6 +578,16 @@ select{max-width:100%}
 /* ═══ SG: 뉴스 썸네일 (v0728-X) ═══ */
 .sg-nthumb{width:76px;height:50px;object-fit:cover;border-radius:8px;float:right;margin:2px 0 2px 10px;background:var(--bg,#eee)}
 @media(max-width:560px){.sg-nthumb{width:64px;height:44px}}
+/* ═══ SG: 뉴스 바로가기·원문 태그 (v0728-Z) ═══ */
+.sg-nl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.sg-nl-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:6px;color:inherit}
+.sg-nl-card b{font-size:18px}
+.sg-nl-ic{font-size:26px}
+.sg-nl-sub{font-size:13px;color:var(--muted,#6b7280)}
+.sg-nl-card:hover{border-color:var(--accent)}
+@media(max-width:560px){.sg-nl-grid{grid-template-columns:1fr}}
+.sg-orig{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 10px;margin-left:8px;white-space:nowrap;color:var(--muted,#6b7280)}
+.sg-orig:hover{border-color:var(--accent);color:inherit}
 </style>
 <!-- 📊 Google Analytics 4 — analytics.google.com에서 측정 ID를 발급받아 아래 GA_ID에 넣으면 자동 활성화됩니다 -->
 <script>
@@ -637,13 +647,12 @@ if(GA_ID){
       <ul>
         <li><a href="#" data-nav="home" onclick="return navTo('home')">오늘의 축구</a></li>
         <li><a href="#" data-nav="intl" onclick="return navTo('intl')">해외축구</a></li>
+        <li><a href="#" data-nav="domestic" onclick="return navTo('domestic')">국내축구</a></li>
         <li><a href="#" data-nav="transfer" onclick="return navTo('transfer')">이적시장</a></li>
         <li><a href="#" data-nav="tools" onclick="return navTo('tools')">축구 도구</a></li>
         <li class="sg-nav-more">
           <button id="sg-more-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="sg-more-menu" aria-label="더보기 메뉴 열기">더보기 ▾</button>
           <ul id="sg-more-menu" hidden>
-            <li><a href="#players" data-nav="players" onclick="return sgMoreGo('players')">🇰🇷 한국 선수</a></li>
-            <li class="sg-md-sec"><a href="#" data-nav="domestic" onclick="return sgMoreGo('domestic')">대표팀</a></li>
             <li class="sg-md-sec"><a href="#" data-nav="mag" onclick="return sgMoreGo('mag')">축구 매거진</a></li>
             <li class="sg-md-sec"><a href="#" data-nav="part" onclick="return sgMoreGo('part')">커뮤니티</a></li>
             <li><a href="#" data-nav="hot" onclick="return sgMoreGo('hot')">🔥 인기 도구</a></li>
@@ -662,9 +671,8 @@ if(GA_ID){
   <div id="sg-sheet-backdrop" hidden></div>
   <div id="sg-sheet" role="dialog" aria-modal="true" aria-label="전체 메뉴" hidden>
     <ul>
-      <li><a href="#" onclick="return sgSheetGo('players')">🇰🇷 한국 선수</a></li>
+      <li><a href="#" onclick="return sgSheetGo('domestic')">🇰🇷 국내축구</a></li>
       <li><a href="#" onclick="return sgSheetGo('transfer')">🔁 이적시장</a></li>
-      <li><a href="#" onclick="return sgSheetGo('domestic')">🇰🇷 대표팀</a></li>
       <li><a href="#" onclick="return sgSheetGo('mag')">📖 축구 매거진</a></li>
       <li><a href="#" onclick="return sgSheetGo('part')">💬 커뮤니티</a></li>
       <li><a href="#" onclick="return sgSheetGo('hot')">🔥 인기 도구</a></li>
@@ -693,15 +701,18 @@ if(GA_ID){
             <p>한국 선수·해외축구·이적시장 소식부터 팬에게 필요한 무료 도구까지 한곳에.</p>
             <div class="sg-hbtns">
               <button class="hbtn" onclick="return sgScrollTo('sg-videos-sec')">▶ 최신 영상 보기</button>
-              <button class="hbtn" onclick="return sgScrollTo('sg-issues-sec')">📰 오늘의 뉴스 보기</button>
+              <button class="hbtn" onclick="return sgScrollTo('sg-newslinks-sec')">📰 오늘의 뉴스 보기</button>
               <button class="hbtn" onclick="navTo('tools')">🧰 축구 도구 사용하기</button>
             </div>
           </div>
         </div>
-        <!-- SG: 오늘의 핵심 이슈 -->
-        <div id="sg-issues-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🔥 오늘의 핵심 이슈</h2><div class="sg-secdesc">지금 가장 중요한 축구 소식 3가지</div></div></div>
-          <div class="sg-issues" id="sg-issues-grid"></div>
+        <!-- SG: 축구 뉴스 바로가기 -->
+        <div id="sg-newslinks-sec">
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">📰 축구 뉴스</h2><div class="sg-secdesc">해외·국내 최신 기사를 바로 확인하세요</div></div></div>
+          <div class="sg-nl-grid">
+            <a class="sg-nl-card" href="#intl" onclick="return navTo('intl')"><span class="sg-nl-ic" aria-hidden="true">🌍</span><b>해외축구 기사</b><span class="sg-nl-sub">EPL·라리가·챔피언스리그 최신 소식 →</span></a>
+            <a class="sg-nl-card" href="#domestic" onclick="return navTo('domestic')"><span class="sg-nl-ic" aria-hidden="true">🇰🇷</span><b>국내축구 기사</b><span class="sg-nl-sub">국가대표·K리그 최신 소식 →</span></a>
+          </div>
         </div>
         <!-- SG: 최신 축구창고 영상 -->
         <div id="sg-videos-sec">
@@ -1544,7 +1555,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-Y</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0728-Z</span></div>
   </div>
 </footer>
 
@@ -3719,7 +3730,7 @@ function extractFee(t){
 }
 var OF_SEED_HTML=null;
 function liIntl(n,meta){
-  return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)
+  return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)
     +'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
     +'<b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a>'
     +'<span class="pmeta2">'+(meta||lgDetect(n.t))+'</span></li>';
@@ -3749,7 +3760,7 @@ function renderIntlLive(items){
   var wcItems=items.filter(function(n){return /world cup/i.test(n.t)||lgDetect(n.t)==="월드컵";}).slice(0,8);
   if(wc&&wcItems.length){
     wc.innerHTML=wcItems.map(function(n){
-      return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
+      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
     }).join("");
     translateNodes("#wc-board .tr-t");
     stamp("wc-stamp",nowT());
@@ -3762,7 +3773,7 @@ function renderIntlLive(items){
   var tl=document.getElementById("transfer-live");
   if(tl&&trItems.length){
     tl.innerHTML=trItems.map(function(n){
-      return '<li><img class="sg-nthumb" loading="lazy" alt="'+escHtml(n.t).slice(0,40)+'" src="'+escHtml(n.img||sgFbImg(n.t))+'"><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
+      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
     }).join("");
     translateNodes("#transfer-live .tr-t");
     stamp("tr-stamp",nowT()+" 업데이트");
@@ -4636,6 +4647,7 @@ document.addEventListener("click", function(e){
   var a = t && t.closest ? t.closest('a[href^="http"]') : null;
   if (!a) return;
   if (a.closest("#sg-news-detail")) return;
+  if (a.classList && a.classList.contains("sg-orig")) return;
   var host = a.closest("#intl-hero, #news-live, #dom-hero, #knews-live, #kl-board, #sg-issues-grid, #sg-pd-news");
   if (!host) return;
   var li = a.closest("li") || a.closest(".sg-tr") || a;
@@ -4787,6 +4799,41 @@ document.addEventListener("error", function(e){
     im.src = sgFbImg(im.alt || "");
   }
 }, true);
+
+// ═══════ SG: 뉴스 목록 표시 개편 (v0728-Z) ═══════
+function sgDecorateNews(root){
+  try {
+    root.querySelectorAll("li").forEach(function(li){
+      if (li.getAttribute("data-sgdec")) return;
+      var a = li.querySelector('a[href^="http"]');
+      if (!a) return;
+      li.setAttribute("data-sgdec", "1");
+      var pm = li.querySelector(".pmeta2");
+      if (pm) {
+        var fee = (pm.textContent.match(/[£€$]\s?[\d.,]+m?/i) || [])[0] || "";
+        pm.textContent = fee;
+        if (!fee) pm.style.display = "none";
+      }
+      var o = document.createElement("a");
+      o.className = "sg-orig";
+      o.href = a.href;
+      o.target = "_blank";
+      o.rel = "noopener noreferrer";
+      o.textContent = "원문기사 보러가기 ↗";
+      li.appendChild(o);
+    });
+  } catch(e){}
+}
+(function sgArmDecorators(){
+  ["news-live", "knews-live", "kl-board", "official-live", "lg-boards"].forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    sgDecorateNews(el);
+    try {
+      new MutationObserver(function(){ sgDecorateNews(el); }).observe(el, { childList: true, subtree: true });
+    } catch(e){}
+  });
+})();
 
 (function armMidnight(){
   var now=new Date();
