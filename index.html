@@ -1555,7 +1555,7 @@ if(GA_ID){
     <div class="links">
       <a href="#" onclick="return navTo('about')">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="#" onclick="return navTo('contact')">문의하기</a><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener" data-notranslate>▶ YouTube</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener" data-notranslate>◎ Instagram</a>
     </div>
-    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-C</span></div>
+    <div>축구창고 — 모든 콘텐츠는 무료입니다. <span style="opacity:.45;font-size:11px" data-notranslate>v0729-D</span></div>
   </div>
 </footer>
 
@@ -4875,7 +4875,7 @@ function sgLoadTMTable(){
           var nameH = "<span class=\"tr-t\" data-en=\"" + escHtml(it.name) + "\">" + escHtml(it.name) + "</span>";
           var fromH = fromKo ? escHtml(fromKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.from) + "\">" + escHtml(it.from) + "</span>";
           var toH = toKo ? escHtml(toKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.to) + "\">" + escHtml(it.to) + "</span>";
-          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + fromH + " → " + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
+          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + iconFor(it.from) + fromH + " → " + iconFor(it.to) + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
         });
         if (html) {
           ul.insertAdjacentHTML("afterbegin", html);
