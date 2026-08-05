@@ -1,68 +1,41 @@
 {
- "updated": "2026-08-05 01:27",
+ "updated": "2026-08-05 12:01",
  "items": [
   {
-   "name": "Max Arfsten",
-   "pos": "좌측 윙 포워드",
-   "from": "Columbus Crew",
-   "to": "Middlesbrough FC",
-   "fee": "6.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/993063/transfer_id/6485273"
-  },
-  {
-   "name": "Joël Drommel",
-   "pos": "골키퍼",
-   "from": "PSV Eindhoven",
-   "to": "FC Twente Enschede",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/333640/transfer_id/6484795"
-  },
-  {
-   "name": "Cisse Sandra",
-   "pos": "공격형 미드필더",
-   "from": "Club Brugge KV",
-   "to": "KVC Westerlo",
-   "fee": "1.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/632088/transfer_id/6484710"
-  },
-  {
-   "name": "Carl Rushworth",
-   "pos": "골키퍼",
-   "from": "브라이턴 &amp; 호브 앨비언",
-   "to": "Coventry City",
-   "fee": "25.70 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/646353/transfer_id/6484586"
-  },
-  {
-   "name": "Giovanni Reyna",
-   "pos": "공격형 미드필더",
-   "from": "Borussia Mönchengladbach",
-   "to": "RC Strasbourg Alsace",
-   "fee": "3.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/504215/transfer_id/6484108"
-  },
-  {
-   "name": "Ákos Markgráf",
-   "pos": "좌측 풀백",
-   "from": "Újpest FC",
-   "to": "FC Copenhagen",
-   "fee": "1.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1123192/transfer_id/6484057"
-  },
-  {
-   "name": "Freddie Potts",
+   "name": "Tobías Reinhart",
    "pos": "수비형 미드필더",
-   "from": "West Ham United",
-   "to": "Club Brugge KV",
-   "fee": "10.00 mil. €",
+   "from": "AC Reggiana 1919",
+   "to": "Club Universidad de Chile",
+   "fee": "700 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/698164/transfer_id/6483599"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/613085/transfer_id/6486529"
+  },
+  {
+   "name": "Gauthier Hein",
+   "pos": "우측 윙 포워드",
+   "from": "FC Metz",
+   "to": "OGC Nice",
+   "fee": "1.70 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/344892/transfer_id/6486100"
+  },
+  {
+   "name": "Gökdeniz Bayrakdar",
+   "pos": "우측 윙 포워드",
+   "from": "Bodrum FK",
+   "to": "Göztepe",
+   "fee": "450 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/345105/transfer_id/6485785"
+  },
+  {
+   "name": "Florentino",
+   "pos": "수비형 미드필더",
+   "from": "Burnley FC",
+   "to": "Ipswich Town",
+   "fee": "18.70 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/357162/transfer_id/6485411"
   }
  ]
 }
