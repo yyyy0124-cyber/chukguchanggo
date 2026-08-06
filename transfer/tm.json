@@ -1,41 +1,59 @@
 {
- "updated": "2026-08-05 12:01",
+ "updated": "2026-08-06 11:54",
  "items": [
   {
-   "name": "Tobías Reinhart",
+   "name": "Christian Nørgaard",
    "pos": "수비형 미드필더",
-   "from": "AC Reggiana 1919",
-   "to": "Club Universidad de Chile",
-   "fee": "700 k €",
+   "from": "Arsenal FC",
+   "to": "Everton FC",
+   "fee": "8.15 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/613085/transfer_id/6486529"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/148367/transfer_id/6489077"
   },
   {
-   "name": "Gauthier Hein",
+   "name": "Douglas Owusu",
    "pos": "우측 윙 포워드",
-   "from": "FC Metz",
-   "to": "OGC Nice",
-   "fee": "1.70 mil. €",
+   "from": "Red Star Belgrade",
+   "to": "Hapoel Tel Aviv",
+   "fee": "2.20 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/344892/transfer_id/6486100"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1305075/transfer_id/6488810"
   },
   {
-   "name": "Gökdeniz Bayrakdar",
-   "pos": "우측 윙 포워드",
-   "from": "Bodrum FK",
-   "to": "Göztepe",
-   "fee": "450 k €",
+   "name": "Christian Früchtl",
+   "pos": "골키퍼",
+   "from": "US Lecce",
+   "to": "Red Bull Salzburg",
+   "fee": "1.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/345105/transfer_id/6485785"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/336307/transfer_id/6488751"
   },
   {
-   "name": "Florentino",
+   "name": "Dion Lopy",
    "pos": "수비형 미드필더",
-   "from": "Burnley FC",
-   "to": "Ipswich Town",
-   "fee": "18.70 mil. €",
+   "from": "UD Almería",
+   "to": "Al-Ittihad Club",
+   "fee": "13.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/357162/transfer_id/6485411"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/649033/transfer_id/6488725"
+  },
+  {
+   "name": "Ben Whiteman",
+   "pos": "중앙 미드필더",
+   "from": "Preston North End",
+   "to": "Wrexham AFC",
+   "fee": "3.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/347389/transfer_id/6488723"
+  },
+  {
+   "name": "Felix Horn Myhre",
+   "pos": "중앙 미드필더",
+   "from": "SK Brann",
+   "to": "West Bromwich Albion",
+   "fee": "3.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/367274/transfer_id/6487724"
   }
  ]
 }
