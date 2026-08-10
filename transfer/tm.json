@@ -1,59 +1,77 @@
 {
- "updated": "2026-08-06 11:54",
+ "updated": "2026-08-10 11:49",
  "items": [
   {
-   "name": "Christian Nørgaard",
-   "pos": "수비형 미드필더",
-   "from": "Arsenal FC",
-   "to": "Everton FC",
-   "fee": "8.15 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/148367/transfer_id/6489077"
-  },
-  {
-   "name": "Douglas Owusu",
-   "pos": "우측 윙 포워드",
-   "from": "Red Star Belgrade",
-   "to": "Hapoel Tel Aviv",
-   "fee": "2.20 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1305075/transfer_id/6488810"
-  },
-  {
-   "name": "Christian Früchtl",
-   "pos": "골키퍼",
-   "from": "US Lecce",
-   "to": "Red Bull Salzburg",
-   "fee": "1.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/336307/transfer_id/6488751"
-  },
-  {
-   "name": "Dion Lopy",
-   "pos": "수비형 미드필더",
-   "from": "UD Almería",
-   "to": "Al-Ittihad Club",
-   "fee": "13.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/649033/transfer_id/6488725"
-  },
-  {
-   "name": "Ben Whiteman",
+   "name": "Mohamed Ali Ben Romdhane",
    "pos": "중앙 미드필더",
-   "from": "Preston North End",
-   "to": "Wrexham AFC",
-   "fee": "3.50 mil. €",
+   "from": "알아흘리 FC",
+   "to": "Al-Shamal SC",
+   "fee": "695 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/347389/transfer_id/6488723"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/577881/transfer_id/6491533"
   },
   {
-   "name": "Felix Horn Myhre",
-   "pos": "중앙 미드필더",
-   "from": "SK Brann",
-   "to": "West Bromwich Albion",
-   "fee": "3.00 mil. €",
+   "name": "Nordine Kandil",
+   "pos": "좌측 윙 포워드",
+   "from": "Amiens SC",
+   "to": "AS Nancy-Lorraine",
+   "fee": "150 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/367274/transfer_id/6487724"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/891379/transfer_id/6491282"
+  },
+  {
+   "name": "Trevoh Chalobah",
+   "pos": "중앙 수비수",
+   "from": "첼시 FC",
+   "to": "Como 1907",
+   "fee": "30.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/346314/transfer_id/6491093"
+  },
+  {
+   "name": "Lucas Digne",
+   "pos": "좌측 풀백",
+   "from": "애스턴 빌라",
+   "to": "파리 생제르맹",
+   "fee": "7.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/126664/transfer_id/6491085"
+  },
+  {
+   "name": "Elliot Stroud",
+   "pos": "좌측 측면 미드필더",
+   "from": "Mjällby AIF",
+   "to": "Hull City",
+   "fee": "2.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/687622/transfer_id/6490924"
+  },
+  {
+   "name": "Samú Costa",
+   "pos": "수비형 미드필더",
+   "from": "RCD Mallorca",
+   "to": "알 나스르 FC",
+   "fee": "22.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/657430/transfer_id/6490820"
+  },
+  {
+   "name": "Jesús Castillo",
+   "pos": "수비형 미드필더",
+   "from": "Universitario de Deportes",
+   "to": "Esperance Tunis",
+   "fee": "607 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/658848/transfer_id/6491187"
+  },
+  {
+   "name": "Magnus Jensen",
+   "pos": "중앙 수비수",
+   "from": "Sönderjyske Fodbold",
+   "to": "FC Midtjylland",
+   "fee": "1.05 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/448471/transfer_id/6490395"
   }
  ]
 }
