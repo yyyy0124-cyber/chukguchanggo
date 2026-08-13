@@ -1,41 +1,86 @@
 {
- "updated": "2026-08-12 12:00",
+ "updated": "2026-08-13 12:07",
  "items": [
   {
-   "name": "Kauã Prates",
-   "pos": "좌측 풀백",
-   "from": "Cruzeiro Esporte Clube",
-   "to": "Borussia Dortmund",
-   "fee": "7.00 mil. €",
+   "name": "Santiago Sosa",
+   "pos": "수비형 미드필더",
+   "from": "Racing Club",
+   "to": "Clube de Regatas Vasco da Gama",
+   "fee": "6.07 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1275068/transfer_id/6192868"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/576026/transfer_id/6500145"
   },
   {
-   "name": "Dastan Satpaev",
-   "pos": "중앙 공격수",
-   "from": "Kairat Almaty",
-   "to": "첼시 FC",
-   "fee": "2.40 mil. €",
+   "name": "Gustav Berggren",
+   "pos": "수비형 미드필더",
+   "from": "Red Bull New York",
+   "to": "Lech Poznan",
+   "fee": "500 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1179146/transfer_id/5513918"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/258007/transfer_id/6499692"
   },
   {
-   "name": "Marcel Hartel",
-   "pos": "중앙 미드필더",
-   "from": "St. Louis CITY SC",
-   "to": "Hannover 96",
-   "fee": "800 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/189073/transfer_id/6495934"
-  },
-  {
-   "name": "Facundo Medina",
+   "name": "Lucas Herrington",
    "pos": "중앙 수비수",
-   "from": "Olympique Marseille",
-   "to": "바이어 레버쿠젠",
-   "fee": "23.00 mil. €",
+   "from": "Colorado Rapids",
+   "to": "Hull City",
+   "fee": "14.80 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/474800/transfer_id/6495578"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1279984/transfer_id/6499315"
+  },
+  {
+   "name": "Mohamed Diomandé",
+   "pos": "중앙 미드필더",
+   "from": "Rangers FC",
+   "to": "Corum FK",
+   "fee": "5.60 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/658531/transfer_id/6499279"
+  },
+  {
+   "name": "Nobel Mendy",
+   "pos": "중앙 수비수",
+   "from": "Rayo Vallecano",
+   "to": "Hull City",
+   "fee": "23.40 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1034853/transfer_id/6499002"
+  },
+  {
+   "name": "Julian Gonstad",
+   "pos": "중앙 공격수",
+   "from": "Hamarkameratene",
+   "to": "KFUM-Kameratene Oslo",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/923530/transfer_id/6498848"
+  },
+  {
+   "name": "Lukas Haraslin",
+   "pos": "좌측 윙 포워드",
+   "from": "AC Sparta Prague",
+   "to": "Al-Fateh SC",
+   "fee": "6.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/239941/transfer_id/6498807"
+  },
+  {
+   "name": "Romelu Lukaku",
+   "pos": "중앙 공격수",
+   "from": "SSC Napoli",
+   "to": "Fenerbahce",
+   "fee": "6.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/96341/transfer_id/6498703"
+  },
+  {
+   "name": "Håkon Røsten",
+   "pos": "중앙 수비수",
+   "from": "Rosenborg BK",
+   "to": "KFUM-Kameratene Oslo",
+   "fee": "450 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/905378/transfer_id/6498642"
   }
  ]
 }
