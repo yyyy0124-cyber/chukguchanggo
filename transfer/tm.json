@@ -1,59 +1,32 @@
 {
- "updated": "2026-08-14 12:07",
+ "updated": "2026-08-15 11:38",
  "items": [
   {
-   "name": "Anderson Ceará",
-   "pos": "우측 측면 미드필더",
-   "from": "FK Csikszereda Miercurea Ciuc",
-   "to": "Bank El Ahly",
-   "fee": "400 k €",
+   "name": "Iker Benito",
+   "pos": "우측 윙 포워드",
+   "from": "CA Osasuna",
+   "to": "Querétaro FC",
+   "fee": "520 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/634815/transfer_id/6502444"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/710679/transfer_id/6505501"
   },
   {
-   "name": "Gastón Lodico",
-   "pos": "중앙 미드필더",
-   "from": "Instituto ACC",
-   "to": "Racing Club",
-   "fee": "1.75 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/563878/transfer_id/6502179"
-  },
-  {
-   "name": "Wilfried Kanga",
-   "pos": "중앙 공격수",
-   "from": "KAA Gent",
-   "to": "Al-Fateh SC",
+   "name": "Harry Clarke",
+   "pos": "우측 풀백",
+   "from": "Ipswich Town",
+   "to": "Preston North End",
    "fee": "4.10 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/395523/transfer_id/6502051"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/528892/transfer_id/6505347"
   },
   {
-   "name": "Johan Mojica",
-   "pos": "좌측 풀백",
-   "from": "RCD Mallorca",
-   "to": "Getafe CF",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/262939/transfer_id/6501870"
-  },
-  {
-   "name": "Antonio Galeano",
+   "name": "Lucas Ribeiro",
    "pos": "우측 윙 포워드",
-   "from": "Mirassol Futebol Clube (SP)",
-   "to": "Clube do Remo (PA)",
-   "fee": "500 k €",
+   "from": "Al-Ittihad SC",
+   "to": "Esperance Tunis",
+   "fee": "605 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/491599/transfer_id/6501843"
-  },
-  {
-   "name": "Mateo Pellegrino",
-   "pos": "중앙 공격수",
-   "from": "Parma Calcio 1913",
-   "to": "ACF Fiorentina",
-   "fee": "22.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/856530/transfer_id/6501830"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/612880/transfer_id/6505113"
   }
  ]
 }
