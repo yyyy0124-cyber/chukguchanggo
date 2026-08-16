@@ -1,32 +1,95 @@
 {
- "updated": "2026-08-15 11:38",
+ "updated": "2026-08-16 13:59",
  "items": [
   {
-   "name": "Iker Benito",
+   "name": "Bruninho",
    "pos": "우측 윙 포워드",
-   "from": "CA Osasuna",
-   "to": "Querétaro FC",
-   "fee": "520 k €",
+   "from": "Club Athletico Paranaense",
+   "to": "Shakhtar Donetsk",
+   "fee": "11.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/710679/transfer_id/6505501"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1500420/transfer_id/6276969"
   },
   {
-   "name": "Harry Clarke",
+   "name": "Mika Godts",
+   "pos": "좌측 윙 포워드",
+   "from": "Ajax Amsterdam",
+   "to": "파리 생제르맹",
+   "fee": "45.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/748804/transfer_id/6507736"
+  },
+  {
+   "name": "Arne Engels",
+   "pos": "중앙 미드필더",
+   "from": "Celtic FC",
+   "to": "West Ham United",
+   "fee": "25.75 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/565435/transfer_id/6507499"
+  },
+  {
+   "name": "Ali Sulieman",
+   "pos": "중앙 공격수",
+   "from": "Kahraba Ismailia",
+   "to": "El Masry SC",
+   "fee": "260 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/702910/transfer_id/6507481"
+  },
+  {
+   "name": "Djed Spence",
    "pos": "우측 풀백",
-   "from": "Ipswich Town",
-   "to": "Preston North End",
-   "fee": "4.10 mil. €",
+   "from": "토트넘 홋스퍼 FC",
+   "to": "Inter Milan",
+   "fee": "30.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/528892/transfer_id/6505347"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/483348/transfer_id/6507250"
   },
   {
-   "name": "Lucas Ribeiro",
-   "pos": "우측 윙 포워드",
-   "from": "Al-Ittihad SC",
-   "to": "Esperance Tunis",
-   "fee": "605 k €",
+   "name": "Nestory Irankunda",
+   "pos": "우측 측면 미드필더",
+   "from": "Watford FC",
+   "to": "Sporting CP",
+   "fee": "15.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/612880/transfer_id/6505113"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/956920/transfer_id/6506976"
+  },
+  {
+   "name": "Ashley Phillips",
+   "pos": "중앙 수비수",
+   "from": "토트넘 홋스퍼 FC",
+   "to": "Middlesbrough FC",
+   "fee": "8.20 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/859951/transfer_id/6506883"
+  },
+  {
+   "name": "Joe Gelhardt",
+   "pos": "중앙 공격수",
+   "from": "Leeds United",
+   "to": "Hull City",
+   "fee": "7.60 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/503980/transfer_id/6506635"
+  },
+  {
+   "name": "Lucas Gourna-Douath",
+   "pos": "수비형 미드필더",
+   "from": "Red Bull Salzburg",
+   "to": "Hull City",
+   "fee": "4.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/620313/transfer_id/6506306"
+  },
+  {
+   "name": "Ferran Torres",
+   "pos": "중앙 공격수",
+   "from": "FC Barcelona",
+   "to": "파리 생제르맹",
+   "fee": "45.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/398184/transfer_id/6506285"
   }
  ]
 }
