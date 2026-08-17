@@ -1,6 +1,15 @@
 {
- "updated": "2026-08-16 13:59",
+ "updated": "2026-08-17 13:07",
  "items": [
+  {
+   "name": "Andrea Giorgini",
+   "pos": "중앙 수비수",
+   "from": "SS Juve Stabia",
+   "to": "FC Südtirol",
+   "fee": "1.20 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/691235/transfer_id/6508425"
+  },
   {
    "name": "Bruninho",
    "pos": "우측 윙 포워드",
@@ -9,6 +18,15 @@
    "fee": "11.00 mil. €",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1500420/transfer_id/6276969"
+  },
+  {
+   "name": "Nadhir Benbouali",
+   "pos": "중앙 공격수",
+   "from": "ETO FC",
+   "to": "Pyramids FC",
+   "fee": "1.75 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/840254/transfer_id/6509063"
   },
   {
    "name": "Mika Godts",
@@ -54,42 +72,6 @@
    "fee": "15.00 mil. €",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/956920/transfer_id/6506976"
-  },
-  {
-   "name": "Ashley Phillips",
-   "pos": "중앙 수비수",
-   "from": "토트넘 홋스퍼 FC",
-   "to": "Middlesbrough FC",
-   "fee": "8.20 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/859951/transfer_id/6506883"
-  },
-  {
-   "name": "Joe Gelhardt",
-   "pos": "중앙 공격수",
-   "from": "Leeds United",
-   "to": "Hull City",
-   "fee": "7.60 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/503980/transfer_id/6506635"
-  },
-  {
-   "name": "Lucas Gourna-Douath",
-   "pos": "수비형 미드필더",
-   "from": "Red Bull Salzburg",
-   "to": "Hull City",
-   "fee": "4.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/620313/transfer_id/6506306"
-  },
-  {
-   "name": "Ferran Torres",
-   "pos": "중앙 공격수",
-   "from": "FC Barcelona",
-   "to": "파리 생제르맹",
-   "fee": "45.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/398184/transfer_id/6506285"
   }
  ]
 }
