@@ -1,77 +1,41 @@
 {
- "updated": "2026-08-17 13:07",
+ "updated": "2026-08-18 11:50",
  "items": [
   {
-   "name": "Andrea Giorgini",
-   "pos": "중앙 수비수",
-   "from": "SS Juve Stabia",
-   "to": "FC Südtirol",
-   "fee": "1.20 mil. €",
+   "name": "Kervin Arriaga",
+   "pos": "수비형 미드필더",
+   "from": "Levante UD",
+   "to": "AEK Athens",
+   "fee": "3.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/691235/transfer_id/6508425"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/526050/transfer_id/6513031"
   },
   {
-   "name": "Bruninho",
+   "name": "Marten Winkler",
    "pos": "우측 윙 포워드",
-   "from": "Club Athletico Paranaense",
-   "to": "Shakhtar Donetsk",
-   "fee": "11.00 mil. €",
+   "from": "Hertha BSC",
+   "to": "RSC Anderlecht",
+   "fee": "4.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1500420/transfer_id/6276969"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/574569/transfer_id/6512902"
   },
   {
-   "name": "Nadhir Benbouali",
+   "name": "Tom Strannegård",
+   "pos": "좌측 측면 미드필더",
+   "from": "IK Start",
+   "to": "FC Thun",
+   "fee": "400 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/527343/transfer_id/6512655"
+  },
+  {
+   "name": "Taiwo Awoniyi",
    "pos": "중앙 공격수",
-   "from": "ETO FC",
-   "to": "Pyramids FC",
-   "fee": "1.75 mil. €",
+   "from": "Nottingham Forest",
+   "to": "Coventry City",
+   "fee": "10.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/840254/transfer_id/6509063"
-  },
-  {
-   "name": "Mika Godts",
-   "pos": "좌측 윙 포워드",
-   "from": "Ajax Amsterdam",
-   "to": "파리 생제르맹",
-   "fee": "45.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/748804/transfer_id/6507736"
-  },
-  {
-   "name": "Arne Engels",
-   "pos": "중앙 미드필더",
-   "from": "Celtic FC",
-   "to": "West Ham United",
-   "fee": "25.75 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/565435/transfer_id/6507499"
-  },
-  {
-   "name": "Ali Sulieman",
-   "pos": "중앙 공격수",
-   "from": "Kahraba Ismailia",
-   "to": "El Masry SC",
-   "fee": "260 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/702910/transfer_id/6507481"
-  },
-  {
-   "name": "Djed Spence",
-   "pos": "우측 풀백",
-   "from": "토트넘 홋스퍼 FC",
-   "to": "Inter Milan",
-   "fee": "30.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/483348/transfer_id/6507250"
-  },
-  {
-   "name": "Nestory Irankunda",
-   "pos": "우측 측면 미드필더",
-   "from": "Watford FC",
-   "to": "Sporting CP",
-   "fee": "15.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/956920/transfer_id/6506976"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/295313/transfer_id/6512359"
   }
  ]
 }
