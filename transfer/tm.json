@@ -1,41 +1,68 @@
 {
- "updated": "2026-08-18 11:50",
+ "updated": "2026-08-19 11:53",
  "items": [
   {
-   "name": "Kervin Arriaga",
+   "name": "Zavier Gozo",
+   "pos": "우측 윙 포워드",
+   "from": "Real Salt Lake City",
+   "to": "Crystal Palace",
+   "fee": "13.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1007383/transfer_id/6516185"
+  },
+  {
+   "name": "Nikola Cumic",
+   "pos": "우측 윙 포워드",
+   "from": "Rubin Kazan",
+   "to": "FK Partizan Belgrade",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/368982/transfer_id/6515793"
+  },
+  {
+   "name": "Rodri",
    "pos": "수비형 미드필더",
-   "from": "Levante UD",
-   "to": "AEK Athens",
+   "from": "맨체스터 시티 FC",
+   "to": "FC Barcelona",
+   "fee": "60.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/357565/transfer_id/6515728"
+  },
+  {
+   "name": "Alexander Bernhardsson",
+   "pos": "우측 윙 포워드",
+   "from": "Holstein Kiel",
+   "to": "VfL Wolfsburg",
+   "fee": "5.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/633454/transfer_id/6515692"
+  },
+  {
+   "name": "Dragoljub Savic",
+   "pos": "우측 윙 포워드",
+   "from": "FK TSC Backa Topola",
+   "to": "Neftchi PFK",
+   "fee": "350 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/574656/transfer_id/6515563"
+  },
+  {
+   "name": "Mads Enggård",
+   "pos": "중앙 미드필더",
+   "from": "Molde FK",
+   "to": "Mjällby AIF",
+   "fee": "1.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/752778/transfer_id/6515458"
+  },
+  {
+   "name": "Gabriel Vidovic",
+   "pos": "좌측 윙 포워드",
+   "from": "GNK Dinamo Zagreb",
+   "to": "SC Paderborn 07",
    "fee": "3.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/526050/transfer_id/6513031"
-  },
-  {
-   "name": "Marten Winkler",
-   "pos": "우측 윙 포워드",
-   "from": "Hertha BSC",
-   "to": "RSC Anderlecht",
-   "fee": "4.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/574569/transfer_id/6512902"
-  },
-  {
-   "name": "Tom Strannegård",
-   "pos": "좌측 측면 미드필더",
-   "from": "IK Start",
-   "to": "FC Thun",
-   "fee": "400 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/527343/transfer_id/6512655"
-  },
-  {
-   "name": "Taiwo Awoniyi",
-   "pos": "중앙 공격수",
-   "from": "Nottingham Forest",
-   "to": "Coventry City",
-   "fee": "10.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/295313/transfer_id/6512359"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/604327/transfer_id/6515440"
   }
  ]
 }
