@@ -1,68 +1,95 @@
 {
- "updated": "2026-08-19 11:53",
+ "updated": "2026-08-20 11:59",
  "items": [
   {
-   "name": "Zavier Gozo",
-   "pos": "우측 윙 포워드",
-   "from": "Real Salt Lake City",
-   "to": "Crystal Palace",
-   "fee": "13.00 mil. €",
+   "name": "Diego Moreira",
+   "pos": "좌측 측면 미드필더",
+   "from": "RC Strasbourg Alsace",
+   "to": "AC Milan",
+   "fee": "45.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1007383/transfer_id/6516185"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/655006/transfer_id/6519178"
   },
   {
-   "name": "Nikola Cumic",
-   "pos": "우측 윙 포워드",
-   "from": "Rubin Kazan",
-   "to": "FK Partizan Belgrade",
+   "name": "Benedikt Gimber",
+   "pos": "중앙 수비수",
+   "from": "1.FC Heidenheim 1846",
+   "to": "Granada CF",
+   "fee": "600 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/227084/transfer_id/6518943"
+  },
+  {
+   "name": "Alessandro Circati",
+   "pos": "중앙 수비수",
+   "from": "Parma Calcio 1913",
+   "to": "SL Benfica",
+   "fee": "18.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/867137/transfer_id/6518927"
+  },
+  {
+   "name": "Joaquinete",
+   "pos": "좌측 윙 포워드",
+   "from": "Epitsentr Kamyanets-Podilskyi",
+   "to": "Karpaty Lviv",
+   "fee": "260 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1007020/transfer_id/6518810"
+  },
+  {
+   "name": "Jovan Milosevic",
+   "pos": "중앙 공격수",
+   "from": "VfB Stuttgart",
+   "to": "SC Braga",
+   "fee": "8.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/943795/transfer_id/6518476"
+  },
+  {
+   "name": "Luis Mina",
+   "pos": "중앙 공격수",
+   "from": "김포 FC",
+   "to": "수원 삼성 블루윙즈",
+   "fee": "?",
+   "kr": true,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/655331/transfer_id/6518396"
+  },
+  {
+   "name": "Omar Fayed",
+   "pos": "중앙 수비수",
+   "from": "Fenerbahce",
+   "to": "Frosinone Calcio",
    "fee": "500 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/368982/transfer_id/6515793"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1036405/transfer_id/6518393"
   },
   {
-   "name": "Rodri",
-   "pos": "수비형 미드필더",
-   "from": "맨체스터 시티 FC",
-   "to": "FC Barcelona",
-   "fee": "60.00 mil. €",
+   "name": "Moussa Diarra",
+   "pos": "중앙 수비수",
+   "from": "Deportivo Alavés",
+   "to": "알와흐다 FC",
+   "fee": "1.20 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/357565/transfer_id/6515728"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/694509/transfer_id/6518136"
   },
   {
-   "name": "Alexander Bernhardsson",
-   "pos": "우측 윙 포워드",
-   "from": "Holstein Kiel",
-   "to": "VfL Wolfsburg",
-   "fee": "5.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/633454/transfer_id/6515692"
-  },
-  {
-   "name": "Dragoljub Savic",
-   "pos": "우측 윙 포워드",
-   "from": "FK TSC Backa Topola",
-   "to": "Neftchi PFK",
-   "fee": "350 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/574656/transfer_id/6515563"
-  },
-  {
-   "name": "Mads Enggård",
+   "name": "Tijjani Reijnders",
    "pos": "중앙 미드필더",
-   "from": "Molde FK",
-   "to": "Mjällby AIF",
-   "fee": "1.50 mil. €",
+   "from": "맨체스터 시티 FC",
+   "to": "Al-Qadsiah FC",
+   "fee": "61.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/752778/transfer_id/6515458"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/460939/transfer_id/6518125"
   },
   {
-   "name": "Gabriel Vidovic",
-   "pos": "좌측 윙 포워드",
-   "from": "GNK Dinamo Zagreb",
-   "to": "SC Paderborn 07",
-   "fee": "3.00 mil. €",
+   "name": "Noah Madsen",
+   "pos": "중앙 수비수",
+   "from": "CS Marítimo",
+   "to": "Holstein Kiel",
+   "fee": "700 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/604327/transfer_id/6515440"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/856406/transfer_id/6517822"
   }
  ]
 }
