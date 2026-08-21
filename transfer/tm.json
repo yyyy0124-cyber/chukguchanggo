@@ -1,95 +1,50 @@
 {
- "updated": "2026-08-20 11:59",
+ "updated": "2026-08-21 11:56",
  "items": [
   {
-   "name": "Diego Moreira",
-   "pos": "좌측 측면 미드필더",
-   "from": "RC Strasbourg Alsace",
-   "to": "AC Milan",
-   "fee": "45.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/655006/transfer_id/6519178"
-  },
-  {
-   "name": "Benedikt Gimber",
-   "pos": "중앙 수비수",
-   "from": "1.FC Heidenheim 1846",
-   "to": "Granada CF",
-   "fee": "600 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/227084/transfer_id/6518943"
-  },
-  {
-   "name": "Alessandro Circati",
-   "pos": "중앙 수비수",
-   "from": "Parma Calcio 1913",
-   "to": "SL Benfica",
-   "fee": "18.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/867137/transfer_id/6518927"
-  },
-  {
-   "name": "Joaquinete",
-   "pos": "좌측 윙 포워드",
-   "from": "Epitsentr Kamyanets-Podilskyi",
-   "to": "Karpaty Lviv",
-   "fee": "260 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1007020/transfer_id/6518810"
-  },
-  {
-   "name": "Jovan Milosevic",
-   "pos": "중앙 공격수",
-   "from": "VfB Stuttgart",
-   "to": "SC Braga",
-   "fee": "8.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/943795/transfer_id/6518476"
-  },
-  {
-   "name": "Luis Mina",
-   "pos": "중앙 공격수",
-   "from": "김포 FC",
-   "to": "수원 삼성 블루윙즈",
-   "fee": "?",
-   "kr": true,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/655331/transfer_id/6518396"
-  },
-  {
-   "name": "Omar Fayed",
-   "pos": "중앙 수비수",
-   "from": "Fenerbahce",
-   "to": "Frosinone Calcio",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1036405/transfer_id/6518393"
-  },
-  {
-   "name": "Moussa Diarra",
-   "pos": "중앙 수비수",
-   "from": "Deportivo Alavés",
-   "to": "알와흐다 FC",
-   "fee": "1.20 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/694509/transfer_id/6518136"
-  },
-  {
-   "name": "Tijjani Reijnders",
+   "name": "Iván Martín",
    "pos": "중앙 미드필더",
-   "from": "맨체스터 시티 FC",
-   "to": "Al-Qadsiah FC",
-   "fee": "61.00 mil. €",
+   "from": "Girona FC",
+   "to": "Racing Santander",
+   "fee": "3.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/460939/transfer_id/6518125"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/341278/transfer_id/6522670"
   },
   {
-   "name": "Noah Madsen",
-   "pos": "중앙 수비수",
-   "from": "CS Marítimo",
-   "to": "Holstein Kiel",
-   "fee": "700 k €",
+   "name": "Allan Okello",
+   "pos": "공격형 미드필더",
+   "from": "Young Africans SC",
+   "to": "AS FAR Rabat",
+   "fee": "385 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/856406/transfer_id/6517822"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/494268/transfer_id/6522589"
+  },
+  {
+   "name": "George Hirst",
+   "pos": "중앙 공격수",
+   "from": "Ipswich Town",
+   "to": "스토크 시티 FC",
+   "fee": "7.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/420808/transfer_id/6522566"
+  },
+  {
+   "name": "Anel Ahmedhodzic",
+   "pos": "중앙 수비수",
+   "from": "Feyenoord Rotterdam",
+   "to": "Burnley FC",
+   "fee": "7.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/377468/transfer_id/6522556"
+  },
+  {
+   "name": "Troy Parrott",
+   "pos": "중앙 공격수",
+   "from": "AZ Alkmaar",
+   "to": "Real Betis Balompié",
+   "fee": "16.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/552655/transfer_id/6522470"
   }
  ]
 }
