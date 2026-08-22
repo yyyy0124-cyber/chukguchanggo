@@ -1,50 +1,77 @@
 {
- "updated": "2026-08-21 11:56",
+ "updated": "2026-08-22 13:45",
  "items": [
   {
-   "name": "Iván Martín",
+   "name": "Oscar",
    "pos": "중앙 미드필더",
-   "from": "Girona FC",
-   "to": "Racing Santander",
-   "fee": "3.00 mil. €",
+   "from": "SK Slavia Prague",
+   "to": "Al-Taawoun FC",
+   "fee": "2.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/341278/transfer_id/6522670"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/401475/transfer_id/6524952"
   },
   {
-   "name": "Allan Okello",
-   "pos": "공격형 미드필더",
-   "from": "Young Africans SC",
-   "to": "AS FAR Rabat",
-   "fee": "385 k €",
+   "name": "Omar Richards",
+   "pos": "좌측 풀백",
+   "from": "Nottingham Forest",
+   "to": "Aris Thessaloniki",
+   "fee": "2.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/494268/transfer_id/6522589"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/424881/transfer_id/6524901"
   },
   {
-   "name": "George Hirst",
+   "name": "Curtis Jones",
+   "pos": "중앙 미드필더",
+   "from": "Liverpool FC",
+   "to": "Inter Milan",
+   "fee": "30.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/433188/transfer_id/6524834"
+  },
+  {
+   "name": "Artem Karpukas",
+   "pos": "수비형 미드필더",
+   "from": "Lokomotiv Moscow",
+   "to": "Zenit St. Petersburg",
+   "fee": "5.20 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/691920/transfer_id/6524598"
+  },
+  {
+   "name": "Tawfik Bentayeb",
    "pos": "중앙 공격수",
-   "from": "Ipswich Town",
-   "to": "스토크 시티 FC",
-   "fee": "7.00 mil. €",
+   "from": "Union Touarga Sportif",
+   "to": "RSC Anderlecht",
+   "fee": "4.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/420808/transfer_id/6522566"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/667995/transfer_id/6524595"
   },
   {
-   "name": "Anel Ahmedhodzic",
+   "name": "Ezri Konsa",
    "pos": "중앙 수비수",
-   "from": "Feyenoord Rotterdam",
-   "to": "Burnley FC",
-   "fee": "7.00 mil. €",
+   "from": "애스턴 빌라",
+   "to": "Arsenal FC",
+   "fee": "59.60 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/377468/transfer_id/6522556"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/413403/transfer_id/6524539"
   },
   {
-   "name": "Troy Parrott",
-   "pos": "중앙 공격수",
-   "from": "AZ Alkmaar",
-   "to": "Real Betis Balompié",
-   "fee": "16.00 mil. €",
+   "name": "Dayann Méthalie",
+   "pos": "좌측 풀백",
+   "from": "FC Toulouse",
+   "to": "Sunderland AFC",
+   "fee": "28.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/552655/transfer_id/6522470"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1191444/transfer_id/6524503"
+  },
+  {
+   "name": "Tommy Marqués",
+   "pos": "수비형 미드필더",
+   "from": "FC Barcelona",
+   "to": "SC Braga",
+   "fee": "11.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/938156/transfer_id/6524416"
   }
  ]
 }
