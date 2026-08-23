@@ -1,77 +1,41 @@
 {
- "updated": "2026-08-22 13:45",
+ "updated": "2026-08-23 14:18",
  "items": [
   {
-   "name": "Oscar",
-   "pos": "중앙 미드필더",
-   "from": "SK Slavia Prague",
-   "to": "Al-Taawoun FC",
-   "fee": "2.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/401475/transfer_id/6524952"
-  },
-  {
-   "name": "Omar Richards",
-   "pos": "좌측 풀백",
-   "from": "Nottingham Forest",
-   "to": "Aris Thessaloniki",
-   "fee": "2.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/424881/transfer_id/6524901"
-  },
-  {
-   "name": "Curtis Jones",
-   "pos": "중앙 미드필더",
-   "from": "Liverpool FC",
-   "to": "Inter Milan",
-   "fee": "30.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/433188/transfer_id/6524834"
-  },
-  {
-   "name": "Artem Karpukas",
-   "pos": "수비형 미드필더",
-   "from": "Lokomotiv Moscow",
-   "to": "Zenit St. Petersburg",
-   "fee": "5.20 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/691920/transfer_id/6524598"
-  },
-  {
-   "name": "Tawfik Bentayeb",
+   "name": "Armando González",
    "pos": "중앙 공격수",
-   "from": "Union Touarga Sportif",
-   "to": "RSC Anderlecht",
+   "from": "Deportivo Guadalajara",
+   "to": "Olympiacos Piraeus",
+   "fee": "8.60 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/837619/transfer_id/6526591"
+  },
+  {
+   "name": "Mehdi Taremi",
+   "pos": "중앙 공격수",
+   "from": "Olympiacos Piraeus",
+   "to": "알와슬 SC",
+   "fee": "400 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/307058/transfer_id/6525880"
+  },
+  {
+   "name": "Matteo Dams",
+   "pos": "좌측 풀백",
+   "from": "알 아흘리 SFC",
+   "to": "Club Brugge KV",
    "fee": "4.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/667995/transfer_id/6524595"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/654918/transfer_id/6525520"
   },
   {
-   "name": "Ezri Konsa",
+   "name": "Asger Sørensen",
    "pos": "중앙 수비수",
-   "from": "애스턴 빌라",
-   "to": "Arsenal FC",
-   "fee": "59.60 mil. €",
+   "from": "AC Sparta Prague",
+   "to": "FC Copenhagen",
+   "fee": "1.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/413403/transfer_id/6524539"
-  },
-  {
-   "name": "Dayann Méthalie",
-   "pos": "좌측 풀백",
-   "from": "FC Toulouse",
-   "to": "Sunderland AFC",
-   "fee": "28.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1191444/transfer_id/6524503"
-  },
-  {
-   "name": "Tommy Marqués",
-   "pos": "수비형 미드필더",
-   "from": "FC Barcelona",
-   "to": "SC Braga",
-   "fee": "11.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/938156/transfer_id/6524416"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/260846/transfer_id/6525410"
   }
  ]
 }
