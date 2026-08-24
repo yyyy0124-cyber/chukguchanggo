@@ -1,6 +1,51 @@
 {
- "updated": "2026-08-23 14:18",
+ "updated": "2026-08-24 11:59",
  "items": [
+  {
+   "name": "Lautaro Montenegro",
+   "pos": "중앙 수비수",
+   "from": "CA San Lorenzo de Almagro",
+   "to": "알와흐다 FC",
+   "fee": "171 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1282697/transfer_id/6528052"
+  },
+  {
+   "name": "Breel Embolo",
+   "pos": "중앙 공격수",
+   "from": "Stade Rennais FC",
+   "to": "Atlanta United FC",
+   "fee": "15.41 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/237662/transfer_id/6527935"
+  },
+  {
+   "name": "Anthony Dennis",
+   "pos": "수비형 미드필더",
+   "from": "Göztepe",
+   "to": "알자지라 클럽",
+   "fee": "5.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1104114/transfer_id/6527803"
+  },
+  {
+   "name": "Matej Sakota",
+   "pos": "우측 윙 포워드",
+   "from": "HSK Zrinjski Mostar",
+   "to": "Umm Salal SC",
+   "fee": "180 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/651773/transfer_id/6527588"
+  },
+  {
+   "name": "Mike Eerdhuijzen",
+   "pos": "중앙 수비수",
+   "from": "FC Utrecht",
+   "to": "KV Mechelen",
+   "fee": "2.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/482141/transfer_id/6527375"
+  },
   {
    "name": "Armando González",
    "pos": "중앙 공격수",
@@ -9,33 +54,6 @@
    "fee": "8.60 mil. €",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/837619/transfer_id/6526591"
-  },
-  {
-   "name": "Mehdi Taremi",
-   "pos": "중앙 공격수",
-   "from": "Olympiacos Piraeus",
-   "to": "알와슬 SC",
-   "fee": "400 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/307058/transfer_id/6525880"
-  },
-  {
-   "name": "Matteo Dams",
-   "pos": "좌측 풀백",
-   "from": "알 아흘리 SFC",
-   "to": "Club Brugge KV",
-   "fee": "4.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/654918/transfer_id/6525520"
-  },
-  {
-   "name": "Asger Sørensen",
-   "pos": "중앙 수비수",
-   "from": "AC Sparta Prague",
-   "to": "FC Copenhagen",
-   "fee": "1.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/260846/transfer_id/6525410"
   }
  ]
 }
