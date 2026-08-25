@@ -1,59 +1,95 @@
 {
- "updated": "2026-08-24 11:59",
+ "updated": "2026-08-25 12:07",
  "items": [
   {
-   "name": "Lautaro Montenegro",
-   "pos": "중앙 수비수",
-   "from": "CA San Lorenzo de Almagro",
-   "to": "알와흐다 FC",
-   "fee": "171 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1282697/transfer_id/6528052"
-  },
-  {
-   "name": "Breel Embolo",
+   "name": "Milutin Osmajic",
    "pos": "중앙 공격수",
-   "from": "Stade Rennais FC",
-   "to": "Atlanta United FC",
-   "fee": "15.41 mil. €",
+   "from": "Preston North End",
+   "to": "Genoa CFC",
+   "fee": "3.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/237662/transfer_id/6527935"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/542819/transfer_id/6531330"
   },
   {
-   "name": "Anthony Dennis",
-   "pos": "수비형 미드필더",
-   "from": "Göztepe",
-   "to": "알자지라 클럽",
-   "fee": "5.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1104114/transfer_id/6527803"
-  },
-  {
-   "name": "Matej Sakota",
+   "name": "Jordan Larsson",
    "pos": "우측 윙 포워드",
-   "from": "HSK Zrinjski Mostar",
-   "to": "Umm Salal SC",
-   "fee": "180 k €",
+   "from": "FC Copenhagen",
+   "to": "Al-Ettifaq FC",
+   "fee": "1.30 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/651773/transfer_id/6527588"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/308552/transfer_id/6531265"
   },
   {
-   "name": "Mike Eerdhuijzen",
-   "pos": "중앙 수비수",
-   "from": "FC Utrecht",
-   "to": "KV Mechelen",
+   "name": "Darian Males",
+   "pos": "우측 윙 포워드",
+   "from": "BSC Young Boys",
+   "to": "Widzew Lodz",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/507479/transfer_id/6530423"
+  },
+  {
+   "name": "Dinko Horkas",
+   "pos": "골키퍼",
+   "from": "UD Las Palmas",
+   "to": "알와슬 SC",
+   "fee": "4.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/357770/transfer_id/6529894"
+  },
+  {
+   "name": "Nikolas Koutsakos",
+   "pos": "중앙 공격수",
+   "from": "APOEL Nicosia",
+   "to": "IK Start",
+   "fee": "550 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/840819/transfer_id/6529844"
+  },
+  {
+   "name": "Valmir Matoshi",
+   "pos": "공격형 미드필더",
+   "from": "FC Thun",
+   "to": "SK Sturm Graz",
+   "fee": "1.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/671806/transfer_id/6529472"
+  },
+  {
+   "name": "Koki Ogawa",
+   "pos": "중앙 공격수",
+   "from": "NEC Nijmegen",
+   "to": "마치다 젤비아",
+   "fee": "1.90 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/351567/transfer_id/6529402"
+  },
+  {
+   "name": "Mads Pedersen",
+   "pos": "좌측 풀백",
+   "from": "FC Augsburg",
+   "to": "Hertha BSC",
+   "fee": "150 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/288429/transfer_id/6529291"
+  },
+  {
+   "name": "Terem Moffi",
+   "pos": "중앙 공격수",
+   "from": "OGC Nice",
+   "to": "Hamburger SV",
    "fee": "2.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/482141/transfer_id/6527375"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/538874/transfer_id/6528946"
   },
   {
-   "name": "Armando González",
-   "pos": "중앙 공격수",
-   "from": "Deportivo Guadalajara",
-   "to": "Olympiacos Piraeus",
-   "fee": "8.60 mil. €",
+   "name": "Michael Heule",
+   "pos": "좌측 풀백",
+   "from": "FC Thun",
+   "to": "1.FC Heidenheim 1846",
+   "fee": "2.75 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/837619/transfer_id/6526591"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/521442/transfer_id/6528894"
   }
  ]
 }
