@@ -1,77 +1,86 @@
 {
- "updated": "2026-08-26 11:46",
+ "updated": "2026-08-27 12:06",
  "items": [
   {
-   "name": "Couhaib Driouech",
-   "pos": "좌측 윙 포워드",
-   "from": "PSV Eindhoven",
-   "to": "Celta de Vigo",
-   "fee": "7.00 mil. €",
+   "name": "Adonis Frías",
+   "pos": "중앙 수비수",
+   "from": "Santos FC",
+   "to": "Atlas Guadalajara",
+   "fee": "3.10 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/593837/transfer_id/6534353"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/598838/transfer_id/6538276"
   },
   {
-   "name": "Nathan Saliba",
+   "name": "Eduard Löwen",
    "pos": "중앙 미드필더",
-   "from": "RSC Anderlecht",
-   "to": "Villarreal CF",
-   "fee": "15.00 mil. €",
+   "from": "St. Louis CITY SC",
+   "to": "San Jose Earthquakes",
+   "fee": "365 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/842420/transfer_id/6534126"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/260655/transfer_id/6538157"
   },
   {
-   "name": "Moncef Zekri",
-   "pos": "좌측 풀백",
-   "from": "KV Mechelen",
-   "to": "Sporting CP",
-   "fee": "3.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1263687/transfer_id/6534006"
-  },
-  {
-   "name": "Jaouen Hadjam",
-   "pos": "좌측 풀백",
-   "from": "BSC Young Boys",
-   "to": "브라이턴 & 호브 앨비언",
-   "fee": "13.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/750903/transfer_id/6533864"
-  },
-  {
-   "name": "Enzo Tchato",
+   "name": "Arnau Martínez",
    "pos": "우측 풀백",
-   "from": "Montpellier HSC",
-   "to": "Frosinone Calcio",
-   "fee": "800 k €",
+   "from": "Girona FC",
+   "to": "Valencia CF",
+   "fee": "5.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/842338/transfer_id/6533855"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/826224/transfer_id/6537928"
   },
   {
-   "name": "Ervin Gigović",
+   "name": "Orlando Gill",
+   "pos": "골키퍼",
+   "from": "CA San Lorenzo de Almagro",
+   "to": "LOSC Lille",
+   "fee": "3.60 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/643259/transfer_id/6537910"
+  },
+  {
+   "name": "Nico González",
+   "pos": "수비형 미드필더",
+   "from": "맨체스터 시티 FC",
+   "to": "Newcastle United",
+   "fee": "56.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/466805/transfer_id/6537702"
+  },
+  {
+   "name": "Krystian Bielik",
+   "pos": "중앙 수비수",
+   "from": "West Bromwich Albion",
+   "to": "Cardiff City",
+   "fee": "2.90 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/287247/transfer_id/6537466"
+  },
+  {
+   "name": "Owen Wolff",
    "pos": "중앙 미드필더",
-   "from": "Helsingborgs IF",
-   "to": "Sandefjord Fotball",
-   "fee": "400 k €",
+   "from": "Austin FC",
+   "to": "Sporting Kansas City",
+   "fee": "3.85 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1040401/transfer_id/6533654"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/797414/transfer_id/6537049"
   },
   {
-   "name": "Carlos Baleba",
-   "pos": "수비형 미드필더",
-   "from": "브라이턴 & 호브 앨비언",
-   "to": "맨체스터 유나이티드",
-   "fee": "75.90 mil. €",
+   "name": "Ethan Pinnock",
+   "pos": "중앙 수비수",
+   "from": "Brentford FC",
+   "to": "Coventry City",
+   "fee": "5.85 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/973085/transfer_id/6533389"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/442248/transfer_id/6536895"
   },
   {
-   "name": "Hampus Finndell",
-   "pos": "수비형 미드필더",
-   "from": "Djurgårdens IF",
-   "to": "Jagiellonia Bialystok",
-   "fee": "400 k €",
+   "name": "Jayden Nelson",
+   "pos": "좌측 윙 포워드",
+   "from": "Austin FC",
+   "to": "Bolton Wanderers",
+   "fee": "945 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/405313/transfer_id/6533347"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/635445/transfer_id/6536739"
   }
  ]
 }
