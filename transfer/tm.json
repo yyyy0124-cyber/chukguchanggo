@@ -1,86 +1,95 @@
 {
- "updated": "2026-08-27 12:06",
+ "updated": "2026-08-28 12:03",
  "items": [
   {
-   "name": "Adonis Frías",
+   "name": "Oscar Naasei",
    "pos": "중앙 수비수",
-   "from": "Santos FC",
-   "to": "Atlas Guadalajara",
-   "fee": "3.10 mil. €",
+   "from": "Granada CF",
+   "to": "Real Madrid Castilla",
+   "fee": "2.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/598838/transfer_id/6538276"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1185057/transfer_id/6540956"
   },
   {
-   "name": "Eduard Löwen",
+   "name": "Hazem Mastouri",
+   "pos": "중앙 공격수",
+   "from": "Dinamo Makhachkala",
+   "to": "Esperance Tunis",
+   "fee": "800 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/953150/transfer_id/6540741"
+  },
+  {
+   "name": "Ondrej Lingr",
+   "pos": "공격형 미드필더",
+   "from": "Houston Dynamo FC",
+   "to": "Korona Kielce",
+   "fee": "1.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/321195/transfer_id/6540690"
+  },
+  {
+   "name": "Taofeek Ismaheel",
+   "pos": "좌측 윙 포워드",
+   "from": "Górnik Zabrze",
+   "to": "Qarabağ FK",
+   "fee": "1.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/676476/transfer_id/6540668"
+  },
+  {
+   "name": "Exequiel Palacios",
    "pos": "중앙 미드필더",
-   "from": "St. Louis CITY SC",
-   "to": "San Jose Earthquakes",
-   "fee": "365 k €",
+   "from": "바이어 레버쿠젠",
+   "to": "Ipswich Town",
+   "fee": "22.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/260655/transfer_id/6538157"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/401578/transfer_id/6540609"
   },
   {
-   "name": "Arnau Martínez",
-   "pos": "우측 풀백",
-   "from": "Girona FC",
-   "to": "Valencia CF",
-   "fee": "5.00 mil. €",
+   "name": "César Huerta",
+   "pos": "좌측 윙 포워드",
+   "from": "RSC Anderlecht",
+   "to": "UNAM Pumas",
+   "fee": "1.70 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/826224/transfer_id/6537928"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/540315/transfer_id/6540593"
   },
   {
-   "name": "Orlando Gill",
-   "pos": "골키퍼",
-   "from": "CA San Lorenzo de Almagro",
-   "to": "LOSC Lille",
-   "fee": "3.60 mil. €",
+   "name": "Elton Acolatse",
+   "pos": "좌측 윙 포워드",
+   "from": "Ferencvárosi TC",
+   "to": "Al-Hazem SC",
+   "fee": "2.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/643259/transfer_id/6537910"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/206740/transfer_id/6540566"
   },
   {
-   "name": "Nico González",
-   "pos": "수비형 미드필더",
-   "from": "맨체스터 시티 FC",
-   "to": "Newcastle United",
-   "fee": "56.00 mil. €",
+   "name": "Kareem Tunde",
+   "pos": "우측 윙 포워드",
+   "from": "Levante UD",
+   "to": "West Bromwich Albion",
+   "fee": "3.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/466805/transfer_id/6537702"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1063340/transfer_id/6540507"
   },
   {
-   "name": "Krystian Bielik",
+   "name": "Gabriele Artistico",
+   "pos": "중앙 공격수",
+   "from": "SS Lazio",
+   "to": "Calcio Padova",
+   "fee": "3.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/604239/transfer_id/6540501"
+  },
+  {
+   "name": "Keven Schlotterbeck",
    "pos": "중앙 수비수",
-   "from": "West Bromwich Albion",
-   "to": "Cardiff City",
-   "fee": "2.90 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/287247/transfer_id/6537466"
-  },
-  {
-   "name": "Owen Wolff",
-   "pos": "중앙 미드필더",
-   "from": "Austin FC",
-   "to": "Sporting Kansas City",
+   "from": "FC Augsburg",
+   "to": "Southampton FC",
    "fee": "3.85 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/797414/transfer_id/6537049"
-  },
-  {
-   "name": "Ethan Pinnock",
-   "pos": "중앙 수비수",
-   "from": "Brentford FC",
-   "to": "Coventry City",
-   "fee": "5.85 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/442248/transfer_id/6536895"
-  },
-  {
-   "name": "Jayden Nelson",
-   "pos": "좌측 윙 포워드",
-   "from": "Austin FC",
-   "to": "Bolton Wanderers",
-   "fee": "945 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/635445/transfer_id/6536739"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/413843/transfer_id/6540500"
   }
  ]
 }
