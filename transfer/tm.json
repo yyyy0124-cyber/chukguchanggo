@@ -1,95 +1,86 @@
 {
- "updated": "2026-08-28 12:03",
+ "updated": "2026-08-29 14:26",
  "items": [
   {
-   "name": "Oscar Naasei",
+   "name": "Gabriel Ávalos",
+   "pos": "중앙 공격수",
+   "from": "CA Independiente",
+   "to": "Club Olimpia",
+   "fee": "820 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/358418/transfer_id/6543745"
+  },
+  {
+   "name": "Matías Pérez",
    "pos": "중앙 수비수",
-   "from": "Granada CF",
-   "to": "Real Madrid Castilla",
+   "from": "Club Cerro Porteño",
+   "to": "Racing Club",
+   "fee": "2.33 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/744416/transfer_id/6543634"
+  },
+  {
+   "name": "Imrân Louza",
+   "pos": "중앙 미드필더",
+   "from": "Watford FC",
+   "to": "Panathinaikos",
+   "fee": "7.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/635336/transfer_id/6543288"
+  },
+  {
+   "name": "Kojo Peprah Oppong",
+   "pos": "중앙 수비수",
+   "from": "OGC Nice",
+   "to": "Fenerbahce",
+   "fee": "12.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1113451/transfer_id/6543110"
+  },
+  {
+   "name": "Veljko Birmancevic",
+   "pos": "좌측 윙 포워드",
+   "from": "AC Sparta Prague",
+   "to": "Ferencvárosi TC",
    "fee": "2.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1185057/transfer_id/6540956"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/419648/transfer_id/6543106"
   },
   {
-   "name": "Hazem Mastouri",
+   "name": "Nicolas Jackson",
    "pos": "중앙 공격수",
-   "from": "Dinamo Makhachkala",
-   "to": "Esperance Tunis",
-   "fee": "800 k €",
+   "from": "첼시 FC",
+   "to": "애스턴 빌라",
+   "fee": "55.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/953150/transfer_id/6540741"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/776890/transfer_id/6543093"
   },
   {
-   "name": "Ondrej Lingr",
-   "pos": "공격형 미드필더",
-   "from": "Houston Dynamo FC",
-   "to": "Korona Kielce",
-   "fee": "1.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/321195/transfer_id/6540690"
-  },
-  {
-   "name": "Taofeek Ismaheel",
-   "pos": "좌측 윙 포워드",
-   "from": "Górnik Zabrze",
-   "to": "Qarabağ FK",
-   "fee": "1.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/676476/transfer_id/6540668"
-  },
-  {
-   "name": "Exequiel Palacios",
-   "pos": "중앙 미드필더",
-   "from": "바이어 레버쿠젠",
-   "to": "Ipswich Town",
-   "fee": "22.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/401578/transfer_id/6540609"
-  },
-  {
-   "name": "César Huerta",
-   "pos": "좌측 윙 포워드",
-   "from": "RSC Anderlecht",
-   "to": "UNAM Pumas",
-   "fee": "1.70 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/540315/transfer_id/6540593"
-  },
-  {
-   "name": "Elton Acolatse",
-   "pos": "좌측 윙 포워드",
-   "from": "Ferencvárosi TC",
-   "to": "Al-Hazem SC",
-   "fee": "2.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/206740/transfer_id/6540566"
-  },
-  {
-   "name": "Kareem Tunde",
-   "pos": "우측 윙 포워드",
-   "from": "Levante UD",
-   "to": "West Bromwich Albion",
-   "fee": "3.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1063340/transfer_id/6540507"
-  },
-  {
-   "name": "Gabriele Artistico",
+   "name": "Tomas Bobcek",
    "pos": "중앙 공격수",
-   "from": "SS Lazio",
-   "to": "Calcio Padova",
-   "fee": "3.00 mil. €",
+   "from": "Lechia Gdansk",
+   "to": "Frosinone Calcio",
+   "fee": "10.70 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/604239/transfer_id/6540501"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/510103/transfer_id/6543067"
   },
   {
-   "name": "Keven Schlotterbeck",
+   "name": "Bruno Duarte",
+   "pos": "중앙 공격수",
+   "from": "Red Star Belgrade",
+   "to": "Clube de Regatas Vasco da Gama",
+   "fee": "2.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/598629/transfer_id/6542848"
+  },
+  {
+   "name": "Yuta Nakayama",
    "pos": "중앙 수비수",
-   "from": "FC Augsburg",
-   "to": "Southampton FC",
-   "fee": "3.85 mil. €",
+   "from": "마치다 젤비아",
+   "to": "Red Star Belgrade",
+   "fee": "1.10 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/413843/transfer_id/6540500"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/346647/transfer_id/6542842"
   }
  ]
 }
