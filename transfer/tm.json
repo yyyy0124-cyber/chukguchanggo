@@ -1,86 +1,77 @@
 {
- "updated": "2026-08-29 14:26",
+ "updated": "2026-08-30 13:32",
  "items": [
   {
-   "name": "Gabriel Ávalos",
-   "pos": "중앙 공격수",
-   "from": "CA Independiente",
-   "to": "Club Olimpia",
-   "fee": "820 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/358418/transfer_id/6543745"
-  },
-  {
-   "name": "Matías Pérez",
-   "pos": "중앙 수비수",
-   "from": "Club Cerro Porteño",
-   "to": "Racing Club",
-   "fee": "2.33 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/744416/transfer_id/6543634"
-  },
-  {
-   "name": "Imrân Louza",
-   "pos": "중앙 미드필더",
-   "from": "Watford FC",
-   "to": "Panathinaikos",
-   "fee": "7.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/635336/transfer_id/6543288"
-  },
-  {
-   "name": "Kojo Peprah Oppong",
-   "pos": "중앙 수비수",
-   "from": "OGC Nice",
-   "to": "Fenerbahce",
-   "fee": "12.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1113451/transfer_id/6543110"
-  },
-  {
-   "name": "Veljko Birmancevic",
+   "name": "Min-kyu Song",
    "pos": "좌측 윙 포워드",
-   "from": "AC Sparta Prague",
-   "to": "Ferencvárosi TC",
-   "fee": "2.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/419648/transfer_id/6543106"
+   "from": "FC 서울",
+   "to": "CD Nacional",
+   "fee": "?",
+   "kr": true,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/581977/transfer_id/6546033"
   },
   {
-   "name": "Nicolas Jackson",
+   "name": "Mikkel Ladefoged",
    "pos": "중앙 공격수",
-   "from": "첼시 FC",
-   "to": "애스턴 빌라",
-   "fee": "55.50 mil. €",
+   "from": "Västerås SK",
+   "to": "Lincoln City",
+   "fee": "5.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/776890/transfer_id/6543093"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/806994/transfer_id/6504434"
   },
   {
-   "name": "Tomas Bobcek",
-   "pos": "중앙 공격수",
-   "from": "Lechia Gdansk",
-   "to": "Frosinone Calcio",
-   "fee": "10.70 mil. €",
+   "name": "Héctor Fort",
+   "pos": "우측 풀백",
+   "from": "FC Barcelona",
+   "to": "Real Sociedad",
+   "fee": "8.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/510103/transfer_id/6543067"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/937955/transfer_id/6545758"
   },
   {
-   "name": "Bruno Duarte",
-   "pos": "중앙 공격수",
-   "from": "Red Star Belgrade",
-   "to": "Clube de Regatas Vasco da Gama",
-   "fee": "2.00 mil. €",
+   "name": "Michael Zetterer",
+   "pos": "골키퍼",
+   "from": "Eintracht Frankfurt",
+   "to": "Leeds United",
+   "fee": "5.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/598629/transfer_id/6542848"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/196813/transfer_id/6545614"
   },
   {
-   "name": "Yuta Nakayama",
-   "pos": "중앙 수비수",
-   "from": "마치다 젤비아",
-   "to": "Red Star Belgrade",
-   "fee": "1.10 mil. €",
+   "name": "Marcus Pedersen",
+   "pos": "우측 풀백",
+   "from": "Torino FC",
+   "to": "Olympiacos Piraeus",
+   "fee": "6.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/346647/transfer_id/6542842"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/583404/transfer_id/6545451"
+  },
+  {
+   "name": "Kaique Pereira",
+   "pos": "골키퍼",
+   "from": "Sociedade Esportiva Palmeiras",
+   "to": "Sporting CP",
+   "fee": "4.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/964590/transfer_id/6544960"
+  },
+  {
+   "name": "Daniel Bassi",
+   "pos": "좌측 윙 포워드",
+   "from": "FK Bodø/Glimt",
+   "to": "Lillestrøm SK",
+   "fee": "1.30 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1015245/transfer_id/6544662"
+  },
+  {
+   "name": "Ognjen Ugresic",
+   "pos": "중앙 미드필더",
+   "from": "FK Partizan Belgrade",
+   "to": "PAOK Thessaloniki",
+   "fee": "6.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/895606/transfer_id/6544549"
   }
  ]
 }
