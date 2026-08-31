@@ -1,77 +1,59 @@
 {
- "updated": "2026-08-30 13:32",
+ "updated": "2026-08-31 12:09",
  "items": [
   {
-   "name": "Min-kyu Song",
-   "pos": "좌측 윙 포워드",
-   "from": "FC 서울",
-   "to": "CD Nacional",
-   "fee": "?",
-   "kr": true,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/581977/transfer_id/6546033"
+   "name": "Marten de Roon",
+   "pos": "수비형 미드필더",
+   "from": "Atalanta BC",
+   "to": "AS Roma",
+   "fee": "1.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/133179/transfer_id/6548194"
   },
   {
-   "name": "Mikkel Ladefoged",
+   "name": "Matías Orozco",
+   "pos": "수비형 미드필더",
+   "from": "Deportivo Cali",
+   "to": "브라이턴 & 호브 앨비언",
+   "fee": "4.10 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1420635/transfer_id/6548045"
+  },
+  {
+   "name": "Ollie Watkins",
    "pos": "중앙 공격수",
-   "from": "Västerås SK",
-   "to": "Lincoln City",
-   "fee": "5.00 mil. €",
+   "from": "애스턴 빌라",
+   "to": "알 힐랄 SFC",
+   "fee": "58.40 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/806994/transfer_id/6504434"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/324358/transfer_id/6547640"
   },
   {
-   "name": "Héctor Fort",
-   "pos": "우측 풀백",
-   "from": "FC Barcelona",
-   "to": "Real Sociedad",
-   "fee": "8.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/937955/transfer_id/6545758"
-  },
-  {
-   "name": "Michael Zetterer",
-   "pos": "골키퍼",
-   "from": "Eintracht Frankfurt",
-   "to": "Leeds United",
-   "fee": "5.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/196813/transfer_id/6545614"
-  },
-  {
-   "name": "Marcus Pedersen",
-   "pos": "우측 풀백",
-   "from": "Torino FC",
-   "to": "Olympiacos Piraeus",
+   "name": "Matheus Martins",
+   "pos": "좌측 윙 포워드",
+   "from": "Botafogo de Futebol e Regatas",
+   "to": "Dynamo Moscow",
    "fee": "6.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/583404/transfer_id/6545451"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/668228/transfer_id/6547436"
   },
   {
-   "name": "Kaique Pereira",
-   "pos": "골키퍼",
-   "from": "Sociedade Esportiva Palmeiras",
-   "to": "Sporting CP",
-   "fee": "4.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/964590/transfer_id/6544960"
-  },
-  {
-   "name": "Daniel Bassi",
+   "name": "Oso",
    "pos": "좌측 윙 포워드",
-   "from": "FK Bodø/Glimt",
-   "to": "Lillestrøm SK",
-   "fee": "1.30 mil. €",
+   "from": "Sevilla FC",
+   "to": "RC Strasbourg Alsace",
+   "fee": "10.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1015245/transfer_id/6544662"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1032280/transfer_id/6546925"
   },
   {
-   "name": "Ognjen Ugresic",
-   "pos": "중앙 미드필더",
-   "from": "FK Partizan Belgrade",
-   "to": "PAOK Thessaloniki",
-   "fee": "6.50 mil. €",
+   "name": "Nick Bätzner",
+   "pos": "공격형 미드필더",
+   "from": "SC Paderborn 07",
+   "to": "Rot-Weiss Essen",
+   "fee": "125 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/895606/transfer_id/6544549"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/443855/transfer_id/6546661"
   }
  ]
 }
