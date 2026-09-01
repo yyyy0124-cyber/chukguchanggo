@@ -1,59 +1,50 @@
 {
- "updated": "2026-08-31 12:09",
+ "updated": "2026-09-01 12:05",
  "items": [
   {
-   "name": "Marten de Roon",
-   "pos": "수비형 미드필더",
-   "from": "Atalanta BC",
-   "to": "AS Roma",
+   "name": "Iker Luque",
+   "pos": "우측 윙 포워드",
+   "from": "Atlético Madrileño",
+   "to": "Racing Santander",
    "fee": "1.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/133179/transfer_id/6548194"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1179482/transfer_id/6552725"
   },
   {
-   "name": "Matías Orozco",
+   "name": "Joël Monteiro",
+   "pos": "좌측 측면 미드필더",
+   "from": "BSC Young Boys",
+   "to": "US Lecce",
+   "fee": "3.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/410787/transfer_id/6552320"
+  },
+  {
+   "name": "Tobias Lauritsen",
+   "pos": "중앙 미드필더",
+   "from": "Vejle Boldklub",
+   "to": "Kalmar FF",
+   "fee": "250 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/805055/transfer_id/6551840"
+  },
+  {
+   "name": "Jordy Bawuah",
    "pos": "수비형 미드필더",
-   "from": "Deportivo Cali",
-   "to": "브라이턴 & 호브 앨비언",
-   "fee": "4.10 mil. €",
+   "from": "PSV Eindhoven U21",
+   "to": "FC Twente Enschede",
+   "fee": "1.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1420635/transfer_id/6548045"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1024739/transfer_id/6551745"
   },
   {
-   "name": "Ollie Watkins",
-   "pos": "중앙 공격수",
-   "from": "애스턴 빌라",
-   "to": "알 힐랄 SFC",
-   "fee": "58.40 mil. €",
+   "name": "Lilian Brassier",
+   "pos": "중앙 수비수",
+   "from": "Stade Rennais FC",
+   "to": "Eintracht Frankfurt",
+   "fee": "9.20 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/324358/transfer_id/6547640"
-  },
-  {
-   "name": "Matheus Martins",
-   "pos": "좌측 윙 포워드",
-   "from": "Botafogo de Futebol e Regatas",
-   "to": "Dynamo Moscow",
-   "fee": "6.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/668228/transfer_id/6547436"
-  },
-  {
-   "name": "Oso",
-   "pos": "좌측 윙 포워드",
-   "from": "Sevilla FC",
-   "to": "RC Strasbourg Alsace",
-   "fee": "10.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1032280/transfer_id/6546925"
-  },
-  {
-   "name": "Nick Bätzner",
-   "pos": "공격형 미드필더",
-   "from": "SC Paderborn 07",
-   "to": "Rot-Weiss Essen",
-   "fee": "125 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/443855/transfer_id/6546661"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/485960/transfer_id/6551664"
   }
  ]
 }
