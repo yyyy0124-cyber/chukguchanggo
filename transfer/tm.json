@@ -1,95 +1,50 @@
 {
- "updated": "2026-09-02 12:02",
+ "updated": "2026-09-03 14:10",
  "items": [
   {
-   "name": "Johnny Kenny",
+   "name": "Saba Kharebashvili",
+   "pos": "좌측 풀백",
+   "from": "Dinamo Tbilisi",
+   "to": "Basaksehir FK",
+   "fee": "2.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1193794/transfer_id/6176104"
+  },
+  {
+   "name": "Rafael Navarro",
    "pos": "중앙 공격수",
-   "from": "Celtic FC",
-   "to": "Preston North End",
+   "from": "Colorado Rapids",
+   "to": "St. Louis CITY SC",
+   "fee": "10.40 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/371267/transfer_id/6561835"
+  },
+  {
+   "name": "Gabriel Mec",
+   "pos": "공격형 미드필더",
+   "from": "Grêmio Foot-Ball Porto Alegrense",
+   "to": "FC Porto",
+   "fee": "11.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1228661/transfer_id/6561606"
+  },
+  {
+   "name": "Joël van den Berg",
+   "pos": "중앙 미드필더",
+   "from": "PSV Eindhoven",
+   "to": "Celtic FC",
    "fee": "3.50 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/875208/transfer_id/6558826"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/987376/transfer_id/6561588"
   },
   {
-   "name": "David Ozoh",
-   "pos": "수비형 미드필더",
-   "from": "Crystal Palace",
-   "to": "Derby County",
-   "fee": "4.65 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/865993/transfer_id/6558687"
-  },
-  {
-   "name": "Malick Fofana",
-   "pos": "좌측 윙 포워드",
-   "from": "올랭피크 리옹",
-   "to": "Sunderland AFC",
-   "fee": "30.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/743386/transfer_id/6558682"
-  },
-  {
-   "name": "Ainsley Maitland-Niles",
-   "pos": "우측 풀백",
-   "from": "올랭피크 리옹",
-   "to": "Everton FC",
+   "name": "Leon Bailey",
+   "pos": "우측 윙 포워드",
+   "from": "애스턴 빌라",
+   "to": "Olympiacos Piraeus",
    "fee": "5.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/285845/transfer_id/6558671"
-  },
-  {
-   "name": "David Affengruber",
-   "pos": "중앙 수비수",
-   "from": "Elche CF",
-   "to": "Fulham FC",
-   "fee": "12.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/452483/transfer_id/6558666"
-  },
-  {
-   "name": "Christos Mouzakitis",
-   "pos": "중앙 미드필더",
-   "from": "Olympiacos Piraeus",
-   "to": "Hull City",
-   "fee": "15.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/964426/transfer_id/6558590"
-  },
-  {
-   "name": "Chema Andrés",
-   "pos": "수비형 미드필더",
-   "from": "VfB Stuttgart",
-   "to": "브라이턴 & 호브 앨비언",
-   "fee": "22.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/948279/transfer_id/6558556"
-  },
-  {
-   "name": "Sorba Thomas",
-   "pos": "좌측 윙 포워드",
-   "from": "스토크 시티 FC",
-   "to": "Hull City",
-   "fee": "8.75 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/475416/transfer_id/6558542"
-  },
-  {
-   "name": "Enzo Fernández",
-   "pos": "중앙 미드필더",
-   "from": "첼시 FC",
-   "to": "맨체스터 시티 FC",
-   "fee": "145.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/648195/transfer_id/6558535"
-  },
-  {
-   "name": "Kevin Lomónaco",
-   "pos": "중앙 수비수",
-   "from": "CA Independiente",
-   "to": "Elche CF",
-   "fee": "4.75 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/661136/transfer_id/6558507"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/387626/transfer_id/6561587"
   }
  ]
 }
