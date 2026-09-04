@@ -1,50 +1,68 @@
 {
- "updated": "2026-09-03 14:10",
+ "updated": "2026-09-04 12:04",
  "items": [
   {
-   "name": "Saba Kharebashvili",
-   "pos": "좌측 풀백",
-   "from": "Dinamo Tbilisi",
-   "to": "Basaksehir FK",
-   "fee": "2.50 mil. €",
+   "name": "Diogo Calila",
+   "pos": "우측 풀백",
+   "from": "CD Santa Clara",
+   "to": "MAS Fès",
+   "fee": "85 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1193794/transfer_id/6176104"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/396429/transfer_id/6564107"
   },
   {
-   "name": "Rafael Navarro",
-   "pos": "중앙 공격수",
-   "from": "Colorado Rapids",
-   "to": "St. Louis CITY SC",
-   "fee": "10.40 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/371267/transfer_id/6561835"
-  },
-  {
-   "name": "Gabriel Mec",
-   "pos": "공격형 미드필더",
-   "from": "Grêmio Foot-Ball Porto Alegrense",
-   "to": "FC Porto",
-   "fee": "11.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1228661/transfer_id/6561606"
-  },
-  {
-   "name": "Joël van den Berg",
-   "pos": "중앙 미드필더",
-   "from": "PSV Eindhoven",
-   "to": "Celtic FC",
-   "fee": "3.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/987376/transfer_id/6561588"
-  },
-  {
-   "name": "Leon Bailey",
+   "name": "Sebastian Clemmensen",
    "pos": "우측 윙 포워드",
-   "from": "애스턴 빌라",
-   "to": "Olympiacos Piraeus",
-   "fee": "5.00 mil. €",
+   "from": "IFK Göteborg",
+   "to": "Rio Ave FC",
+   "fee": "1.40 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/387626/transfer_id/6561587"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/805190/transfer_id/6564099"
+  },
+  {
+   "name": "Alessio Romagnoli",
+   "pos": "중앙 수비수",
+   "from": "SS Lazio",
+   "to": "알 사드 SC",
+   "fee": "3.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/197747/transfer_id/6564089"
+  },
+  {
+   "name": "Zidane Iqbal",
+   "pos": "중앙 미드필더",
+   "from": "FC Utrecht",
+   "to": "Dundee United FC",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/686845/transfer_id/6563778"
+  },
+  {
+   "name": "Tobe Leysen",
+   "pos": "골키퍼",
+   "from": "Oud-Heverlee Leuven",
+   "to": "KRC Genk",
+   "fee": "2.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/580434/transfer_id/6563777"
+  },
+  {
+   "name": "Mohamed Jemjami",
+   "pos": "골키퍼",
+   "from": "KACM Marrakech",
+   "to": "AS FAR Rabat",
+   "fee": "370 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/867271/transfer_id/6563645"
+  },
+  {
+   "name": "Faraji Karmoune",
+   "pos": "중앙 수비수",
+   "from": "Olympique Safi",
+   "to": "FUS Rabat",
+   "fee": "130 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/902847/transfer_id/6563635"
   }
  ]
 }
