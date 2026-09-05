@@ -1,68 +1,32 @@
 {
- "updated": "2026-09-04 12:04",
+ "updated": "2026-09-05 12:48",
  "items": [
   {
-   "name": "Diogo Calila",
-   "pos": "우측 풀백",
-   "from": "CD Santa Clara",
-   "to": "MAS Fès",
-   "fee": "85 k €",
+   "name": "Ali Badra Diabaté",
+   "pos": "중앙 수비수",
+   "from": "Samsunspor",
+   "to": "Al-Qadsiah FC",
+   "fee": "8.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/396429/transfer_id/6564107"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1457367/transfer_id/6567749"
   },
   {
-   "name": "Sebastian Clemmensen",
-   "pos": "우측 윙 포워드",
-   "from": "IFK Göteborg",
+   "name": "Nail Omerovic",
+   "pos": "좌측 윙 포워드",
+   "from": "NK Osijek",
+   "to": "GD Estoril Praia",
+   "fee": "1.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/797824/transfer_id/6567671"
+  },
+  {
+   "name": "Simón García",
+   "pos": "중앙 수비수",
+   "from": "Atlético Nacional",
    "to": "Rio Ave FC",
-   "fee": "1.40 mil. €",
+   "fee": "2.30 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/805190/transfer_id/6564099"
-  },
-  {
-   "name": "Alessio Romagnoli",
-   "pos": "중앙 수비수",
-   "from": "SS Lazio",
-   "to": "알 사드 SC",
-   "fee": "3.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/197747/transfer_id/6564089"
-  },
-  {
-   "name": "Zidane Iqbal",
-   "pos": "중앙 미드필더",
-   "from": "FC Utrecht",
-   "to": "Dundee United FC",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/686845/transfer_id/6563778"
-  },
-  {
-   "name": "Tobe Leysen",
-   "pos": "골키퍼",
-   "from": "Oud-Heverlee Leuven",
-   "to": "KRC Genk",
-   "fee": "2.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/580434/transfer_id/6563777"
-  },
-  {
-   "name": "Mohamed Jemjami",
-   "pos": "골키퍼",
-   "from": "KACM Marrakech",
-   "to": "AS FAR Rabat",
-   "fee": "370 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/867271/transfer_id/6563645"
-  },
-  {
-   "name": "Faraji Karmoune",
-   "pos": "중앙 수비수",
-   "from": "Olympique Safi",
-   "to": "FUS Rabat",
-   "fee": "130 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/902847/transfer_id/6563635"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1202035/transfer_id/6567557"
   }
  ]
 }
