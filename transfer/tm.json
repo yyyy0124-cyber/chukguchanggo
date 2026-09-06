@@ -1,6 +1,33 @@
 {
- "updated": "2026-09-05 12:48",
+ "updated": "2026-09-06 13:05",
  "items": [
+  {
+   "name": "Jan Jurcec",
+   "pos": "우측 풀백",
+   "from": "Kryvbas Kryvyi Rig",
+   "to": "Slask Wroclaw",
+   "fee": "250 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/672616/transfer_id/6569424"
+  },
+  {
+   "name": "José Antonio de la Rosa",
+   "pos": "우측 윙 포워드",
+   "from": "Cádiz CF",
+   "to": "Wieczysta Krakow",
+   "fee": "700 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1027993/transfer_id/6568848"
+  },
+  {
+   "name": "Roko Jurisic",
+   "pos": "좌측 풀백",
+   "from": "NK Osijek",
+   "to": "GD Estoril Praia",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/570721/transfer_id/6567802"
+  },
   {
    "name": "Ali Badra Diabaté",
    "pos": "중앙 수비수",
