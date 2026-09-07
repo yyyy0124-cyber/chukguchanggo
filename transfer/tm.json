@@ -1,9 +1,36 @@
 {
- "updated": "2026-09-06 13:05",
+ "updated": "2026-09-07 11:59",
  "items": [
   {
+   "name": "Ibrahima Diaby",
+   "pos": "수비형 미드필더",
+   "from": "Cercle Brugge ",
+   "to": "알 아흘리 SFC",
+   "fee": "13.50 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1053160/transfer_id/6571894"
+  },
+  {
+   "name": "Pedro Henrique",
+   "pos": "중앙 수비수",
+   "from": "Red Bull Bragantino",
+   "to": "Al-Ettifaq FC",
+   "fee": "500 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/329720/transfer_id/6571761"
+  },
+  {
+   "name": "Léo Borges",
+   "pos": "좌측 풀백",
+   "from": "Pogon Szczecin",
+   "to": "SK Sigma Olomouc",
+   "fee": "700 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/681692/transfer_id/6570581"
+  },
+  {
    "name": "Jan Jurcec",
-   "pos": "우측 풀백",
+   "pos": "우측 측면 미드필더",
    "from": "Kryvbas Kryvyi Rig",
    "to": "Slask Wroclaw",
    "fee": "250 k €",
@@ -18,42 +45,6 @@
    "fee": "700 k €",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1027993/transfer_id/6568848"
-  },
-  {
-   "name": "Roko Jurisic",
-   "pos": "좌측 풀백",
-   "from": "NK Osijek",
-   "to": "GD Estoril Praia",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/570721/transfer_id/6567802"
-  },
-  {
-   "name": "Ali Badra Diabaté",
-   "pos": "중앙 수비수",
-   "from": "Samsunspor",
-   "to": "Al-Qadsiah FC",
-   "fee": "8.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1457367/transfer_id/6567749"
-  },
-  {
-   "name": "Nail Omerovic",
-   "pos": "좌측 윙 포워드",
-   "from": "NK Osijek",
-   "to": "GD Estoril Praia",
-   "fee": "1.50 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/797824/transfer_id/6567671"
-  },
-  {
-   "name": "Simón García",
-   "pos": "중앙 수비수",
-   "from": "Atlético Nacional",
-   "to": "Rio Ave FC",
-   "fee": "2.30 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1202035/transfer_id/6567557"
   }
  ]
 }
