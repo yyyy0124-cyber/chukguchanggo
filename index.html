@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-font="batang" data-palette="purple">
+<html lang="ko" data-font="pretendard" data-palette="purple">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -609,6 +609,7 @@ if(GA_ID){
 }
 </script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2139001800218485" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/homepage.css?v=0908">
 </head>
 <body>
 
@@ -627,9 +628,9 @@ if(GA_ID){
       <button class="theme-btn" id="lang-btn" onclick="setLang(LANG==='en'?'ko':'en')" title="Language">🌐 EN</button>
       <select class="theme-btn" id="font-sel" onchange="setFont(this.value)" title="글꼴 선택" style="appearance:none">
         <option value="system" style="color:#1f2937">가 시스템 고딕</option>
-        <option value="pretendard" style="color:#1f2937">가 프리텐다드</option>
+        <option value="pretendard" style="color:#1f2937" selected>가 프리텐다드</option>
         <option value="noto" style="color:#1f2937">가 노토 산스</option>
-        <option value="batang" style="color:#1f2937" selected>가 고운바탕 (명조)</option>
+        <option value="batang" style="color:#1f2937">가 고운바탕 (명조)</option>
       </select>
       <select class="theme-btn" id="palette-sel" onchange="setPalette(this.value)" title="색상 조합 선택" style="appearance:none">
         <option value="navy" style="color:#1f2937">🎨 네이비 포레스트</option>
@@ -693,27 +694,27 @@ if(GA_ID){
     <main>
 
       <!-- ════════════ [뷰: 홈] 히어로 + 도구 바로가기 ════════════ -->
-      <div data-view="home">
+      <div data-view="home" id="sg-home">
         <div class="hero2">
           <img src="hero.jpg" alt="축구공이 가득 쌓인 창고 통로" fetchpriority="high" width="1600" height="1244">
           <div class="ht">
-            <span style="background:var(--accent);color:#3b2b00;font-size:12px;font-weight:800;padding:4px 12px;border-radius:99px;align-self:flex-start;letter-spacing:1px">⚽ FOOTBALL WAREHOUSE</span>
-            <h2 style="margin-top:10px">매일 축구 <span style="color:var(--accent)">핵심만</span> 골라서 보여드립니다</h2>
-            <p>한국 선수·해외축구·이적시장 소식부터 팬에게 필요한 무료 도구까지 한곳에.</p>
-            <div class="sg-hbtns">
-              <button class="hbtn" onclick="return sgScrollTo('sg-videos-sec')">▶ 최신 영상 보기</button>
-              <button class="hbtn" onclick="return sgScrollTo('sg-newslinks-sec')">📰 오늘의 뉴스 보기</button>
-              <button class="hbtn" onclick="navTo('tools')">🧰 축구 도구 사용하기</button>
-            </div>
+            <span class="hr-eyebrow">FOOTBALL WAREHOUSE</span>
+            <h1>오늘의 축구, <span>핵심만 한곳에.</span></h1>
+            <p>한국 선수 소식부터 무료 축구 도구까지.</p>
           </div>
         </div>
         <!-- SG: 축구 뉴스 바로가기 -->
         <div id="sg-newslinks-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">📰 축구 뉴스</h2><div class="sg-secdesc">해외·국내 최신 기사를 바로 확인하세요</div></div></div>
-          <div class="sg-nl-grid">
-            <a class="sg-nl-card" href="#intl" onclick="return navTo('intl')"><span class="sg-nl-ic" aria-hidden="true">🌍</span><b>해외축구 기사</b><span class="sg-nl-sub">EPL·라리가·챔피언스리그 최신 소식 →</span></a>
-            <a class="sg-nl-card" href="#domestic" onclick="return navTo('domestic')"><span class="sg-nl-ic" aria-hidden="true">🇰🇷</span><b>국내축구 기사</b><span class="sg-nl-sub">국가대표·K리그 최신 소식 →</span></a>
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">오늘의 핵심 소식</h2><div class="sg-secdesc" id="hr-news-status" role="status">최신 소식을 확인하고 있습니다.</div></div><a class="sg-more" href="/news/">뉴스 전체 →</a></div>
+          <div class="hr-filters" role="group" aria-label="뉴스 분야 선택">
+            <button type="button" data-news-filter="all" aria-pressed="true">전체</button>
+            <button type="button" data-news-filter="korean" aria-pressed="false">한국 선수</button>
+            <button type="button" data-news-filter="intl" aria-pressed="false">해외축구</button>
+            <button type="button" data-news-filter="domestic" aria-pressed="false">국내축구</button>
+            <button type="button" data-news-filter="transfer" aria-pressed="false">이적</button>
           </div>
+          <div id="hr-news-list" aria-busy="true"><p class="hr-empty">뉴스를 불러오는 중입니다. <a href="/news/">날짜별 뉴스 보기 →</a></p></div>
+          <noscript><p><a href="/news/">날짜별 축구 뉴스에서 최신 소식을 확인하세요 →</a></p></noscript>
         </div>
         <!-- SG: 최신 축구창고 영상 -->
         <div id="sg-videos-sec">
@@ -722,13 +723,12 @@ if(GA_ID){
         </div>
         <!-- SG: 인기 축구 도구 -->
         <div id="sg-tools-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🧰 인기 축구 도구</h2><div class="sg-secdesc">홈에서는 대표 6종만 — 전체 61종은 도구함에서</div></div></div>
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">자주 쓰는 축구 도구</h2><div class="sg-secdesc">무료 · 가입 없이 바로 사용</div></div><a class="sg-more" href="/tools/" onclick="return navTo('tools')">전체 61종 →</a></div>
           <div class="sg-tgrid" id="sg-tools-grid"></div>
-          <div style="text-align:center;margin:14px 0 4px"><button class="hbtn" onclick="navTo('tools')">전체 축구 도구 보기 →</button></div>
         </div>
         <!-- SG: 이적시장 -->
         <div id="sg-transfer-sec">
-          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">🔁 이적시장</h2><div class="sg-secdesc">검수된 최신 오피셜 이적</div></div><a class="sg-more" href="/transfer/" onclick="return navTo('transfer')">이적시장 전체 보기 →</a></div>
+          <div class="sg-sechead"><div><h2 class="sec" style="margin:0">주요 이적 소식</h2><div class="sg-secdesc" id="hr-transfer-status">한국 선수·주요 구단 우선 · Transfermarkt 수집본</div></div><a class="sg-more" href="/transfer/">이적시장 전체 →</a></div>
           <div class="sg-trlist" id="sg-transfer-list"></div>
         </div>
         <!-- SG: 축구 매거진 -->
@@ -737,14 +737,14 @@ if(GA_ID){
           <div class="sg-mgrid" id="sg-mag-grid"></div>
         </div>
         <!-- SG: 커뮤니티 -->
-        <div id="sg-comm-sec">
+        <div id="sg-comm-sec" hidden>
           <div class="sg-sechead"><div><h2 class="sec" style="margin:0">💬 커뮤니티</h2><div class="sg-secdesc">축구 팬들과 자유롭게 이야기하는 공간</div></div></div>
           <div id="sg-comm-list"></div>
         </div>
         <!-- SG: SNS 팔로우 -->
         <div id="sg-sns-sec">
           <div class="sg-sechead"><div><h2 class="sec" style="margin:0">📣 축구창고 팔로우</h2><div class="sg-secdesc">매일 축구 핵심 이슈를 가장 빠르게 만나보세요.</div></div></div>
-          <div id="sg-sns-links"></div>
+          <div id="sg-sns-links"><a href="https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" target="_blank" rel="noopener noreferrer">YouTube ↗</a><a href="https://www.instagram.com/chukguchanggo/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
         </div>
 
       </div>
@@ -1514,14 +1514,14 @@ if(GA_ID){
         <div class="ad-slot ad-side">광고 슬롯 ③<br>사각형 300×250</div>
       </div>
 
-      <div class="box">
+      <div class="box hr-side-tools">
         <h3>🧰 오늘의 도구</h3>
         <div id="tool-spot"></div>
         <div class="tqgrid" id="tool-quick"></div>
         <div style="text-align:right;margin-top:8px"><a href="/tools/" onclick="return navTo('tools')" style="font-size:12px;font-weight:700;color:var(--pitch)">61종 전체 보기 →</a></div>
       </div>
 
-      <div class="box">
+      <div class="box hr-side-dday">
         <h3>⏳ 개막 D-day</h3>
         <div id="side-dday" data-notranslate style="font-size:12.5px;line-height:2"></div>
         <div style="text-align:right;margin-top:8px"><a href="#" onclick="return navToolA('dday')" style="font-size:12px;font-weight:700;color:var(--pitch)">전체 일정 보기 →</a></div>
@@ -1533,7 +1533,7 @@ if(GA_ID){
         <div style="font-size:10px;color:var(--sub);margin-top:6px">한국시간 기준 · 출처: TheSportsDB</div>
       </div>
 
-      <div class="box">
+      <div class="box hr-side-reading">
         <h3>📖 함께 보면 좋은 글</h3>
         <div style="font-size:13px;line-height:2">
           · <a href="#" onclick="return openArticle('watch')" style="font-weight:600">해외축구 합법 시청 방법 총정리</a><br>
@@ -3392,7 +3392,7 @@ function loadFixtures(){
         var rows=[];
         pa.filter(function(e){return e.intHomeScore!=null;}).slice(0,2).forEach(function(e){
           rows.push({tag:L.tag,done:true,h:e.strHomeTeam,a:e.strAwayTeam,hs:e.intHomeScore,as:e.intAwayScore,
-            hb:e.strHomeTeamBadge||"",ab:e.strAwayTeamBadge||""});
+            ts:e.strTimestamp || (e.dateEvent ? e.dateEvent + "T" + (e.strTime || "00:00:00") : ""),hb:e.strHomeTeamBadge||"",ab:e.strAwayTeamBadge||""});
         });
         var now=Date.now();
         nx.filter(function(e){return e.strTimestamp&&new Date(e.strTimestamp+"Z")>now;})
@@ -4222,7 +4222,7 @@ function SGVideoCard(vd){
   var inner = sgThumb(vd.thumb, vd.title, "sg-vc-thumb")
     + '<div class="sg-vc-body"><span class="sg-cat">' + plat + "</span>"
     + "<b>" + escHtml(vd.title) + "</b>"
-    + (vd.desc ? "<p>" + escHtml(vd.desc) + "</p>" : "")
+    + (vd.desc && vd.desc !== vd.title ? "<p>" + escHtml(vd.desc) + "</p>" : "")
     + (vd.date ? '<small class="sg-date">' + escHtml(vd.date) + "</small>" : "") + "</div>";
   return vd.href
     ? '<a class="sg-vc" href="' + escHtml(vd.href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
@@ -4783,7 +4783,7 @@ function sgLoadVideos(){
         var m = link.match(/[?&]v=([\w-]{6,})/) || link.match(/shorts\/([\w-]{6,})/);
         if (!m) return;
         var id = m[1];
-        fresh.push({ title: String(it.title || it.t || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", desc: String(it.title || it.t || "") });
+        fresh.push({ title: String(it.title || it.t || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", date: it.d ? new Date(it.d).toLocaleDateString("ko-KR", {timeZone:"Asia/Seoul"}) : "" });
       });
       if (!fresh.length) return;
       fresh.forEach(function(v2){
@@ -5276,5 +5276,6 @@ var idx=0,n=rows.length;for(var r=0;r<n;r++){var y=910-r*(660/(n-1));var cnt=row
 c.beginPath();c.fillStyle=(r===0?"#f97316":"#facc15");c.arc(x,y,26,0,7);c.fill();c.fillStyle="#1c1830";c.font="bold 18px sans-serif";c.fillText(String(idx+1),x,y+6);c.fillStyle="#fff";c.font="bold 20px sans-serif";c.fillText(pn.slice(0,8),x,y+52);idx++;}}
 c.fillStyle="rgba(255,255,255,.75)";c.font="16px sans-serif";c.fillText("chukguchanggo.com — 축구창고 베스트11 메이커",360,992);
 cv.style.display="block";var dl=document.getElementById("b11-dl");dl.href=cv.toDataURL("image/png");dl.style.display="inline-block";return false;};})();</script>
+<script src="/homepage.js?v=0908"></script>
 </body>
 </html>
