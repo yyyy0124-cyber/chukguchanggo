@@ -3693,7 +3693,7 @@ function startHeroRotate(){
   heroTimer=setInterval(function(){ if(!heroPause&&heroPool.length>1) showHero(heroIdx+1); },4000);
 }
 // 홈 뉴스: 해외·월드컵·국내 기사를 중요도 점수로 섞어 배치
-var HOME_INTL=[],HOME_KR=[];
+var HOME_INTL=[],HOME_KR=[],HOME_NT=[];
 function newsScore(n){
   var t=(n.t||"")+" "+(n.tag||"");
   var s=0;
@@ -3708,7 +3708,7 @@ function newsScore(n){
   return s;
 }
 function mixHomeNews(){
-  var all=HOME_INTL.concat(HOME_KR);
+  var all=HOME_INTL.concat(HOME_KR,HOME_NT);
   if(!all.length) return;
   var seen=new Set();
   all=all.filter(function(n){if(seen.has(n.l)||seen.has(n.t))return false;seen.add(n.l);seen.add(n.t);return true;});
@@ -3910,6 +3910,8 @@ function loadKNews(){
     items=items.filter(function(n){return !(window.KL_USED&&window.KL_USED.has(n.t));}); // K리그 보드와 중복 제거
     items.sort(function(a,b){return b.d-a.d;});
     knPool=items; knIdx=0; knShow();
+    HOME_NT=items;
+    mixHomeNews();
     // 국내축구 캐러셀은 K리그 보드(연합뉴스 사진)가 전담 — 그쪽이 실패했을 때만 대신 채움
     if(!(TABHERO["dom-hero"]&&TABHERO["dom-hero"].pool&&TABHERO["dom-hero"].pool.length)){
       setTabHero("dom-hero",items.map(function(n){return {t:n.t,l:n.l,tag:n.cat,img:""};}));
@@ -3936,7 +3938,7 @@ function loadKLeague(){
         return arr.map(function(n){
           var t=n.t,src="",m=t.match(/^(.*)\s-\s([^-]+)$/);
           if(m){t=m[1];src=m[2];}
-          return {t:t,l:n.l,src:src,d:n.d,img:""};
+          return {t:t,l:n.l,src:src,d:n.d,img:"",category:"domestic"};
         });
       }),
     rss2json("https://www.yna.co.kr/rss/sports.xml")
@@ -3958,8 +3960,8 @@ function loadKLeague(){
     items.sort(function(a,b){return b.d-a.d;});
     // 국내축구 탭 사진 캐러셀: 연합뉴스 실사진 기사 우선
     setTabHero("dom-hero",items.map(function(n){return {t:n.t,l:n.l,tag:n.src||"K리그",img:n.img||""};}));
-    // 홈 뉴스 혼합용 국내 풀 (상위 8건)
-    HOME_KR=items.slice(0,8).map(function(n){return {t:n.t,l:n.l,tag:n.src||"K리그",img:n.img||"",d:n.d};});
+    // Keep the complete pool: category filtering must happen before the home limit.
+    HOME_KR=items.map(function(n){return {t:n.t,l:n.l,src:n.src,category:n.category,img:n.img||"",d:n.d};});
     mixHomeNews();
     items=items.slice(0,12);
     window.KL_USED=new Set(items.map(function(n){return n.t;}));
@@ -5276,6 +5278,7 @@ var idx=0,n=rows.length;for(var r=0;r<n;r++){var y=910-r*(660/(n-1));var cnt=row
 c.beginPath();c.fillStyle=(r===0?"#f97316":"#facc15");c.arc(x,y,26,0,7);c.fill();c.fillStyle="#1c1830";c.font="bold 18px sans-serif";c.fillText(String(idx+1),x,y+6);c.fillStyle="#fff";c.font="bold 20px sans-serif";c.fillText(pn.slice(0,8),x,y+52);idx++;}}
 c.fillStyle="rgba(255,255,255,.75)";c.font="16px sans-serif";c.fillText("chukguchanggo.com — 축구창고 베스트11 메이커",360,992);
 cv.style.display="block";var dl=document.getElementById("b11-dl");dl.href=cv.toDataURL("image/png");dl.style.display="inline-block";return false;};})();</script>
-<script src="/homepage.js?v=0908"></script>
+<script src="/news-filters.js?v=0908-filter1"></script>
+<script src="/homepage.js?v=0908-filter1"></script>
 </body>
 </html>

@@ -7,8 +7,7 @@
   const safeURL = value => { try { const u = new URL(value, location.href); return /^https?:$/.test(u.protocol) ? u.href : ''; } catch (_) { return ''; } };
   const dateText = value => new Date(value).toLocaleString('ko-KR', {timeZone:'Asia/Seoul',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
   const DAY = 86400000;
-  const korean = /손흥민|이강인|김민재|황희찬|황인범|이재성|양현준|양민혁|이한범|배준호|백승호|오현규|조규성|코리안리거|한국 선수|Son Heung|Kang.in|Min.jae/i;
-  const transfer = /이적|영입|오피셜|계약|임대|transfer|signing/i;
+  const filters = window.SGNewsFilters;
   let live = [], archive = [], archiveDate = '', selected = 'all', settled = false;
   const listBox = document.getElementById('hr-news-list');
   const status = document.getElementById('hr-news-status');
@@ -45,10 +44,9 @@
     const title = String(n.t || n.title || '').trim();
     const href = safeURL(n.l || n.link || '');
     const d = Number(n.d) || Date.parse(n.date || '');
-    const domestic = n.category === 'domestic' || (window.HOME_KR || []).some(k => k.l === href) || /K리그|국가대표|대한축구협회|한국 축구|프로축구/.test(n.tag || '');
     let source = n.src || n.source || n.tag || '';
     if (!source && href) source = new URL(href).hostname.replace(/^www\./,'');
-    return {title,href,d,source,domestic,archive:!!n.archive};
+    return {title,href,d,source,category:n.category,tag:n.tag,summary:n.summary,archive:!!n.archive};
   }
   function currentNews() {
     const seen = new Set();
@@ -57,14 +55,15 @@
       const key = n.title.toLowerCase().replace(/[\s\p{P}]/gu,'');
       if (seen.has(n.href) || seen.has(key)) return false;
       seen.add(n.href); seen.add(key); return true;
-    }).sort((a,b) => Number(korean.test(b.title))-Number(korean.test(a.title)) || b.d-a.d);
+    });
   }
   function renderNews() {
     const all = currentNews();
-    const rows = all.filter(n => selected === 'all' || (selected === 'korean' && korean.test(n.title)) || (selected === 'transfer' && transfer.test(n.title)) || (selected === 'domestic' && n.domestic) || (selected === 'intl' && !n.domestic)).slice(0,4);
+    const rows = filters.select(all, selected);
     listBox.setAttribute('aria-busy', String(!settled && !all.length));
     const anyLive = all.some(n => !n.archive);
-    status.textContent = anyLive ? '최근 3일 소식 · 한국 선수 우선 · 한국시간' : all.length ? archiveDate + ' 수집본 · 한국시간' : settled ? '새 소식을 불러오지 못했습니다.' : '최신 소식을 확인하고 있습니다.';
+    const label = {all:'한국 선수 우선',korean:'한국 선수 소식 · 최신순',intl:'해외 리그·국제축구 · 최신순',domestic:'K리그·한국 대표팀 · 최신순',transfer:'선수 영입·이적·재계약 · 최신순'}[selected];
+    status.textContent = all.length ? (anyLive ? '최근 3일 소식' : archiveDate+' 수집본')+' · '+label+' · 한국시간' : settled ? '새 소식을 불러오지 못했습니다.' : '최신 소식을 확인하고 있습니다.';
     listBox.innerHTML = rows.length ? rows.map(n => '<a class="hr-news" href="'+esc(n.href)+'" target="_blank" rel="noopener noreferrer"><h3>'+esc(n.title)+'</h3><div class="hr-news-meta"><span class="hr-source">'+esc(n.source)+'</span><time datetime="'+new Date(n.d).toISOString()+'">'+esc(dateText(n.d))+(n.archive?' 수집':'')+'</time><span>원문 보기 ↗</span></div></a>').join('') : '<div class="hr-empty">'+(all.length ? '이 분야의 최근 소식이 아직 없습니다.' : settled ? '잠시 후 다시 방문하거나 날짜별 뉴스를 확인해 주세요.' : '뉴스를 불러오는 중입니다.')+'<a href="/news/">날짜별 뉴스 보기 →</a></div>';
   }
   home.querySelectorAll('[data-news-filter]').forEach(button => button.addEventListener('click', () => {
@@ -97,7 +96,9 @@
         const text = meta ? meta.textContent : '';
         const stamp = text.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}/);
         const heading = row.parentElement.previousElementSibling;
-        return {t:title ? title.textContent : '',l:link ? link.getAttribute('href') : '',d:stamp ? Date.parse(stamp[0].replace(' ','T')+':00+09:00') : 0,src:text.split('·')[0].trim(),category:heading && /국내|K리그/.test(heading.textContent) ? 'domestic':'intl',archive:true};
+        const summary = Array.from(row.querySelectorAll('p:not(.meta)')).map(p=>p.textContent).join(' ');
+        const category = heading && /국내|K리그/.test(heading.textContent) ? 'domestic' : heading && /해외/.test(heading.textContent) ? 'intl' : '';
+        return {t:title ? title.textContent : '',l:link ? link.getAttribute('href') : '',d:stamp ? Date.parse(stamp[0].replace(' ','T')+':00+09:00') : 0,src:text.split('·')[0].trim(),category,summary,archive:true};
       });
     } catch (_) { /* The existing collectors can still supply the live list. */ }
     finally { settled=true; renderNews(); }
