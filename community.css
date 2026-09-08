@@ -1,0 +1,18 @@
+#board-categories{display:grid;gap:18px;margin:24px 0;padding:0;background:transparent;box-shadow:none;position:static;border:0;height:auto;z-index:auto}
+.board-group h3{font-size:13px;color:var(--sub);margin:0 0 9px;font-weight:700}
+.board-group>div{display:flex;gap:9px;flex-wrap:wrap}
+.board-category{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 20px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:15px;font-weight:700;color:var(--text);text-decoration:none}
+.board-category:hover{border-color:var(--pitch);color:var(--pitch)}
+.board-category.on{background:var(--pitch);border-color:var(--pitch);color:white}
+.board-category:focus-visible,.bbs-row:focus-visible{outline:3px solid #d5a947;outline-offset:3px}
+.board-empty{text-align:center;padding:44px 16px;color:var(--sub);font-size:15px;line-height:1.8}
+#board-ui .bbs-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#board-ui .bbs-top>.small{flex:1 1 240px}
+#board-ui .bbs-row{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);text-align:left;font-family:inherit;cursor:pointer;min-height:54px}
+#board-ui .bbs-row:hover{background:var(--res-bg)}
+#board-ui .bbs-row[aria-expanded=true]{background:var(--res-bg)}
+#board-write{margin-top:20px;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--res-bg)}
+#board-write textarea{width:100%;min-height:180px;resize:vertical;margin-top:12px;padding:14px;box-sizing:border-box;font-family:inherit;font-size:16px}
+#board-ui button:disabled{opacity:.55;cursor:wait}
+#board-list .bbody{overflow-wrap:anywhere;white-space:normal}
+@media(max-width:600px){.board-group>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.board-category{padding:10px 8px}#board-write{padding:14px}#board-write .frow{flex-wrap:wrap}#board-write input{min-width:0!important;width:100%!important;flex:1 1 100%}#board-ui .bbs-row{display:grid;grid-template-columns:1fr auto;gap:6px;padding:14px 4px}#board-ui .bbs-row .bno{display:none}#board-ui .bbs-row .btit{grid-column:1/-1}#board-ui .bbs-row .bwho{font-size:12px}#board-ui .bbs-row .bdate{font-size:12px}}

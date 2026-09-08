@@ -611,6 +611,8 @@ if(GA_ID){
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2139001800218485" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="/homepage.css?v=0908">
 <link rel="stylesheet" href="/internal.css?v=0908-review1">
+<link rel="stylesheet" href="/community.css?v=0908-boards1">
+<script src="/board-categories.js?v=0908-boards1"></script>
 </head>
 <body>
 
@@ -1372,42 +1374,34 @@ if(GA_ID){
             <a href="#" onclick="return navToolA('fx-calc')">직구 환율 계산기<small>£·€ 금액 변환</small></a>
           </div>
         </div>
-        <div class="note">💬 이적 얘기를 나누고 싶다면? <a href="#" onclick="return navTo('part')" style="color:var(--pitch);font-weight:700">축구토론방 이적시장방</a>에서 실시간으로 대화하세요.</div>
+        <div class="note">💬 이적 얘기를 나누고 싶다면? <a href="#" onclick="return navTo('part')" style="color:var(--pitch);font-weight:700">커뮤니티 이적시장방</a>에서 실시간으로 대화하세요.</div>
       </div>
 
-      <!-- ════════════ [뷰: 축구토론방] 주제별 익명 실시간 채팅 ════════════ -->
+      <!-- ════════════ [뷰: 커뮤니티] 주제별 게시판 ════════════ -->
       <div data-view="part" hidden>
         <div class="banner">
           <img src="https://images.unsplash.com/photo-1676746424139-77f8bd8922a8?q=80&w=1600&auto=format&fit=crop&crop=entropy" alt="야간 축구 경기장" loading="lazy">
-          <div class="cap">축구토론방<small>익명 자유게시판과 주제별 실시간 채팅</small></div>
+          <div class="cap">커뮤니티<small>리그별 경기 이야기부터 한국축구 소식까지</small></div>
         </div>
-        <h2 class="sec">💬 축구토론방 <span style="font-size:12px;color:var(--sub);font-weight:400">가입 없음 · 게시판은 ㅇㅇ(IP), 채팅은 자동 닉네임</span></h2>
-        <div class="tqgrid" id="chat-rooms" style="grid-template-columns:repeat(auto-fill,minmax(155px,1fr))"></div>
+        <h2 class="sec">💬 커뮤니티 <span style="font-size:12px;color:var(--sub);font-weight:400">주제를 선택하고 글과 댓글로 이야기를 나누세요</span></h2>
+        <nav id="board-categories" aria-label="커뮤니티 게시판 선택"></nav>
 
         <section class="tool" style="margin-top:14px">
-          <h2 id="chat-room-title">⚽ 자유 수다방</h2>
-          <div class="desc" id="chat-room-desc">아무 축구 얘기나 환영 — 서로 존중하는 대화 부탁드려요.</div>
-          <div data-notranslate id="chat-ui">
-            <div id="chat-msgs"></div>
-            <div class="frow">
-              <input type="text" id="chat-in" maxlength="200" placeholder="메시지 입력 (Enter 전송)" onkeydown="if(event.key==='Enter')chatSend()" style="flex:1;min-width:200px">
-              <button class="go" onclick="chatSend()">전송</button>
-            </div>
-            <div class="small" id="chat-note" style="margin-top:6px"></div>
-          </div>
-          <div data-notranslate id="board-ui" hidden>
+          <h2 id="board-room-title">EPL 게시판</h2>
+          <div class="desc" id="board-room-desc">프리미어리그 경기와 구단 이야기를 나누세요.</div>
+          <div data-notranslate id="board-ui">
             <div class="bbs-top">
               <span class="small">글 작성 시 닉네임(IP 앞 두 자리)가 함께 표시됩니다 · 30초에 1글</span>
               <button class="go" style="padding:7px 14px;font-size:13px" onclick="boardLoad()">↻ 새로고침</button>
               <button class="go" style="padding:7px 14px;font-size:13px" onclick="boardToggleWrite()">✏️ 글쓰기</button>
             </div>
-            <div id="board-write" hidden>
+            <div id="board-write" hidden><p id="board-write-target" class="note"></p>
               <div class="frow" style="margin-top:10px;margin-bottom:0">
-                <input id="bw-nick" maxlength="10" placeholder="ㅇㅇ" style="width:110px">
-                <input id="bw-title" maxlength="100" placeholder="제목" style="flex:1;min-width:200px">
+                <input aria-label="닉네임" id="bw-nick" maxlength="10" placeholder="ㅇㅇ" style="width:110px">
+                <input aria-label="글 제목" id="bw-title" maxlength="100" placeholder="제목" style="flex:1;min-width:200px">
               </div>
-              <textarea id="bw-body" maxlength="2000" placeholder="내용 (2000자 이내 · 링크 금지)"></textarea>
-              <div class="frow" style="margin-top:8px"><button class="go" onclick="boardWrite()">등록</button></div>
+              <textarea aria-label="글 내용" id="bw-body" maxlength="2000" placeholder="내용 (2000자 이내 · 링크 금지)"></textarea>
+              <div class="frow" style="margin-top:8px"><button class="go" id="board-submit" onclick="boardWrite()">글 등록</button></div>
             </div>
             <div id="board-list" style="margin-top:12px"><div class="small" style="text-align:center;padding:30px 0">불러오는 중…</div></div>
           </div>
@@ -1437,12 +1431,12 @@ if(GA_ID){
             <li>해외축구와 이적시장 소식</li>
             <li>직접 제작한 축구 영상과 분석</li>
             <li>계산기·변환기 등 무료 축구 도구 60여 종</li>
-            <li>축구 팬 커뮤니티(축구토론방)</li>
+            <li>축구 팬 커뮤니티(커뮤니티)</li>
           </ol>
           <h3>콘텐츠 원칙</h3>
           <p>뉴스는 본문을 옮겨 싣지 않고 헤드라인과 원문 링크만 소개하며, 출처를 항상 표기합니다. 기록·규칙 정보는 확정된 사실을 기준으로 작성하고, 추정치에는 그 사실을 명시합니다. 사이트 운영은 광고 수익으로 이루어지며, 제휴 링크가 포함된 글에는 별도로 표시합니다.</p>
           <h3>운영 문의</h3>
-          <p>제안·오류 제보는 <a href="#" onclick="return navTo('contact')">문의하기</a>를 이용해 주시고, 다른 팬들과의 대화는 <a href="#" onclick="return navTo('part')">축구토론방</a>에서 나눠 주세요.</p>
+          <p>제안·오류 제보는 <a href="#" onclick="return navTo('contact')">문의하기</a>를 이용해 주시고, 다른 팬들과의 대화는 <a href="#" onclick="return navTo('part')">커뮤니티</a>에서 나눠 주세요.</p>
           <h3>사진 출처</h3>
           <p style="font-size:12px;color:var(--sub)" data-notranslate>국내축구 배너: 서울연구원, <a href="https://commons.wikimedia.org/wiki/File:The_Red_Devils_fan_club_crowds_at_Seoul_Plaza.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY 4.0 · 일부 배경 사진: Unsplash</p>
         </article>
@@ -1536,7 +1530,7 @@ document.addEventListener("click",function(e){
 });
 
 // ── 🔎 상단바 통합 검색 (도구 + 글 + 게시판) ─────────────
-var GS_VIEWS=[["해외축구","intl"],["국내축구","domestic"],["이적시장","transfer"],["축구토론방","part"],["채팅","part"],
+var GS_VIEWS=[["해외축구","intl"],["국내축구","domestic"],["이적시장","transfer"],["커뮤니티","part"],["게시판","part"],
   ["킥오프 매거진","mag"],["추천 도구","hot"],["도구함","tools"],["소개","about"],["문의하기","contact"]];
 function gSearch(){
   var inp=document.getElementById("gsearch"),out=document.getElementById("gs-out");
@@ -3107,6 +3101,7 @@ function renderTransferWindow(){var box=document.getElementById('tw-box');if(box
 // ── 🔀 해시 라우팅(뒤로가기 지원) ──────────────────────
 var VIEW_NAMES=["home","tools","hot","mag","intl","domestic","transfer","part","about","privacy","contact"];
 function routeTo(h){
+  if(h.indexOf("board-")===0){navTo("part");boardJoin(SGBoards.find(h.slice(6))?h.slice(6):"epl",true);return;}
   if(h.indexOf("article-")===0) return openArticle(h.slice(8));
   if(VIEW_NAMES.indexOf(h)>-1){ navTo(h); }
   else if(document.getElementById(h)){ navTool(h); }
@@ -3694,7 +3689,7 @@ function loadHighlights(){
 // 3단: ① PRE_EN 내장 사전(0ms) → ② tren: 캐시 → ③ 25개 묶음 배치 API (요청 수 1/25)
 // 한국어 복귀: EN_NODES 레지스트리로 원문 즉시 복원 (새로고침 없음)
 var PRE_EN={
-"도구함":"Tools","🔥 추천 도구":"🔥 Popular","📖 킥오프 매거진":"📖 Kickoff Magazine","해외축구":"World Football","국내축구":"K-Football","이적시장":"Transfers","💬 축구토론방":"💬 Chat Rooms","축구토론방":"Football Chat Rooms","주제별 방에서 익명으로 실시간 대화":"Anonymous real-time chat by topic",
+"도구함":"Tools","🔥 추천 도구":"🔥 Popular","📖 킥오프 매거진":"📖 Kickoff Magazine","해외축구":"World Football","국내축구":"K-Football","이적시장":"Transfers","💬 커뮤니티":"💬 Community","커뮤니티":"Football Community","주제별 방에서 익명으로 실시간 대화":"Anonymous real-time chat by topic",
 "⚙️ 설정":"⚙️ Settings","🌙 다크모드":"🌙 Dark mode","☀️ 라이트모드":"☀️ Light mode",
 "축구 팬을 위한 도구 · 뉴스 · 커뮤니티":"Tools · News · Community for football fans",
 "필요한 축구 도구, 전부":"Every football tool you need — all in the","창고":"Warehouse","에 있습니다":"",
@@ -4076,7 +4071,7 @@ function sgRenderComm(){
   var box = document.getElementById("sg-comm-list");
   if (!box) return;
   box.innerHTML = '<div class="sg-empty"><div class="sg-empty-ic">💬</div>'
-    + "<p>실시간 채팅과 게시판은 축구토론방에서 이용할 수 있습니다.</p>"
+    + "<p>리그별·한국축구 게시판은 커뮤니티에서 이용할 수 있습니다.</p>"
     + '<a class="sg-empty-cta" href="#" onclick="return navTo(&quot;part&quot;)">커뮤니티 가기</a></div>';
 }
 function sgRenderSNS(){
@@ -4639,12 +4634,12 @@ setTimeout(function(){ try { sgFillBadges(); } catch(e){} }, 9000);
     armMidnight();
   },next-now);
 })();
-// 실사용 카운터: 도구를 열 때마다 Firebase에 +1 (채팅 DB 연결 시 자동 활성화)
+// 실사용 카운터: 도구를 열 때마다 Firebase에 +1 (게시판 DB 연결 시 자동 활성화)
 window.TOOL_USES={};
 var _navToolA_cnt=navToolA;
 navToolA=function(id){
   try{
-    if(chatReady&&window.firebase){
+    if(boardReady&&window.firebase){
       firebase.database().ref("counts/"+id).set(firebase.database.ServerValue.increment(1));
       window.TOOL_USES[id]=(window.TOOL_USES[id]||0)+1;
     }
@@ -4662,123 +4657,42 @@ var FB_CONFIG={
   messagingSenderId:"650733600142",
   appId:"1:650733600142:web:19f80d9a569b020bf0f8df"
 };
-// ↑ 운영자 설정: Firebase 콘솔 → 프로젝트 설정 → 웹앱 → 구성(config) 객체를 붙여넣으면 채팅방이 활성화됩니다.
-//   따라 하기: 프로젝트 폴더의 "채팅방_연결_가이드.md" 참고 (5~10분 소요, 무료)
-//   예: var FB_CONFIG={apiKey:"AIza…",authDomain:"xxx.firebaseapp.com",databaseURL:"https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"xxx",appId:"1:…"};
-var CHAT_BAN=/시발|씨발|병신|지랄|개새|좆|꺼져|섹스|야동|도박|토토|카지노/;
-var chatLastSend=0;
-function chatNick(){
-  var n=null; try{n=localStorage.getItem("chat-nick");}catch(e){}
-  if(n) return n;
-  var pos=["골키퍼","풀백","센터백","볼란치","메짤라","윙어","스트라이커","폴스나인","리베로","플레이메이커"];
-  n="익명의 "+pos[Math.floor(Math.random()*pos.length)]+" "+(100+Math.floor(Math.random()*900));
-  try{localStorage.setItem("chat-nick",n);}catch(e){}
-  return n;
+
+var BOARD_BAN=/시발|씨발|병신|지랄|개새|좆|꺼져|섹스|야동|도박|토토|카지노/;
+var boardReady=false, boardCur="epl", boardLoadVersion=0, boardSaving=false, boardLastComment=0;
+var boardDrafts={};
+function renderBoardCategories(){
+ var wrap=document.getElementById("board-categories");if(!wrap)return;
+ var groups=["유럽 주요 리그","한국축구","자유 이야기"];
+ wrap.innerHTML=groups.map(function(group){return '<div class="board-group"><h3>'+group+'</h3><div>'+SGBoards.categories.filter(function(c){return c.group===group;}).map(function(c){return '<a href="#board-'+c.id+'" class="board-category'+(c.id===boardCur?' on':'')+'"'+(c.id===boardCur?' aria-current="page"':'')+' onclick="boardJoin(\''+c.id+'\');return false;">'+c.name+'</a>';}).join('')+'</div></div>';}).join('');
 }
-// 주제별 방 목록 — 방을 추가하려면 여기에 한 줄만 더하면 됩니다
-var CHAT_ROOMS=[
-  {id:"board",ic:"📝",n:"자유게시판",d:"익명 게시판 — 닉네임(IP)로 자유롭게 글을 남기는 공간. 서로 존중해 주세요."},
-  {id:"free",ic:"⚽",n:"자유 수다방",d:"아무 축구 얘기나 환영 — 서로 존중하는 대화 부탁드려요."},
-  {id:"world",ic:"🌍",n:"해외축구방",d:"EPL·라리가·분데스리가·챔스 — 유럽 축구 이야기."},
-  {id:"kleague",ic:"🇰🇷",n:"K리그방",d:"K리그1·2와 국가대표 이야기."},
-  {id:"transfer",ic:"🔁",n:"이적시장방",d:"오피셜·루머·영입 평가 — 이적 얘기 전용."},
-  {id:"wc",ic:"🏆",n:"월드컵방",d:"월드컵 경기 감상과 토론."},
-  {id:"game",ic:"🎮",n:"FM·FPL방",d:"풋볼매니저·판타지 리그 공략과 자랑."}
-];
-var chatCur="free", chatRef=null, chatReady=false;
-function renderRooms(){
-  var wrap=document.getElementById("chat-rooms");
-  if(!wrap) return;
-  wrap.innerHTML=CHAT_ROOMS.map(function(r){
-    return '<div class="tqcard'+(r.id===chatCur?" on":"")+'" onclick="chatJoin(\''+r.id+'\')">'
-      +'<span class="ic">'+r.ic+'</span><b>'+r.n+'</b></div>';
-  }).join("");
+function boardJoin(id,silent){
+ var category=SGBoards.find(id);if(!category)return;
+ if(boardSaving){alert("글 등록이 끝난 뒤 게시판을 이동해 주세요.");return;}
+ var w=document.getElementById("board-write");
+ if(w)boardDrafts[boardCur]={n:document.getElementById("bw-nick").value,t:document.getElementById("bw-title").value,b:document.getElementById("bw-body").value};
+ boardCur=id;boardOpenId=null;boardPosts=[];boardCmts={};
+ renderBoardCategories();
+ document.getElementById("board-room-title").textContent=category.name+(id==='free'?'':' 게시판');
+ document.getElementById("board-room-desc").textContent=category.description;
+ document.getElementById("board-write-target").textContent=category.name+"에 글을 작성합니다.";
+ if(w){w.hidden=true;var draft=boardDrafts[id]||{};document.getElementById("bw-nick").value=draft.n||'';document.getElementById("bw-title").value=draft.t||'';document.getElementById("bw-body").value=draft.b||'';}
+ if(!silent){var prev=NAV_SILENT;NAV_SILENT=true;navTo("part");NAV_SILENT=prev;setHash("board-"+id);}
+ if(typeof curView!=='undefined'&&curView==='part')document.title=category.name+" | 축구창고 커뮤니티";
+ boardLoad();
 }
-function chatJoin(id){
-  var room=null,i;
-  for(i=0;i<CHAT_ROOMS.length;i++) if(CHAT_ROOMS[i].id===id) room=CHAT_ROOMS[i];
-  if(!room) return;
-  chatCur=id;
-  renderRooms();
-  var tt=document.getElementById("chat-room-title"),dd=document.getElementById("chat-room-desc");
-  if(tt) tt.textContent=room.ic+" "+room.n;
-  if(dd) dd.textContent=room.d;
-  var cu=document.getElementById("chat-ui"),bu=document.getElementById("board-ui");
-  if(id==="board"){ // 📝 자유게시판: 채팅 UI 대신 게시판 렌더
-    if(chatRef){chatRef.off();chatRef=null;}
-    if(cu) cu.hidden=true;
-    if(bu) bu.hidden=false;
-    boardLoad();
-    return;
-  }
-  if(cu) cu.hidden=false;
-  if(bu) bu.hidden=true;
-  var box=document.getElementById("chat-msgs");
-  if(!box) return;
-  if(!chatReady){ // Firebase 미설정/미로드
-    box.innerHTML='<div class="small" style="text-align:center;padding:80px 10px 0">💬 채팅방 오픈 준비 중입니다.<br>곧 만나요!</div>';
-    return;
-  }
-  if(chatRef) chatRef.off(); // 이전 방 수신 해제
-  box.innerHTML="";
-  chatRef=firebase.database().ref("chat/"+id).limitToLast(60);
-  chatRef.on("child_added",function(snap){
-    var m=snap.val()||{};
-    var d=document.createElement("div");
-    d.className="cmsg";
-    d.innerHTML='<b>'+escHtml(String(m.n||"익명").slice(0,30))+'</b>'+escHtml(String(m.t||"").slice(0,200))
-      +'<span class="ctime">'+(m.d?new Date(m.d).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}):"")+'</span>';
-    box.appendChild(d);
-    while(box.children.length>80) box.removeChild(box.firstChild);
-    box.scrollTop=box.scrollHeight;
-  });
-}
-function chatInit(){
-  var box=document.getElementById("chat-msgs"),note=document.getElementById("chat-note"),inp=document.getElementById("chat-in");
-  if(!box) return;
-  renderRooms();
-  if(!FB_CONFIG){
-    chatJoin(chatCur);
-    if(inp){inp.disabled=true;inp.placeholder="오픈 준비 중…";}
-    return;
-  }
-  var s1=document.createElement("script"),s2=document.createElement("script");
-  s1.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js";
-  s2.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js";
-  s1.onload=function(){document.head.appendChild(s2);};
-  s2.onload=function(){
-    try{
-      firebase.initializeApp(FB_CONFIG);
-      chatReady=true;
-      chatJoin(chatCur);
-      if(note) note.textContent="내 닉네임: "+chatNick()+" · 5초에 1회 · 200자 이내";
-      // 도구 실사용 집계 불러오기 → 100회 이상이면 카드에 표시
-      firebase.database().ref("counts").once("value").then(function(snap){
-        window.TOOL_USES=snap.val()||{};
-        try{renderToolSpot();}catch(e){}
-      });
-    }catch(e){
-      box.innerHTML='<div class="small" style="text-align:center;padding:80px 10px 0">채팅방 연결에 실패했습니다. 잠시 후 새로고침해 주세요.</div>';
-    }
-  };
-  document.head.appendChild(s1);
-}
-function chatSend(){
-  var inp=document.getElementById("chat-in");
-  if(!inp||inp.disabled) return;
-  var t=(inp.value||"").trim();
-  if(!t) return;
-  if(t.length>200){alert("200자 이내로 입력해 주세요.");return;}
-  if(CHAT_BAN.test(t)){alert("부적절한 표현이 포함되어 전송할 수 없습니다.");return;}
-  if(/https?:\/\//i.test(t)){alert("링크는 보낼 수 없습니다. (스팸 방지)");return;}
-  var now=Date.now();
-  if(now-chatLastSend<5000){alert("잠시 후 다시 보내주세요. (5초 간격)");return;}
-  if(!chatReady||!window.firebase) return;
-  chatLastSend=now;
-  try{
-    firebase.database().ref("chat/"+chatCur).push({n:chatNick(),t:t,d:firebase.database.ServerValue.TIMESTAMP});
-    inp.value="";
-  }catch(e){}
+function boardInit(){
+ renderBoardCategories();
+ var hash=location.hash.slice(1),id=hash.indexOf('board-')===0?hash.slice(6):'epl';
+ boardJoin(SGBoards.find(id)?id:'epl',true);
+ var s1=document.createElement("script"),s2=document.createElement("script");
+ s1.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js";
+ s2.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js";
+ function failed(){document.getElementById('board-list').innerHTML='<p class="board-empty">게시판에 연결하지 못했습니다. 페이지를 새로고침해 주세요.</p>';}
+ s1.onerror=failed;s2.onerror=failed;
+ s1.onload=function(){document.head.appendChild(s2);};
+ s2.onload=function(){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);boardReady=true;boardLoad();firebase.database().ref('counts').once('value').then(function(snap){window.TOOL_USES=snap.val()||{};}).catch(function(){});}catch(e){failed();}};
+ document.head.appendChild(s1);
 }
 // ⑧-5 📝 자유게시판 (익명 · ㅇㅇ(IP) 표시 — 디시식) : posts/{id}, 댓글 pcmt/{postId}/{cmtId}
 var BOARD_IP=null, boardLastWrite=0, boardOpenId=null, boardPosts=[], boardCmts={};
@@ -4800,23 +4714,16 @@ function fmtBd(d){
     : (dt.getMonth()+1)+"."+dt.getDate();
 }
 function boardLoad(){
-  var list=document.getElementById("board-list"); if(!list) return;
-  if(!chatReady||!window.firebase){
-    list.innerHTML='<div class="small" style="text-align:center;padding:40px 0">📝 게시판 오픈 준비 중입니다.</div>';
-    return;
-  }
-  list.innerHTML='<div class="small" style="text-align:center;padding:30px 0">불러오는 중…</div>';
-  firebase.database().ref("posts").limitToLast(100).once("value").then(function(snap){
-    var v=snap.val()||{};
-    boardPosts=Object.keys(v).map(function(k){var p=v[k]||{};p._id=k;return p;})
-      .sort(function(a,b){return (b.d||0)-(a.d||0);});
-    return firebase.database().ref("pcmt").once("value");
-  }).then(function(cs){
-    boardCmts=(cs&&cs.val())||{};
-    renderBoardList();
-  }).catch(function(){
-    list.innerHTML='<div class="small" style="text-align:center;padding:40px 0">불러오기에 실패했습니다. ↻ 새로고침을 눌러주세요.</div>';
-  });
+ var list=document.getElementById('board-list');if(!list)return;
+ var version=++boardLoadVersion,category=boardCur;
+ if(!boardReady||!window.firebase){list.innerHTML='<p class="board-empty">게시판에 연결하고 있습니다.</p>';return;}
+ list.innerHTML='<p class="board-empty" role="status">글을 불러오고 있습니다.</p>';
+ firebase.database().ref('posts').orderByChild('board').equalTo(SGBoards.queryValue(category)).limitToLast(100).once('value').then(function(snap){
+  if(version!==boardLoadVersion)return null;
+  var values=snap.val()||{};
+  boardPosts=Object.keys(values).map(function(key){return Object.assign({},values[key],{_id:key});}).filter(function(p){return SGBoards.belongs(p,category);}).sort(function(a,b){return (b.d||0)-(a.d||0);});
+  return Promise.all(boardPosts.map(function(p){return firebase.database().ref('pcmt/'+p._id).once('value').then(function(s){return [p._id,s.val()||{}];});}));
+ }).then(function(comments){if(version!==boardLoadVersion||!comments)return;boardCmts={};comments.forEach(function(pair){boardCmts[pair[0]]=pair[1];});renderBoardList();}).catch(function(){if(version===boardLoadVersion)list.innerHTML='<p class="board-empty">글을 불러오지 못했습니다. 위의 새로고침 버튼으로 다시 시도해 주세요.</p>';});
 }
 function renderBoardList(){
   var list=document.getElementById("board-list"); if(!list) return;
@@ -4827,11 +4734,11 @@ function renderBoardList(){
   var no=boardPosts.length;
   list.innerHTML='<div class="bbs">'+boardPosts.map(function(p,i){
     var id=p._id, cm=boardCmts[id]||{}, cn=Object.keys(cm).length;
-    var row='<div class="bbs-row" onclick="boardOpen(\''+id+'\')">'
+    var row='<button type="button" class="bbs-row" aria-expanded="'+(boardOpenId===id)+'" onclick="boardOpen(\''+id+'\')">'
       +'<span class="bno">'+(no-i)+'</span>'
       +'<span class="btit">'+escHtml(String(p.t||"").slice(0,100))+(cn?' <em class="bcnt">['+cn+']</em>':'')+'</span>'
       +'<span class="bwho">'+escHtml(String(p.n||"ㅇㅇ").slice(0,10))+'('+escHtml(String(p.ip||"0.0").slice(0,15))+')</span>'
-      +'<span class="bdate">'+fmtBd(p.d)+'</span></div>';
+      +'<span class="bdate">'+fmtBd(p.d)+'</span></button>';
     if(boardOpenId===id){
       var carr=Object.keys(cm).map(function(k){return cm[k];}).sort(function(a,b){return (a.d||0)-(b.d||0);});
       row+='<div class="bbs-view">'
@@ -4857,38 +4764,40 @@ function boardToggleWrite(){
   if(w) w.hidden=!w.hidden;
 }
 function boardWrite(){
-  if(!chatReady||!window.firebase){alert("게시판 오픈 준비 중입니다.");return;}
+  if(!boardReady||!window.firebase){alert("게시판 연결 후 다시 시도해 주세요.");return;}
+  if(boardSaving)return;
   var nk=(document.getElementById("bw-nick").value||"").trim()||"ㅇㅇ";
   var t=(document.getElementById("bw-title").value||"").trim();
   var b=(document.getElementById("bw-body").value||"").trim();
   if(!t){alert("제목을 입력해 주세요.");return;}
   if(!b){alert("내용을 입력해 주세요.");return;}
-  if(CHAT_BAN.test(nk+" "+t+" "+b)){alert("부적절한 표현이 포함되어 등록할 수 없습니다.");return;}
+  if(BOARD_BAN.test(nk+" "+t+" "+b)){alert("부적절한 표현이 포함되어 등록할 수 없습니다.");return;}
   if(/https?:\/\//i.test(t+" "+b)){alert("링크는 넣을 수 없습니다. (스팸 방지)");return;}
   var now=Date.now();
   if(now-boardLastWrite<30000){alert("도배 방지: 30초에 한 번만 작성할 수 있어요.");return;}
+  var targetBoard=boardCur;boardSaving=true;document.getElementById("board-submit").disabled=true;
   boardIp(function(ip){
     boardLastWrite=Date.now();
     firebase.database().ref("posts").push({
-      n:nk.slice(0,10),ip:ip,t:t.slice(0,100),b:b.slice(0,2000),d:firebase.database.ServerValue.TIMESTAMP
+      board:SGBoards.queryValue(targetBoard),n:nk.slice(0,10),ip:ip,t:t.slice(0,100),b:b.slice(0,2000),d:firebase.database.ServerValue.TIMESTAMP
     }).then(function(){
       document.getElementById("bw-title").value="";
       document.getElementById("bw-body").value="";
       var w=document.getElementById("board-write"); if(w) w.hidden=true;
       boardLoad();
-    }).catch(function(){alert("등록에 실패했습니다. 잠시 후 다시 시도해 주세요.");});
+    }).catch(function(){boardLastWrite=0;alert("등록에 실패했습니다. 작성한 글은 유지됩니다. 잠시 후 다시 시도해 주세요.");}).finally(function(){boardSaving=false;document.getElementById("board-submit").disabled=false;});
   });
 }
 function boardCmt(id){
-  if(!chatReady||!window.firebase) return;
+  if(!boardReady||!window.firebase) return;
   var el=document.getElementById("bc-in"); if(!el) return;
   var t=(el.value||"").trim(); if(!t) return;
   if(t.length>200){alert("200자 이내로 입력해 주세요.");return;}
-  if(CHAT_BAN.test(t)){alert("부적절한 표현이 포함되어 있습니다.");return;}
+  if(BOARD_BAN.test(t)){alert("부적절한 표현이 포함되어 있습니다.");return;}
   if(/https?:\/\//i.test(t)){alert("링크는 넣을 수 없습니다.");return;}
   var now=Date.now();
-  if(now-chatLastSend<5000){alert("잠시 후 다시 시도해 주세요. (5초 간격)");return;}
-  chatLastSend=now;
+  if(now-boardLastComment<5000){alert("잠시 후 다시 시도해 주세요. (5초 간격)");return;}
+  boardLastComment=now;
   boardIp(function(ip){
     firebase.database().ref("pcmt/"+id).push({
       n:"ㅇㅇ",ip:ip,t:t.slice(0,200),d:firebase.database.ServerValue.TIMESTAMP
@@ -4900,7 +4809,7 @@ function boardCmt(id){
     }).catch(function(){});
   });
 }
-chatInit();
+boardInit();
 
 // ⑨ 매 10분(+10초) 자동 갱신 등록 — 10분 간격
 scheduleHourly(loadNews);
