@@ -1,50 +1,41 @@
 {
- "updated": "2026-09-07 11:59",
+ "updated": "2026-09-08 11:48",
  "items": [
   {
-   "name": "Ibrahima Diaby",
+   "name": "Alexandru Pop",
+   "pos": "중앙 공격수",
+   "from": "FC Dinamo 1948",
+   "to": "Ironi Kiryat Shmona",
+   "fee": "150 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/434892/transfer_id/6574084"
+  },
+  {
+   "name": "Ivan Zhelizko",
    "pos": "수비형 미드필더",
-   "from": "Cercle Brugge ",
-   "to": "알 아흘리 SFC",
-   "fee": "13.50 mil. €",
+   "from": "Lechia Gdansk",
+   "to": "Ludogorets Razgrad",
+   "fee": "4.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1053160/transfer_id/6571894"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/417229/transfer_id/6573027"
   },
   {
-   "name": "Pedro Henrique",
-   "pos": "중앙 수비수",
-   "from": "Red Bull Bragantino",
-   "to": "Al-Ettifaq FC",
-   "fee": "500 k €",
+   "name": "Mathys de Carvalho",
+   "pos": "수비형 미드필더",
+   "from": "올랭피크 리옹",
+   "to": "Al-Diriyah FC",
+   "fee": "1.10 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/329720/transfer_id/6571761"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1004486/transfer_id/6574298"
   },
   {
-   "name": "Léo Borges",
-   "pos": "좌측 풀백",
-   "from": "Pogon Szczecin",
-   "to": "SK Sigma Olomouc",
-   "fee": "700 k €",
+   "name": "Abdulaziz Al-Aliwa",
+   "pos": "좌측 윙 포워드",
+   "from": "알콜루드 클럽",
+   "to": "Al-Qadsiah FC",
+   "fee": "3.45 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/681692/transfer_id/6570581"
-  },
-  {
-   "name": "Jan Jurcec",
-   "pos": "우측 측면 미드필더",
-   "from": "Kryvbas Kryvyi Rig",
-   "to": "Slask Wroclaw",
-   "fee": "250 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/672616/transfer_id/6569424"
-  },
-  {
-   "name": "José Antonio de la Rosa",
-   "pos": "우측 윙 포워드",
-   "from": "Cádiz CF",
-   "to": "Wieczysta Krakow",
-   "fee": "700 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1027993/transfer_id/6568848"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/748080/transfer_id/6573077"
   }
  ]
 }
