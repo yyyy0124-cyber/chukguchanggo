@@ -1,41 +1,32 @@
 {
- "updated": "2026-09-08 11:48",
+ "updated": "2026-09-10 12:09",
  "items": [
   {
-   "name": "Alexandru Pop",
+   "name": "Ivan Oleynikov",
+   "pos": "공격형 미드필더",
+   "from": "Krylya Sovetov Samara",
+   "to": "CSKA Moscow",
+   "fee": "1.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/371627/transfer_id/6578903"
+  },
+  {
+   "name": "Alan Lescano",
+   "pos": "공격형 미드필더",
+   "from": "AA Argentinos Juniors",
+   "to": "Clube de Regatas Vasco da Gama",
+   "fee": "6.45 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/991134/transfer_id/6578250"
+  },
+  {
+   "name": "Ivan Mamut",
    "pos": "중앙 공격수",
-   "from": "FC Dinamo 1948",
-   "to": "Ironi Kiryat Shmona",
-   "fee": "150 k €",
+   "from": "NK Varazdin",
+   "to": "Persija Jakarta",
+   "fee": "500 k €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/434892/transfer_id/6574084"
-  },
-  {
-   "name": "Ivan Zhelizko",
-   "pos": "수비형 미드필더",
-   "from": "Lechia Gdansk",
-   "to": "Ludogorets Razgrad",
-   "fee": "4.00 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/417229/transfer_id/6573027"
-  },
-  {
-   "name": "Mathys de Carvalho",
-   "pos": "수비형 미드필더",
-   "from": "올랭피크 리옹",
-   "to": "Al-Diriyah FC",
-   "fee": "1.10 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1004486/transfer_id/6574298"
-  },
-  {
-   "name": "Abdulaziz Al-Aliwa",
-   "pos": "좌측 윙 포워드",
-   "from": "알콜루드 클럽",
-   "to": "Al-Qadsiah FC",
-   "fee": "3.45 mil. €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/748080/transfer_id/6573077"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/446996/transfer_id/6579189"
   }
  ]
 }
