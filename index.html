@@ -837,35 +837,7 @@ if(GA_ID){
       </section>
 
       <!-- ══════════ 도구 4: 유니폼 사이즈 가이드 ══════════ -->
-      <section class="tool" id="uniform">
-        <h2>👕 유니폼 사이즈 가이드 (아시아 · US · EU · 남미)</h2>
-        <div class="desc">가슴둘레로 대략적인 표기를 비교하는 참고표입니다. 실제 구매는 브랜드·모델별 실측표를 확인하세요.</div>
-        <div class="frow">
-          <div class="field">
-            <label>가슴둘레 (cm)</label>
-            <input type="number" id="un-chest" placeholder="예: 98" min="80" max="120">
-          </div>
-          <div class="field">
-            <label>선호 핏</label>
-            <select id="un-fit">
-              <option value="0">정핏</option>
-              <option value="1">여유핏 (한 치수 업)</option>
-            </select>
-          </div>
-          <button class="go" onclick="convUniform()">사이즈 보기</button>
-        </div>
-        <div class="result" id="un-out"></div>
-        <details>
-          <summary>지역별 사이즈 비교표 + 직구 팁 보기</summary>
-          <table class="chart" id="un-chart">
-            <tr><th>가슴둘레</th><th>아시아 (한국·일본)</th><th>US</th><th>EU</th><th>남미 (브라질)</th></tr>
-          </table>
-          <div class="note" style="line-height:1.8">
-            <b>구매 전 확인</b><br>지역 이름만으로 사이즈를 확정할 수 없습니다. 같은 표기라도 브랜드·모델별 실측이 다릅니다. 제조사 실측표와 가지고 있는 옷을 비교하세요.
-          </div>
-        </details>
-        <div class="note">👕 사이즈를 확인했다면? → <a href="#" onclick="return openArticle('jersey')" style="color:var(--pitch);font-weight:700">유니폼 정품 vs 레플리카 구분법</a></div>
-      </section>
+      <section class="tool" id="uniform"><h2>👕 유니폼 사이즈 비교</h2><div class="desc">내 옷과 구매할 유니폼의 가슴 단면·총장을 비교합니다.</div><a class="go" href="/tools/uniform/">실측 비교 도구 열기</a></section>
 
       <!-- 광고 슬롯 ⑤ 퀴즈 위 인피드 -->
       <div class="ad-slot" style="height:120px;margin-bottom:22px">광고 슬롯 ⑤ 인피드(반응형) — 퀴즈 진입 전 배치</div>
@@ -1801,41 +1773,7 @@ renderSideDday();
 
 // ── 도구 4: 유니폼 사이즈 가이드 ───────────────────────
 // 일반 참고 기준 (브랜드별 상이) — [가슴둘레lo, hi, 아시아, US, EU, 남미(BR)]
-const UNI=[
-  [86,91,"M (95)","S","S","P"],
-  [91,96,"L (100)","M","M","M"],
-  [96,101,"XL (105)","L","L","G"],
-  [101,106,"2XL (110)","XL","XL","GG"],
-  [106,111,"3XL (115)","2XL","XXL","3G"]
-];
-const unChart=document.getElementById("un-chart");
-UNI.forEach((r,i)=>{
-  const tr=document.createElement("tr");
-  tr.dataset.i=i;
-  tr.innerHTML=`<td>${r[0]}~${r[1]}cm</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td>`;
-  unChart.appendChild(tr);
-});
-function convUniform(){
-  const chest=parseFloat(document.getElementById("un-chest").value);
-  const fitUp=parseInt(document.getElementById("un-fit").value,10);
-  const out=document.getElementById("un-out");
-  document.querySelectorAll("#un-chart tr").forEach(tr=>tr.classList.remove("hit"));
-  if(!chest||chest<80||chest>120){
-    out.className="result show";
-    out.innerHTML="가슴둘레를 80~120cm 사이로 입력해 주세요. (측정법: 겨드랑이 바로 아래 가장 넓은 부분을 수평으로 잰 길이)";
-    return;
-  }
-  let idx=UNI.findIndex(r=>chest>=r[0]&&chest<r[1]);
-  if(idx===-1) idx=chest<86?0:UNI.length-1;
-  idx=Math.min(idx+fitUp,UNI.length-1);
-  const r=UNI[idx];
-  out.className="result show";
-  out.innerHTML=`가슴둘레 <b>${chest}cm</b>${fitUp?" + 여유핏":""} 기준 → `
-    +`아시아 <b>${r[2]}</b> · US <b>${r[3]}</b> · EU <b>${r[4]}</b> · 남미(BR) <b>${r[5]}</b>`
-    +`<div class="small">어센틱(선수용)은 타이트하게 나오니 한 치수 업, 아르헨티나 구단 제품은 슬림핏이 많으니 여유 있게 권장합니다.</div>`;
-  const tr=document.querySelector(`#un-chart tr[data-i="${idx}"]`);
-  if(tr){tr.classList.add("hit"); tr.closest("details").open=true;}
-}
+function convUniform(){location.href='/tools/uniform/';}
 
 // ── 도구 5: 축구 팬 레벨 테스트 (랜덤 출제 은행) ────────
 // 사실 데이터 약 160건 × 무작위 오답·순서 조합 → 1,000개 이상의 문제 변형이 생성됩니다.
@@ -4849,6 +4787,6 @@ c.fillStyle="rgba(255,255,255,.75)";c.font="16px sans-serif";c.fillText("chukguc
 cv.style.display="block";var dl=document.getElementById("b11-dl");dl.href=cv.toDataURL("image/png");dl.style.display="inline-block";return false;};})();</script>
 <script src="/news-filters.js?v=0908-filter1"></script>
 <script src="/homepage.js?v=0908-filter1"></script>
-<script src="/internal.js?v=0908-review1"></script>
+<script src="/internal.js?v=0910-tools1"></script>
 </body>
 </html>
