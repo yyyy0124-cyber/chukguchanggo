@@ -22,6 +22,7 @@
  window.navTool=function(id){
   const aliases={goalpace:'goal-pace',tripcost:'trip-cost',fx:'fx-calc',stud:'stud-pick',bootsize:'boot-size',fpl:'fpl-budget',glossary:'term-search','jersey-size':'uniform'};
   id=aliases[id]||id;
+  if(['uniform','best11','balance-game'].includes(id)){location.href='/tools/'+id+'/';return false;}
   const el=$(id);
   if(!el||!el.classList.contains('tool'))return window.navTo('tools');
   const r=oldTool(id);
@@ -40,6 +41,7 @@
  };
  mode();
  const hash=location.hash.slice(1);
+ if(['uniform','best11','balance-game'].includes(hash)){location.replace('/tools/'+hash+'/');return;}
  if(['about','privacy','contact'].includes(hash))window.navTo(hash);
  else if($(hash)?.classList.contains('tool'))window.navTool(hash);
  else if(hash.startsWith('article-'))window.openArticle(hash.slice(8));

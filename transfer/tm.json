@@ -1,32 +1,23 @@
 {
- "updated": "2026-09-10 12:09",
+ "updated": "2026-09-11 12:09",
  "items": [
   {
-   "name": "Ivan Oleynikov",
-   "pos": "공격형 미드필더",
-   "from": "Krylya Sovetov Samara",
-   "to": "CSKA Moscow",
-   "fee": "1.00 mil. €",
+   "name": "Maximiliano Gutiérrez",
+   "pos": "우측 윙 포워드",
+   "from": "CA Independiente",
+   "to": "Dynamo Moscow",
+   "fee": "6.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/371627/transfer_id/6578903"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/965323/transfer_id/6580123"
   },
   {
-   "name": "Alan Lescano",
-   "pos": "공격형 미드필더",
-   "from": "AA Argentinos Juniors",
-   "to": "Clube de Regatas Vasco da Gama",
-   "fee": "6.45 mil. €",
+   "name": "Nikolay Titkov",
+   "pos": "중앙 미드필더",
+   "from": "Baltika Kaliningrad",
+   "to": "Lokomotiv Moscow",
+   "fee": "1.25 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/991134/transfer_id/6578250"
-  },
-  {
-   "name": "Ivan Mamut",
-   "pos": "중앙 공격수",
-   "from": "NK Varazdin",
-   "to": "Persija Jakarta",
-   "fee": "500 k €",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/446996/transfer_id/6579189"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/606526/transfer_id/6579975"
   }
  ]
 }
