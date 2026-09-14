@@ -24,7 +24,7 @@
  home.addEventListener('error',event=>fallbackThumbnail(event.target),true);
  home.querySelectorAll('img.sg-vc-thumb').forEach(img=>{if(img.complete&&!img.naturalWidth)fallbackThumbnail(img);});
  // 화면 읽기 순서는 모바일의 뉴스 → 도구 → 영상 → 매거진 순서와 일치한다.
- const tagline=document.querySelector('header .tagline');if(tagline)tagline.textContent='축구 뉴스 · 영상 · 도구';
+ const tagline=document.querySelector('header .tagline');if(tagline)tagline.textContent='축구팬을 위한 모든 것을 한곳에';
  // 모든 메뉴의 첫 화면을 홈과 같은 제목 체계로 맞춘다.
  const sections={intl:['해외축구','주요 리그별 뉴스와 해외축구 소식'],domestic:['국내축구','K리그와 대한민국 축구 소식'],transfer:['이적시장','이적 보도와 루머 · 확정 여부는 구단 발표 확인'],mag:['매거진','축구를 보는 데 도움이 되는 가이드와 분석'],hot:['주요 소식','축구 뉴스 모아보기'],players:['한국 선수','해외와 국내에서 뛰는 한국 선수 소식']};
  Object.entries(sections).forEach(([id,[title,desc]])=>{
