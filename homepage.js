@@ -28,14 +28,14 @@
   input.placeholder = '선수·도구·글 검색';
   input.setAttribute('aria-label', '선수, 도구, 글, 영상 검색');
   const settings = document.createElement('button');
-  settings.id = 'hr-settings'; settings.type = 'button'; settings.textContent = '설정 · 글꼴 / 화면';
+  settings.id = 'hr-settings'; settings.type = 'button'; settings.textContent = '설정 · 블랙 / 화이트 모드';
   settings.onclick = event => { event.stopPropagation(); window.sgSheetClose(false); window.scrollTo({top:0,behavior:'instant'}); toggleCfg(); const first = document.querySelector('#cfg-panel button'); if (first) first.focus(); };
   document.getElementById('sg-sheet').appendChild(settings);
   document.addEventListener('keydown', event => {
     const panel = document.getElementById('cfg-panel');
     if (event.key === 'Escape' && !panel.hidden) {
       panel.hidden = true;
-      const target = document.getElementById(matchMedia('(max-width:600px)').matches ? 'sg-sheet-btn' : 'cfg-btn');
+      const target = document.getElementById('cfg-btn');
       target.focus();
     }
   });
@@ -101,9 +101,10 @@
         return {t:title ? title.textContent : '',l:link ? link.getAttribute('href') : '',d:stamp ? Date.parse(stamp[0].replace(' ','T')+':00+09:00') : 0,src:text.split('·')[0].trim(),category,summary,archive:true};
       });
     } catch (_) { /* The existing collectors can still supply the live list. */ }
-    finally { settled=true; renderNews(); }
+    finally { settled=true; renderNews(); document.dispatchEvent(new CustomEvent('sg-news-archive',{detail:archive})); }
   }
   renderNews(); loadArchive();
+  scheduleHourly(loadArchive,5);
 
   // Extend the existing tool/article search without changing its navigation behavior.
   const previousSearch = window.gSearch;

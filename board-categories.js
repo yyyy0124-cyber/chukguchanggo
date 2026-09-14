@@ -10,8 +10,8 @@
   {id:'national',icon:'🇰🇷',name:'국가대표',group:'한국축구',description:'남녀 국가대표와 연령별 대표팀 이야기를 나누세요.'},
   {id:'free',icon:'📝',name:'자유게시판',group:'자유 이야기',description:'주제에 구애받지 않고 축구 이야기를 나누세요. 기존 자유게시판 글도 이곳에 있습니다.'}
  ];
- function find(id){return categories.find(c=>c.id===id)||null;}
- function belongs(post,id){return !!find(id)&&(post.board||'free')===id;}
- function queryValue(id){if(!find(id))throw new Error('Unknown board');return id==='free'?null:id;}
+ function find(id){if(id==='all')return {id:'all',name:'전체 이야기',description:'리그와 팀을 넘어, 지금 나누고 싶은 축구 이야기.'};return categories.find(c=>c.id===id)||null;}
+ function belongs(post,id){return id==='all'?!!find(post.board||'free'):!!find(id)&&(post.board||'free')===id;}
+ function queryValue(id){if(id==='all'||!find(id))throw new Error('Unknown board');return id==='free'?null:id;}
  return {categories,find,belongs,queryValue};
 });
