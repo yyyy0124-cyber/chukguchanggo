@@ -7,7 +7,8 @@
   const main=document.querySelector('main,.wrap,.container');
   if(main&&!main.querySelector('.sg-section-nav')){
    const nav=document.createElement('nav');nav.className='sg-section-nav';nav.setAttribute('aria-label','주요 페이지');
-   [['/','홈'],['/news/','뉴스'],['/tools/','도구'],['/mag/','매거진'],['/players/korean/','한국 선수'],['/transfer/','이적시장']].forEach(([href,label])=>{const a=document.createElement('a');a.href=href;a.textContent=label;if(href!=='/'&&location.pathname.startsWith(href))a.setAttribute('aria-current','page');nav.append(a);});
+   const info=/^\/(about|privacy|terms|contact)\.html$/.test(location.pathname);
+   (info?[['/','← 홈으로']]:[['/','홈'],['/news/','뉴스'],['/tools/','도구'],['/mag/','매거진'],['/transfer/','이적시장']]).forEach(([href,label])=>{const a=document.createElement('a');a.href=href;a.textContent=label;if(href!=='/'&&location.pathname.startsWith(href))a.setAttribute('aria-current','page');nav.append(a);});
    main.prepend(nav);
   }
  }
