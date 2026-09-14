@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>축구창고 — 링크 모음</title>
-<meta name="description" content="축구창고의 모든 링크 — 무료 축구 도구 60종, 뉴스, 인스타그램, 유튜브">
+<meta name="description" content="한국 선수 소식부터 무료 축구 도구와 직관 가이드까지, 축구창고에서 이어보세요.">
 <meta property="og:title" content="축구창고 — 링크 모음">
-<meta property="og:description" content="축구 도구 60종 · 뉴스 · SNS를 한곳에서">
+<meta property="og:description" content="한국 선수 소식 · 무료 축구 도구 · 매거진">
 <meta property="og:image" content="https://chukguchanggo.com/og-image-v2.png">
 <meta property="og:url" content="https://chukguchanggo.com/links">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -38,28 +38,34 @@ h1 span{color:#facc15}
 .btn.main small{color:#7c5e00}
 .sns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
 .sns .btn{justify-content:center;text-align:center}
+.section-title{font-size:13px;text-align:left;color:#e3daf4;margin:24px 4px 10px;font-weight:600}
+a:focus-visible{outline:3px solid #facc15;outline-offset:4px}
+.btn.main:focus-visible{outline-color:white}
+.btn small{line-height:1.6}
+@media(max-width:360px){.btn{padding:14px 12px;gap:8px}.sns{gap:8px}.sns .btn{font-size:13px}.sns .ic{display:none}}
+@media(prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover,.btn:active{transform:none}}
 .foot{margin-top:26px;font-size:12px;color:rgba(255,255,255,.5)}
 .foot a{color:rgba(255,255,255,.7)}
 </style>
 </head>
 <body>
-<div class="wrap">
+<main class="wrap">
   <img class="logo" src="icon-512.png" alt="축구창고 로고">
   <h1>축구<span>창고</span></h1>
-  <p class="bio">축구 팬을 위한 무료 도구 60종 · 매일 축구 뉴스 · 이적 오피셜<br>전부 무료 · 회원가입 없음</p>
-
-  <a class="btn main" href="https://chukguchanggo.com" onclick="track('home')">
-    <span class="ic">⚽</span><span>축구창고 홈<small>도구 60종 · 뉴스 · 커뮤니티 전부 여기에</small></span></a>
-
-  <a class="btn" href="https://chukguchanggo.com/#tools" onclick="track('tools')">
-    <span class="ic">🧰</span><span>도구함 바로가기<small>킥오프 한국시간 · 사이즈 변환 · 승점 계산기</small></span></a>
-
-  <a class="btn" href="https://chukguchanggo.com/#transfer" onclick="track('transfer')">
-    <span class="ic">🔁</span><span>오늘의 이적 오피셜<small>이적시장 소식 실시간 정리</small></span></a>
-
-  <a class="btn" href="https://chukguchanggo.com/#intl" onclick="track('news')">
-    <span class="ic">📰</span><span>해외축구 뉴스<small>10분마다 채워지는 헤드라인</small></span></a>
-
+  <p class="bio">한국 선수의 경기 이야기, 그다음이 궁금하다면.<br>선수 소식부터 직접 쓰는 축구 도구까지.</p>
+  <h2 class="section-title">영상 보고 오셨나요?</h2>
+  <a class="btn main" href="https://chukguchanggo.com/players/korean/" onclick="track('korean_players')">
+    <span class="ic" aria-hidden="true">🇰🇷</span><span>한국 선수 소식 모아보기<small>선수별 소식과 공식 정보 확인하기</small></span></a>
+  <a class="btn" href="https://chukguchanggo.com/news/" onclick="track('news')">
+    <span class="ic" aria-hidden="true">📰</span><span>축구 뉴스 이어보기<small>날짜별 소식과 기사 원문 찾아보기</small></span></a>
+  <h2 class="section-title">축구를 더 즐기는 방법</h2>
+  <a class="btn" href="https://chukguchanggo.com/tools/" onclick="track('tools')">
+    <span class="ic" aria-hidden="true">🧰</span><span>무료 축구 도구 사용하기<small>한국시간 변환 · 팀 나누기 · 경기 수 계산</small></span></a>
+  <a class="btn" href="https://chukguchanggo.com/mag/" onclick="track('magazine')">
+    <span class="ic" aria-hidden="true">📖</span><span>축구 매거진 읽기<small>첫 직관 준비부터 축구 용어와 경기 해설까지</small></span></a>
+  <a class="btn" href="https://chukguchanggo.com/transfer/" onclick="track('transfer')">
+    <span class="ic" aria-hidden="true">🔁</span><span>이적 소식 확인하기<small>선수의 이적 정보를 출처와 함께 확인</small></span></a>
+  <h2 class="section-title">편한 채널에서 만나요</h2>
   <div class="sns">
     <a class="btn" href="https://www.instagram.com/chukguchanggo/" onclick="track('instagram')">
       <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="#E4405F" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></span><span>인스타그램</span></a>
@@ -75,6 +81,6 @@ h1 span{color:#facc15}
     <span class="ic">📮</span><span>문의 · 제휴<small>chukguchanggo@gmail.com</small></span></a>
 
   <p class="foot">ⓒ 축구창고 · <a href="https://chukguchanggo.com">chukguchanggo.com</a></p>
-</div>
+</main>
 </body>
 </html>
