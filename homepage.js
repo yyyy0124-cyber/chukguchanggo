@@ -59,10 +59,10 @@
   }
   function renderNews() {
     const all = currentNews();
-    const rows = filters.select(all, selected);
+    const rows = selected === 'all' ? all.slice().sort((a,b)=>b.d-a.d).slice(0,4) : filters.select(all, selected);
     listBox.setAttribute('aria-busy', String(!settled && !all.length));
     const anyLive = all.some(n => !n.archive);
-    const label = {all:'한국 선수 우선',korean:'한국 선수 소식 · 최신순',intl:'해외 리그·국제축구 · 최신순',domestic:'K리그·한국 대표팀 · 최신순',transfer:'선수 영입·이적·재계약 · 최신순'}[selected];
+    const label = {all:'최신순',korean:'한국 선수 소식 · 최신순',intl:'해외 리그·국제축구 · 최신순',domestic:'K리그·한국 대표팀 · 최신순',transfer:'선수 영입·이적·재계약 · 최신순'}[selected];
     status.textContent = all.length ? (anyLive ? '최근 3일 소식' : archiveDate+' 수집본')+' · '+label+' · 한국시간' : settled ? '새 소식을 불러오지 못했습니다.' : '최신 소식을 확인하고 있습니다.';
     listBox.innerHTML = rows.length ? rows.map(n => '<a class="hr-news" href="'+esc(n.href)+'" target="_blank" rel="noopener noreferrer"><h3>'+esc(n.title)+'</h3><div class="hr-news-meta"><span class="hr-source">'+esc(n.source)+'</span><time datetime="'+new Date(n.d).toISOString()+'">'+esc(dateText(n.d))+(n.archive?' 수집':'')+'</time><span>원문 보기 ↗</span></div></a>').join('') : '<div class="hr-empty">'+(all.length ? '이 분야의 최근 소식이 아직 없습니다.' : settled ? '잠시 후 다시 방문하거나 날짜별 뉴스를 확인해 주세요.' : '뉴스를 불러오는 중입니다.')+'<a href="/news/">날짜별 뉴스 보기 →</a></div>';
   }
