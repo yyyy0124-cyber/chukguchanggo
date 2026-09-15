@@ -1,0 +1,5 @@
+(()=>{'use strict';
+const dir='/assets/editorial-v1/';
+for(const [id,alt] of [['kickoff','두 시계로 표현한 현지 시간과 한국시간'],['boot-size','축구화와 눈금으로 표현한 사이즈 확인'],['winrate','승리와 무승부, 패배를 비교하는 기록 그래픽'],['points-sim','승점 조합을 표현한 점수판 그래픽']]){const card=document.querySelector('#sg-tools-grid a[href="/tools/'+id+'/"]')||document.querySelector('#sg-tools-grid a[href="#'+id+'"]');if(!card)continue;const img=document.createElement('img');img.src=dir+id+'.svg';img.alt=alt;img.width=640;img.height=360;img.decoding='async';card.querySelector('.edition-diagram').replaceChildren(img);}
+for(const [id,alt] of [['watch','축구를 시청하는 밤의 거실을 표현한 생성 이미지'],['boots','축구화와 측정 도구를 표현한 생성 이미지'],['xg','축구공과 골문을 표현한 생성 이미지']]){const card=document.querySelector('#sg-mag-grid a[href="/mag/'+id+'/"]');if(!card)continue;const cover=card.querySelector('.edition-cover');cover.classList.add('photo-cover');cover.replaceChildren();const img=document.createElement('img');img.src=dir+id+'.webp';img.alt=alt;img.width=960;img.height=640;img.loading='lazy';img.decoding='async';cover.append(img);}
+})();
