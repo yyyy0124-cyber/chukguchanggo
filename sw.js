@@ -1,5 +1,5 @@
 // 축구창고 PWA 서비스워커 — 같은 도메인만 개입, 네트워크 우선(항상 최신) + 오프라인 캐시 폴백
-var CACHE = "chukgu-v10-content-0915";
+var CACHE = "chukgu-v11-home-0915";
 var ASSETS = ["/media-home.css?v=0914-release1","/media-edition.css?v=0914-release1","/media-edition.js?v=0915-content2","/transfer-news.js?v=0914-release1","/community-security-config.js?v=0914-release1","/community-security.js?v=0914-release1","/board-categories.js?v=0914-release1", "/community.css?v=0914-release1", "/", "/index.html", "/internal.css?v=0908-review1", "/internal.js?v=0915-content2", "/homepage.css?v=0908", "/news-filters.js?v=0908-filter1", "/homepage.js?v=0915-content2", "/logo_header.png", "/favicon.png", "/icon-192.png", "/manifest.json"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));
