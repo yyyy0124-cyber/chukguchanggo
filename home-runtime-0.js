@@ -1,0 +1,3267 @@
+
+// ── ⚙️ 설정 드롭다운 (모바일 대응: 컨트롤 4종 묶음) ─────
+function toggleCfg(){
+  const p=document.getElementById("cfg-panel");
+  if(p){p.hidden=!p.hidden;document.getElementById("cfg-btn").setAttribute("aria-expanded",String(!p.hidden));}
+  return false;
+}
+document.addEventListener("click",function(e){
+  const p=document.getElementById("cfg-panel");
+  if(p&&!p.hidden&&!e.target.closest("#cfg-panel")&&!e.target.closest("#cfg-btn")) p.hidden=true;
+  const g=document.getElementById("gs-out");
+  if(g&&!g.hidden&&!e.target.closest("#gs-wrap")) g.hidden=true;
+});
+
+// ── 🔎 상단바 통합 검색 (도구 + 글 + 게시판) ─────────────
+var GS_VIEWS=[["해외축구","intl"],["국내축구","domestic"],["이적시장","transfer"],["커뮤니티","part"],["게시판","part"],
+  ["킥오프 매거진","mag"],["추천 도구","hot"],["도구함","tools"],["소개","about"],["문의하기","contact"]];
+function gSearch(){
+  var inp=document.getElementById("gsearch"),out=document.getElementById("gs-out");
+  if(!inp||!out) return;
+  var q=(inp.value||"").trim().toLowerCase();
+  if(q.length<1){out.hidden=true;out.innerHTML="";return;}
+  var html="";
+  var tools=(window.ALLT||[]).filter(function(t){return t[2].toLowerCase().indexOf(q)>-1;}).slice(0,6);
+  if(tools.length){
+    html+='<div class="gcat">🧰 도구</div>'+tools.map(function(t){
+      return '<a href="#" onclick="return gsGo(\'tool\',\''+t[0]+'\')">'+t[1]+' '+t[2]+'</a>';
+    }).join("");
+  }
+  var arts=[];
+  try{
+    Object.keys(ARTICLES).forEach(function(k){
+      var a=ARTICLES[k];
+      if((a.t+" "+(a.cat||"")).toLowerCase().indexOf(q)>-1) arts.push([k,a.t]);
+    });
+  }catch(e){}
+  if(arts.length){
+    html+='<div class="gcat">📖 글</div>'+arts.slice(0,5).map(function(a){
+      return '<a href="#" onclick="return gsGo(\'art\',\''+a[0]+'\')">'+a[1]+'</a>';
+    }).join("");
+  }
+  var views=GS_VIEWS.filter(function(v){return v[0].toLowerCase().indexOf(q)>-1;});
+  if(views.length){
+    html+='<div class="gcat">📂 게시판</div>'+views.map(function(v){
+      return '<a href="#" onclick="return gsGo(\'view\',\''+v[1]+'\')">'+v[0]+'</a>';
+    }).join("");
+  }
+  out.innerHTML=html||'<div class="gcat">검색 결과가 없습니다</div>';
+  out.hidden=false;
+}
+function gsGo(kind,key){
+  var inp=document.getElementById("gsearch"),out=document.getElementById("gs-out");
+  if(out){out.hidden=true;out.innerHTML="";}
+  if(inp) inp.value="";
+  if(kind==="tool") navToolA(key);
+  else if(kind==="art") openArticle(key);
+  else navTo(key);
+  return false;
+}
+function gsKey(ev){
+  if(ev.key==="Enter"){
+    var first=document.querySelector("#gs-out a");
+    if(first){ev.preventDefault();first.click();}
+  }else if(ev.key==="Escape"){
+    var out=document.getElementById("gs-out");
+    if(out) out.hidden=true;
+  }
+}
+
+// ── 📤 결과 공유 (모바일: 공유 시트 / PC: 클립보드 복사) ──
+function shareText(t){
+  const msg=t+"\n\n⚽ 축구창고 "+location.href.split("#")[0];
+  if(navigator.share){
+    navigator.share({text:msg}).catch(function(){});
+  }else if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(
+      function(){alert("결과가 복사되었습니다! 원하는 곳에 붙여넣어 공유하세요.");},
+      function(){prompt("아래 내용을 복사하세요:",msg);}
+    );
+  }else{
+    prompt("아래 내용을 복사하세요:",msg);
+  }
+}
+function shareQuiz(){
+  shareText("🏟️ 축구 팬 레벨 테스트: "+(window.lastQuizScore||0)+"/10 — "+(window.lastQuizLevel||"")+"\n너도 도전해볼래?");
+}
+function sharePos(){
+  shareText("🧬 나의 축구 포지션 테스트 결과: "+(window.lastPos||"?")+"\n너는 어느 포지션일까?");
+}
+function shareSplit(){
+  if(window.lastSplit) shareText(window.lastSplit);
+}
+
+// ── 화이트/블랙 모드 전환 ──────────────────────────────
+// 우선순위: 저장된 선택 > OS 설정. 선택은 localStorage에 저장되어 재방문 시 유지.
+function applyTheme(mode){
+  document.documentElement.setAttribute("data-theme",mode);
+  ['light','dark'].forEach(function(value){const button=document.getElementById('mode-'+value);if(button)button.setAttribute('aria-pressed',String(mode===value));});
+}
+function chooseTheme(mode){
+  if(!['light','dark'].includes(mode))return;
+  try{localStorage.setItem('theme',mode);}catch(e){}
+  applyTheme(mode);
+}
+function toggleTheme(){chooseTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');}
+(function(){
+  let saved=null;
+  try{saved=localStorage.getItem("theme");}catch(e){}
+  const prefers=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(["light","dark"].includes(saved)?saved:(prefers?"dark":"light"));
+})();
+
+// 색상 팔레트·글꼴은 기본 디자인으로 고정한다.
+document.documentElement.removeAttribute('data-palette');
+document.documentElement.setAttribute('data-font','system');
+// ── 뷰(탭) 전환: 항목 클릭 시 해당 내용만 표시 ──────────
+let lastListView="home";
+// ── 브라우저 뒤로가기 지원: 화면 전환을 URL 해시로 히스토리에 기록 ──
+var NAV_SILENT=false; // true면 해시를 기록하지 않음 (뒤로가기로 인한 이동일 때)
+function setHash(h){
+  if(NAV_SILENT) return;
+  if("#"+h===location.hash) return;
+  try{history.pushState(null,"","#"+h);}
+  catch(e){NAV_SILENT=true;location.hash=h;setTimeout(function(){NAV_SILENT=false;},0);}
+}
+function navTo(v){
+  curView=v;
+  if(v!=="article") setHash(v);
+  if(v!=="article") lastListView=v;
+  if(LANG==="en") setTimeout(function(){translateView(v);},80); // EN 모드: 새 화면 자동 번역
+  document.querySelectorAll("[data-view]").forEach(el=>{
+    el.hidden = !el.dataset.view.split(" ").includes(v);
+  });
+  document.querySelectorAll("nav a[data-nav]").forEach(a=>{
+    a.classList.toggle("on", a.dataset.nav===v);
+    if(a.dataset.nav===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+  return false; // 링크 기본 동작 방지
+}
+function navTool(id){
+  const s=NAV_SILENT; NAV_SILENT=true;
+  navTo("tools");
+  NAV_SILENT=s; setHash(id);
+  setTimeout(()=>{const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:"smooth",block:"start"});},80);
+}
+
+// ── 도구 1: 축구화 사이즈 변환 ─────────────────────────
+// 표준 남성 사이즈 참고표 (브랜드별 상이할 수 있음)
+const SIZES = [
+  [240,"38.5","5.5","6"],[245,"39","6","6.5"],[250,"40","6","7"],
+  [255,"40.5","6.5","7.5"],[260,"41","7","8"],[265,"42","7.5","8.5"],
+  [270,"42.5","8","9"],[275,"43","8.5","9.5"],[280,"44","9","10"],
+  [285,"44.5","9.5","10.5"],[290,"45","10","11"],[295,"45.5","10.5","11.5"],
+  [300,"46","11","12"]
+];
+const chart = document.getElementById("bs-chart");
+if(chart) SIZES.forEach(r=>{
+  const tr=document.createElement("tr");
+  tr.dataset.mm=r[0];
+  tr.innerHTML=`<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>`;
+  chart.appendChild(tr);
+});
+function convBoot(){
+  const mm=parseInt(document.getElementById("bs-mm").value,10);
+  const out=document.getElementById("bs-out");
+  document.querySelectorAll("#bs-chart tr").forEach(tr=>tr.classList.remove("hit"));
+  if(!mm||mm<230||mm>310){
+    out.className="result show";
+    out.innerHTML="발 길이를 230~310mm 사이로 입력해 주세요.";
+    return;
+  }
+  // 가장 가까운 5mm 단위로 매칭 (같은 거리면 큰 쪽 = 여유 있는 사이즈)
+  let best=SIZES[0];
+  if(chart) SIZES.forEach(r=>{
+    const d=Math.abs(r[0]-mm), bd=Math.abs(best[0]-mm);
+    if(d<bd||(d===bd&&r[0]>best[0])) best=r;
+  });
+  out.className="result show";
+  out.innerHTML=`발 길이 <b>${mm}mm</b> 기준 → EU <b>${best[1]}</b> · UK <b>${best[2]}</b> · US <b>${best[3]}</b>`
+    +`<div class="small">참고용 대응표입니다. 실제 구매 전 브랜드·모델별 사이즈표와 착화감을 확인하세요.</div>`;
+  const tr=document.querySelector(`#bs-chart tr[data-mm="${best[0]}"]`);
+  if(tr){tr.classList.add("hit"); tr.closest("details").open=true;}
+}
+
+// ── 도구 2: 킥오프 한국시간 변환 ───────────────────────
+// 방식: 해당 시간대의 UTC 오프셋을 Intl API로 구해 정확히 변환 (DST 자동 반영)
+function tzOffsetMin(tz, utcDate){
+  const f=new Intl.DateTimeFormat("en-US",{timeZone:tz,hour12:false,
+    year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+  const parts=Object.fromEntries(f.formatToParts(utcDate).map(x=>[x.type,x.value]));
+  const asUTC=Date.UTC(parts.year,parts.month-1,parts.day,parts.hour==="24"?0:parts.hour,parts.minute);
+  return (asUTC-utcDate.getTime())/60000;
+}
+function convKickoff(){
+  const tz=document.getElementById("ko-tz").value;
+  const d=document.getElementById("ko-date").value;
+  const tm=document.getElementById("ko-time").value;
+  const out=document.getElementById("ko-out");
+  if(!d||!tm){out.className="result show";out.innerHTML="날짜와 시간을 입력해 주세요.";return;}
+  const [y,mo,da]=d.split("-").map(Number), [h,mi]=tm.split(":").map(Number);
+  // 1차 추정 후 오프셋 보정 (2-pass)
+  let guess=new Date(Date.UTC(y,mo-1,da,h,mi));
+  let off=tzOffsetMin(tz,guess);
+  let utc=new Date(guess.getTime()-off*60000);
+  off=tzOffsetMin(tz,utc);
+  utc=new Date(guess.getTime()-off*60000);
+  const kst=new Date(utc.getTime()+9*60*60000);
+  const days=["일","월","화","수","목","금","토"];
+  const pad=n=>String(n).padStart(2,"0");
+  const kd=`${kst.getUTCFullYear()}년 ${kst.getUTCMonth()+1}월 ${kst.getUTCDate()}일 (${days[kst.getUTCDay()]}) ${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())}`;
+  const nextDay=(kst.getUTCDate()!==da)||(kst.getUTCMonth()+1!==mo);
+  out.className="result show";
+  out.innerHTML=`한국시간 <b>${kd}</b>${nextDay?' <span style="color:var(--danger);font-weight:700">— 한국 기준 다음 날 새벽!</span>':''}`
+    +`<div class="small">현지 시간대 오프셋 UTC${off>=0?"+":""}${off/60}시간 적용 (서머타임 자동 반영)</div>`;
+}
+// 오늘 날짜 기본값
+
+
+// ── 도구 3: 주요 경기·개막 D-day ───────────────────────
+// 개막일 출처: 각 리그 사무국 발표 (라리가는 잠정)
+const LEAGUES=[];
+function renderDday(){
+  const grid=document.getElementById("dday-grid");
+  const now=new Date();
+  const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  grid.innerHTML="";
+  LEAGUES.forEach(l=>{
+    const [y,m,d]=l.d.split("-").map(Number);
+    const target=Date.UTC(y,m-1,d);
+    const diff=Math.round((target-today)/86400000);
+    const card=document.createElement("div");
+    let num,cls="";
+    if(diff>0){num="D-"+diff;}
+    else if(diff===0){num="오늘!";cls="live";}
+    else{num="개막 완료";cls="live";}
+    card.className="dcard "+cls;
+    card.innerHTML=`<div class="flag">${l.f}</div><b>${l.n}</b><div class="dnum">${num}</div><small>${l.d.replace(/-/g,".")} · ${l.note}</small>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderSideDday(){
+  const el=document.getElementById("side-dday"); if(!el) return;
+  const now=new Date();
+  const today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  el.innerHTML=LEAGUES.map(function(l){
+    const p=l.d.split("-").map(Number);
+    const diff=Math.round((Date.UTC(p[0],p[1]-1,p[2])-today)/86400000);
+    if(diff<0) return "";
+    const num=diff===0?"오늘!":"D-"+diff;
+    return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px dashed var(--line);padding:2px 0"><span>'+l.f+" "+l.n+'</span><b style="color:var(--pitch)">'+num+"</b></div>";
+  }).join("")||'<div style="color:var(--sub)">예정된 일정이 없습니다</div>';
+}
+renderSideDday();
+
+// ── 도구 4: 유니폼 사이즈 가이드 ───────────────────────
+// 일반 참고 기준 (브랜드별 상이) — [가슴둘레lo, hi, 아시아, US, EU, 남미(BR)]
+function convUniform(){location.href='/tools/uniform/';}
+
+// ── 도구 5: 축구 팬 레벨 테스트 (랜덤 출제 은행) ────────
+// 사실 데이터 약 160건 × 무작위 오답·순서 조합 → 1,000개 이상의 문제 변형이 생성됩니다.
+// 데이터는 시즌과 무관한 확정 사실(홈구장·역대 기록·규칙·용어)만 사용해 갱신 부담이 없습니다.
+const QB={
+stadium:[["아스널","에미레이츠 스타디움"],["맨체스터 유나이티드","올드 트래퍼드"],["리버풀","안필드"],["맨체스터 시티","에티하드 스타디움"],["첼시","스탬퍼드 브리지"],["토트넘","토트넘 홋스퍼 스타디움"],["뉴캐슬","세인트 제임스 파크"],["웨스트햄","런던 스타디움"],["아스톤 빌라","빌라 파크"],["레알 마드리드","산티아고 베르나베우"],["바르셀로나","캄 노우"],["아틀레티코 마드리드","메트로폴리타노"],["바이에른 뮌헨","알리안츠 아레나"],["도르트문트","지그날 이두나 파크"],["유벤투스","알리안츠 스타디움(토리노)"],["AC 밀란","산 시로"],["파리 생제르맹","파르크 데 프랭스"],["마르세유","스타드 벨로드롬"],["아약스","요한 크루이프 아레나"],["포르투","이스타디우 두 드라강"],["셀틱","셀틱 파크"],["보카 주니어스","라 봄보네라"],["리버 플레이트","엘 모누멘탈"]],
+league:[["아스널","프리미어리그"],["맨체스터 유나이티드","프리미어리그"],["리버풀","프리미어리그"],["맨체스터 시티","프리미어리그"],["첼시","프리미어리그"],["토트넘","프리미어리그"],["뉴캐슬","프리미어리그"],["웨스트햄","프리미어리그"],["아스톤 빌라","프리미어리그"],["에버턴","프리미어리그"],["브라이턴","프리미어리그"],["레알 마드리드","라리가"],["바르셀로나","라리가"],["아틀레티코 마드리드","라리가"],["세비야","라리가"],["발렌시아","라리가"],["아틀레틱 빌바오","라리가"],["바이에른 뮌헨","분데스리가"],["도르트문트","분데스리가"],["레버쿠젠","분데스리가"],["RB 라이프치히","분데스리가"],["프랑크푸르트","분데스리가"],["유벤투스","세리에 A"],["AC 밀란","세리에 A"],["인터 밀란","세리에 A"],["나폴리","세리에 A"],["AS 로마","세리에 A"],["라치오","세리에 A"],["파리 생제르맹","리그 1"],["마르세유","리그 1"],["리옹","리그 1"],["모나코","리그 1"],["아약스","에레디비시"],["PSV 아인트호벤","에레디비시"],["페예노르트","에레디비시"],["포르투","프리메이라 리가"],["벤피카","프리메이라 리가"],["스포르팅","프리메이라 리가"]],
+leaguePool:["프리미어리그","라리가","분데스리가","세리에 A","리그 1","에레디비시","프리메이라 리가"],
+nick:[["거너스","아스널"],["레드 데블스","맨체스터 유나이티드"],["블루스","첼시"],["스퍼스","토트넘"],["토피스","에버턴"],["맥파이스(까치 군단)","뉴캐슬"],["해머스","웨스트햄"],["라 베키아 시뇨라(노부인)","유벤투스"],["네라추리","인터 밀란"],["로소네리","AC 밀란"],["로스 블랑코스","레알 마드리드"],["블라우그라나","바르셀로나"],["콜초네로스","아틀레티코 마드리드"]],
+wc:[["브라질",5],["독일",4],["이탈리아",4],["아르헨티나",3],["프랑스",2],["우루과이",2],["잉글랜드",1],["스페인",1]],
+ballon:[["1998","지네딘 지단"],["2004","안드리 셰브첸코"],["2005","호나우지뉴"],["2006","파비오 칸나바로"],["2007","카카"],["2013","크리스티아누 호날두"],["2016","크리스티아누 호날두"],["2018","루카 모드리치"],["2019","리오넬 메시"],["2022","카림 벤제마"]],
+ballonPool:["지네딘 지단","안드리 셰브첸코","호나우지뉴","파비오 칸나바로","카카","크리스티아누 호날두","루카 모드리치","리오넬 메시","카림 벤제마","웨인 루니","사비 에르난데스","안드레스 이니에스타","티에리 앙리"],
+player:[["티에리 앙리","아스널"],["스티븐 제라드","리버풀"],["프랭크 램파드","첼시"],["프란체스코 토티","AS 로마"],["파올로 말디니","AC 밀란"],["라이언 긱스","맨체스터 유나이티드"],["사비 에르난데스","바르셀로나"],["이케르 카시야스","레알 마드리드"],["잔루이지 부폰","유벤투스"],["박지성","맨체스터 유나이티드"],["손흥민","토트넘"],["필립 람","바이에른 뮌헨"]],
+term:[["하프스페이스","중앙과 측면 사이의 세로 공간"],["로우블록","자기 진영 깊숙이 내려앉은 밀집 수비"],["게겐프레싱","공을 뺏긴 직후 즉시 되빼앗으러 가는 역압박"],["빌드업","후방에서 패스로 공격을 전개하는 과정"],["오버래핑","풀백이 윙어 바깥쪽으로 추월해 올라가는 움직임"],["컷백","엔드라인 부근에서 페널티 지점 쪽으로 꺾어 내주는 패스"],["세컨볼","경합 이후 튀어나온 공"],["폴스나인","최전방에서 내려와 플레이메이킹하는 가짜 9번"],["인버티드 풀백","공격 시 중앙 미드필더 자리로 들어오는 풀백"],["더블 피벗","수비형 미드필더 2명을 나란히 두는 구성"],["xG","슛이 골이 될 확률을 합산한 기대득점 지표"],["스위칭","긴 패스로 반대 측면으로 공격 방향을 전환하는 것"],["포켓","상대 미드필더 라인과 수비 라인 사이의 빈 공간"],["박투박","공격과 수비 양면을 오가며 넓게 뛰는 미드필더"],["오프사이드 트랩","수비 라인을 일제히 끌어올려 상대를 오프사이드에 빠뜨리는 전술"],["클린시트","실점 없이 경기를 마치는 것"]],
+rules:[
+{q:"다음 중 오프사이드가 선언될 수 있는 상황은?",o:["스로인으로 받은 공","골킥으로 받은 공","코너킥으로 받은 공","프리킥으로 받은 공"],a:3,exp:"오프사이드는 스로인·골킥·코너킥에서 직접 받은 경우 적용되지 않습니다. 프리킥은 예외가 아닙니다."},
+{q:"페널티킥 상황에서 골키퍼에게 허용되는 것은?",o:["킥 전에 골라인 앞으로 나와 있기","킥 순간 한 발만 골라인에 닿아 있기","골대를 흔들어 시야 방해하기","키커에게 다가가 말 걸기"],a:1,exp:"킥이 이뤄지는 순간 최소 한 발이 골라인 위(또는 선상)에 있으면 됩니다."},
+{q:"EPL 38경기 무패 우승 '디 인빈시블스'를 달성한 팀은?",o:["맨체스터 유나이티드","아스널","첼시","리버풀"],a:1,exp:"2003-04 시즌 아스널이 26승 12무로 무패 우승했습니다."},
+{q:"다음 중 챔피언스리그(유러피언컵 포함)를 한 번도 우승하지 못한 클럽은?",o:["아스톤 빌라","노팅엄 포레스트","토트넘 홋스퍼","FC 포르투"],a:2,exp:"함정! 아스톤 빌라(1982)·노팅엄 포레스트(1979·80)·포르투(1987·2004)는 우승 경험이 있고, 토트넘은 2019 준우승이 최고 성적입니다."},
+{q:"골키퍼가 손으로 잡으면 백패스 반칙이 되는 경우는?",o:["같은 팀 선수가 발로 의도적으로 보낸 공","같은 팀 선수가 머리로 보낸 공","같은 팀 선수가 가슴으로 보낸 공","상대 선수가 찬 공"],a:0,exp:"발로 의도적으로 보낸 백패스만 손 처리 금지입니다."},
+{q:"남미 최대 더비 '수페르클라시코'는 어느 두 팀의 경기인가?",o:["상파울루 vs 코린치안스","플라멩구 vs 플루미넨세","보카 주니어스 vs 리버 플레이트","페냐롤 vs 나시오날"],a:2,exp:"아르헨티나 부에노스아이레스의 보카 주니어스와 리버 플레이트의 더비입니다."},
+{q:"현행 규칙상 토너먼트 연장전 방식은?",o:["골든골(먼저 넣으면 즉시 종료)","실버골(전반 종료 시 앞서면 종료)","연장 전·후반을 모두 치른 뒤 승부차기","연장 없이 곧바로 승부차기"],a:2,exp:"골든골·실버골은 2004년 이후 폐지됐고, 현재는 연장 전·후반 30분을 모두 치릅니다."},
+{q:"한 팀의 필드 위 인원이 몇 명 미만이 되면 경기를 진행할 수 없나?",o:["9명","8명","7명","6명"],a:2,exp:"경기 규칙 제3조: 한 팀은 최소 7명이 있어야 경기를 진행할 수 있습니다."},
+{q:"다음 중 VAR이 개입할 수 있는 판정이 아닌 것은?",o:["득점 장면","페널티킥 여부","코너킥 여부","다이렉트 퇴장"],a:2,exp:"VAR은 득점·페널티킥·다이렉트 퇴장·신원 오인 4가지 상황에만 개입합니다."},
+{q:"선수가 퇴장당하면 그 팀은?",o:["5분 후 교체 선수 투입 가능","다음 하프에 교체 투입 가능","교체 없이 10명으로 경기","벤치 선수로 즉시 교체"],a:2,exp:"퇴장 인원은 보충할 수 없어 수적 열세로 경기해야 합니다."},
+{q:"다음 중 직접 득점이 인정되지 않는 것은?",o:["골킥","코너킥","스로인","직접 프리킥"],a:2,exp:"스로인으로 곧장 들어간 골은 무효(상대 골이면 골킥, 자책이면 코너킥). 골킥·코너킥은 직접 득점이 인정됩니다."},
+{q:"공격수가 오프사이드 '위치'에 서 있기만 한 경우 판정은?",o:["즉시 간접 프리킥","경고 후 프리킥","반칙 아님 — 플레이에 관여해야 반칙","주심 재량"],a:2,exp:"위치 자체는 반칙이 아니며, 공에 관여하거나 상대를 방해할 때만 오프사이드가 선언됩니다."}
+]
+};
+const qPick=arr=>arr[Math.floor(Math.random()*arr.length)];
+function qShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function qWrong(pool,correct,n){
+  const uniq=Array.from(new Set(pool)).filter(x=>x!==correct);
+  return qShuffle(uniq).slice(0,n);
+}
+const QGEN=[
+  ()=>{const p=qPick(QB.stadium);return{q:p[0]+"의 홈구장은?",correct:p[1],pool:QB.stadium.map(x=>x[1]),exp:p[0]+"의 홈구장은 "+p[1]+"입니다."};},
+  ()=>{const p=qPick(QB.stadium);return{q:p[1]+"을(를) 홈으로 쓰는 클럽은?",correct:p[0],pool:QB.stadium.map(x=>x[0]),exp:p[1]+"은(는) "+p[0]+"의 홈구장입니다."};},
+  ()=>{const p=qPick(QB.league);return{q:p[0]+"이(가) 속한 리그는?",correct:p[1],pool:QB.leaguePool,exp:p[0]+"은(는) "+p[1]+" 소속입니다."};},
+  ()=>{const p=qPick(QB.nick);return{q:"'"+p[0]+"'라는 별명으로 불리는 클럽은?",correct:p[1],pool:QB.nick.map(x=>x[1]),exp:"'"+p[0]+"'은(는) "+p[1]+"의 별명입니다."};},
+  ()=>{const p=qPick(QB.wc);return{q:p[0]+"의 월드컵 우승 횟수는? (2022년 대회까지)",correct:p[1]+"회",pool:["0회","1회","2회","3회","4회","5회"],exp:p[0]+"은(는) 2022년까지 월드컵을 "+p[1]+"회 우승했습니다."};},
+  ()=>{const p=qPick(QB.ballon);return{q:p[0]+"년 발롱도르 수상자는?",correct:p[1],pool:QB.ballonPool,exp:p[0]+"년 발롱도르는 "+p[1]+"이(가) 수상했습니다."};},
+  ()=>{const p=qPick(QB.player);return{q:p[0]+"이(가) 커리어를 대표하는 시절을 보낸 클럽은?",correct:p[1],pool:QB.player.map(x=>x[1]),exp:p[0]+"의 대표 클럽은 "+p[1]+"입니다."};},
+  ()=>{const p=qPick(QB.term);return{q:"축구 용어 '"+p[0]+"'의 뜻은?",correct:p[1],pool:QB.term.map(x=>x[1]),exp:"'"+p[0]+"' = "+p[1]};},
+  ()=>{const p=qPick(QB.term);return{q:"다음 설명이 가리키는 용어는? — \""+p[1]+"\"",correct:p[0],pool:QB.term.map(x=>x[0]),exp:"'"+p[0]+"'에 대한 설명입니다."};},
+  ()=>({fixed:qPick(QB.rules)})
+];
+let usedQ=new Set(),qCur=null,qAnswered=false,blockN=0,blockCorrect=0,totalN=0,totalCorrect=0;
+function nextQuestion(){
+  let item=null,tries=0;
+  while(tries++<40){
+    const g=QGEN[Math.floor(Math.random()*QGEN.length)]();
+    if(g.fixed){
+      item={q:g.fixed.q,opts:g.fixed.o.slice(),a:g.fixed.o[g.fixed.a],exp:g.fixed.exp};
+    }else{
+      const wrong=qWrong(g.pool,g.correct,3);
+      if(wrong.length<3) continue;
+      item={q:g.q,opts:qShuffle([g.correct].concat(wrong)),a:g.correct,exp:g.exp};
+    }
+    if(!usedQ.has(item.q)) break; // 세션 내 중복 출제 방지
+  }
+  usedQ.add(item.q);
+  if(usedQ.size>150) usedQ.clear();
+  qCur=item; qAnswered=false;
+  const acc=totalN?Math.round(totalCorrect/totalN*100)+"% ("+totalCorrect+"/"+totalN+")":"—";
+  document.getElementById("quiz-box").innerHTML=
+    '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-bottom:8px">'
+    +'<span>이번 라운드 <b>'+(blockN+1)+' / 10</b></span><span>누적 정답률 '+acc+'</span></div>'
+    +'<div class="qq" style="font-weight:700;font-size:15px;margin-bottom:10px">'+item.q+'</div>'
+    +item.opts.map((o,i)=>'<button type="button" class="qopt" style="width:100%;text-align:left;font-family:inherit" onclick="answerQ('+i+')">'+o+'</button>').join("")
+    +'<div class="qexp" id="q-exp">💡 '+item.exp+'</div>'
+    +'<button class="go" id="q-next" onclick="nextQuestion()" style="margin-top:10px;display:none">다음 문제 →</button>';
+}
+function answerQ(i){
+  if(qAnswered) return;
+  qAnswered=true;
+  const btns=document.querySelectorAll("#quiz-box .qopt");
+  btns.forEach(function(b,j){
+    if(qCur.opts[j]===qCur.a) b.classList.add("correct");
+    else if(j===i) b.classList.add("wrong");
+    b.disabled=true; b.style.cursor="default";
+  });
+  if(qCur.opts[i]===qCur.a){blockCorrect++;totalCorrect++;}
+  blockN++; totalN++;
+  document.getElementById("q-exp").classList.add("show");
+  const nextBtn=document.getElementById("q-next");
+  nextBtn.style.display="inline-block";
+  if(blockN===10){
+    let level,msg;
+    if(blockCorrect<=3){level="⚽ 유망주";msg="이제 막 입덕하셨군요. '축구 용어 사전'부터 읽어보세요!";}
+    else if(blockCorrect<=6){level="🔄 로테이션 멤버";msg="기본기는 탄탄합니다. 하이라이트 말고 풀경기에 도전!";}
+    else if(blockCorrect<=8){level="⭐ 주전 멤버";msg="친구들 사이에서 축구 좀 본다는 소리 듣는 레벨.";}
+    else{level="🏆 레전드 (해설위원급)";msg="이 정도면 직접 분석 글을 쓰셔야 합니다.";}
+    window.lastQuizScore=blockCorrect;
+    window.lastQuizLevel=level;
+    // 주간 챌린지: 이번 주 최고 기록 갱신 (WK·renderChal은 하단 스크립트에 정의 — 클릭 시점엔 존재)
+    try{
+      const ck="chal-"+WK, prev=parseInt(localStorage.getItem(ck)||"-1",10);
+      if(blockCorrect>prev) localStorage.setItem(ck,String(blockCorrect));
+      if(typeof renderChal==="function") renderChal();
+    }catch(e){}
+    const out=document.getElementById("qz-out");
+    out.className="result show";
+    out.innerHTML="<b>"+blockCorrect+" / 10</b> — "+level
+      +'<div class="small">'+msg+" 다음 문제부터 새 라운드가 시작됩니다.</div>"
+      +'<button class="go" style="margin-top:8px" onclick="shareQuiz()">📤 결과 공유하기</button>';
+    blockN=0; blockCorrect=0;
+    nextBtn.textContent="새 라운드 시작 →";
+  }else{
+    nextBtn.textContent="다음 문제 →";
+  }
+}
+
+
+// ── 도구 6: 승점 시뮬레이터 ─────────────────────────────
+function simPoints(){
+  const now=parseInt(document.getElementById("ps-now").value,10);
+  const played=parseInt(document.getElementById("ps-played").value,10);
+  const total=parseInt(document.getElementById("ps-total").value,10);
+  const goal=parseInt(document.getElementById("ps-goal").value,10);
+  const out=document.getElementById("ps-out");
+  out.className="result show";
+  if([now,played,total,goal].some(isNaN)||total<played||now>played*3){
+    out.innerHTML="입력을 확인해 주세요. (총 경기 ≥ 치른 경기, 승점 ≤ 치른 경기×3)";return;
+  }
+  const left=total-played, max=now+left*3, need=goal-now;
+  if(need<=0){out.innerHTML="이미 목표 승점을 달성했습니다! 🎉 (현재 "+now+"점 ≥ 목표 "+goal+"점)";return;}
+  if(need>left*3){out.innerHTML="남은 "+left+"경기를 전승해도 최대 <b>"+max+"점</b> — 목표 "+goal+"점은 산술적으로 불가능합니다. 😢";return;}
+  const minW=Math.ceil(need/3);
+  const rem=need-(minW-1)*3;
+  const alt=(minW>1&&rem<3&&(minW-1)+rem<=left)?" 또는 "+(minW-1)+"승 "+rem+"무":"";
+  out.innerHTML="남은 <b>"+left+"경기</b>에서 <b>"+need+"점</b>이 더 필요합니다.<br>최소 시나리오: <b>"+minW+"승</b>"+alt
+    +"<div class='small'>최대 가능 승점 "+max+"점 · 남은 경기 전패 시 "+now+"점 유지</div>";
+}
+
+// ── 도구 7: 승률 계산기 ────────────────────────────────
+function calcWinRate(){
+  const w=parseInt(document.getElementById("wr-w").value,10)||0;
+  const d=parseInt(document.getElementById("wr-d").value,10)||0;
+  const l=parseInt(document.getElementById("wr-l").value,10)||0;
+  const out=document.getElementById("wr-out");
+  const g=w+d+l;
+  out.className="result show";
+  if(g===0){out.innerHTML="경기 수를 입력해 주세요.";return;}
+  const pts=w*3+d;
+  out.innerHTML=g+"경기 <b>"+w+"승 "+d+"무 "+l+"패</b><br>"
+    +"승률 <b>"+Math.round(w/g*1000)/10+"%</b> · 무패율 "+Math.round((w+d)/g*1000)/10+"%"
+    +(g>d?" · 무 제외 승률 "+Math.round(w/(g-d)*1000)/10+"%":"")
+    +"<div class='small'>승점 "+pts+"점 · 경기당 평균 "+(Math.round(pts/g*100)/100)+"점 (리그 우승권은 통상 경기당 2.2점 이상)</div>";
+}
+
+// ── 도구 8: 풋살 팀 나누기 + 대관비 1/N ─────────────────
+function splitFutsal(){
+  const names=(document.getElementById("fs-names").value||"").split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+  const cost=parseFloat(document.getElementById("fs-cost").value)||0;
+  const tn=parseInt(document.getElementById("fs-teams").value,10);
+  const out=document.getElementById("fs-out");
+  out.className="result show";
+  if(names.length<2){out.innerHTML="참가자를 2명 이상 입력해 주세요.";return;}
+  if(names.length<tn){out.innerHTML="참가자("+names.length+"명)가 팀 수("+tn+"팀)보다 적습니다.";return;}
+  const per=cost>0?Math.ceil(cost/names.length/100)*100:0;
+  const sh=qShuffle(names.slice());
+  const teams=Array.from({length:tn},function(){return[];});
+  sh.forEach(function(n,i){teams[i%tn].push(n);});
+  out.innerHTML=(cost>0?"1인당 <b>"+per.toLocaleString()+"원</b> <span class='small'>(총 "+cost.toLocaleString()+"원 ÷ "+names.length+"명, 100원 단위 올림)</span><br>":"")
+    +teams.map(function(t,i){return "<b>팀 "+(i+1)+"</b> ("+t.length+"명): "+t.join(", ");}).join("<br>")
+    +"<div class='small'>버튼을 다시 누르면 팀이 새로 섞입니다.</div>"
+    +'<button class="go" style="margin-top:8px" onclick="shareSplit()">📤 팀 배정 공유하기</button>';
+  window.lastSplit="⚽ 오늘의 팀 배정\n"
+    +teams.map(function(t,i){return "팀 "+(i+1)+" ("+t.length+"명): "+t.join(", ");}).join("\n")
+    +(cost>0?"\n💰 1인당 "+per.toLocaleString()+"원 (총 "+cost.toLocaleString()+"원)":"");
+}
+
+// ── 도구 9: 스터드 선택기 ──────────────────────────────
+const STUD={
+  fg:["FG (Firm Ground)","일반 천연잔디의 표준. 대부분의 축구화 기본형입니다. 비에 젖은 프로급 잔디용 SG(금속 스터드)는 동호회 구장에서는 오히려 위험합니다."],
+  ag:["AG (Artificial Grass)","긴 인조잔디 전용. 짧고 많은 스터드가 하중을 분산합니다. FG를 신어도 되지만 무릎·발목 부담이 커집니다."],
+  tf:["TF (터프화)","짧은 인조잔디 풋살장의 정답. 잘게 박힌 고무 돌기로 접지력을 얻습니다. 국내 풋살장 대부분이 여기 해당합니다."],
+  ic:["IC/IN (풋살화)","실내 마루·우레탄 코트용 평평한 고무 밑창. 코트를 손상시키지 않으면서 접지력이 가장 좋습니다."],
+  dirt:["TF (터프화) 권장","맨땅·흙에서는 긴 스터드가 박히지 않고 겉돕니다. 돌기가 낮은 TF가 가장 안정적입니다."]
+};
+function pickStud(){
+  const k=document.getElementById("st-ground").value;
+  const out=document.getElementById("st-out");
+  out.className="result show";
+  out.innerHTML="추천: <b>"+STUD[k][0]+"</b><div class='small'>"+STUD[k][1]+"</div>";
+}
+
+// ── 도구 10: 해외 직관 경비 계산기 ──────────────────────
+function calcTrip(){
+  const v=function(id){return parseFloat(document.getElementById(id).value)||0;};
+  const air=v("tc-air"), hotel=v("tc-hotel")*v("tc-nights"), ticket=v("tc-ticket")*v("tc-games"),
+        daily=v("tc-daily")*v("tc-days"), etc=v("tc-etc");
+  const total=air+hotel+ticket+daily+etc;
+  const out=document.getElementById("tc-out");
+  out.className="result show";
+  if(total<=0){out.innerHTML="금액을 입력해 주세요.";return;}
+  const row=function(k,val){const p=Math.round(val/total*100);
+    return "<div class='vrow'><span class='vlabel' style='width:90px'>"+k+"</span><div class='vtrack'><div class='vfill' style='width:"+p+"%'></div></div><span class='vpct'>"+p+"%</span></div>";};
+  out.innerHTML="총 예상 경비 <b>"+total.toLocaleString()+"원</b>"
+    +row("항공",air)+row("숙박",hotel)+row("티켓",ticket)+row("식비·교통",daily)+row("기타",etc)
+    +"<div class='small'>환율 변동·돌발 지출 대비 +10% 여유 권장: 약 "+Math.round(total*1.1).toLocaleString()+"원</div>";
+}
+
+// ── 도구 11: FPL 예산 트래커 ────────────────────────────
+let fplList=[];
+function fplRender(){
+  const out=document.getElementById("fpl-out");
+  if(!out) return;
+  const sum=Math.round(fplList.reduce(function(a,b){return a+b;},0)*10)/10;
+  const left=Math.round((100.0-sum)*10)/10;
+  const slots=15-fplList.length;
+  out.innerHTML="영입 <b>"+fplList.length+" / 15명</b> · 사용 <b>£"+sum.toFixed(1)+"m</b> · 잔액 <b style='color:"+(left<0?"var(--danger)":"inherit")+"'>£"+left.toFixed(1)+"m</b>"
+    +(slots>0
+      ?"<div class='small'>남은 "+slots+"자리 · 슬롯당 평균 £"+(left/slots).toFixed(1)+"m"+(left<0?" — ⚠️ 예산 초과!":"")+"</div>"
+      :"<div class='small'>스쿼드 완성! "+(left>=0?"예산 통과 ✓":"⚠️ 예산 초과 — 조정 필요")+"</div>")
+    +(fplList.length?"<div class='small'>목록: "+fplList.map(function(p){return "£"+p.toFixed(1);}).join(", ")+"</div>":"");
+}
+function fplAdd(){
+  const p=parseFloat(document.getElementById("fpl-price").value);
+  if(!p||p<3.5||p>16){alert("선수 가격은 £3.5m~£16.0m 사이로 입력해 주세요.");return;}
+  if(fplList.length>=15){alert("스쿼드는 15명까지입니다.");return;}
+  fplList.push(Math.round(p*10)/10);
+  document.getElementById("fpl-price").value="";
+  fplRender();
+}
+function fplUndo(){fplList.pop();fplRender();}
+function fplReset(){fplList=[];fplRender();}
+fplRender();
+
+// ── 도구 12: 유니폼 마킹 미리보기 ───────────────────────
+function renderMark(){
+  const name=((document.getElementById("mk-name").value||"NAME").toUpperCase().replace(/[^A-Z .\-]/g,"").slice(0,12))||"NAME";
+  const no=Math.min(99,Math.max(1,parseInt(document.getElementById("mk-no").value,10)||7));
+  const c=document.getElementById("mk-color").value;
+  const j=document.getElementById("mk-jersey");
+  j.style.background=c;
+  j.style.color=(c==="#f8fafc")?"#111827":"#fff";
+  document.getElementById("mk-jname").textContent=name;
+  document.getElementById("mk-jno").textContent=no;
+  document.getElementById("mk-out").style.display="flex";
+}
+
+// ── 도구 13: 축구 용어 검색 (QB.term 데이터 재사용) ──────
+function searchTerm(){
+  const q=(document.getElementById("ts-q").value||"").trim().toLowerCase();
+  const out=document.getElementById("ts-out");
+  if(!q){out.innerHTML="용어를 입력하면 뜻이 표시됩니다. 전체 목록은 용어 사전에서 볼 수 있습니다.";return;}
+  const hits=QB.term.filter(function(t){return t[0].toLowerCase().indexOf(q)>-1||t[1].toLowerCase().indexOf(q)>-1;});
+  out.innerHTML=hits.length
+    ?hits.slice(0,6).map(function(t){return "<b>"+t[0]+"</b> — "+t[1];}).join("<br>")
+    :"'"+q+"'에 대한 결과가 없습니다. <a href='#' onclick=\"return openArticle('glossary')\" style='font-weight:700;color:var(--pitch)'>용어 사전 전체 보기</a>에서 찾아보세요.";
+}
+
+// ── 도구 14: 포메이션 뷰어 ──────────────────────────────
+const FORMATIONS={
+"4-3-3":[["GK",50,92],["LB",14,73],["CB",37,78],["CB",63,78],["RB",86,73],["CM",28,52],["CDM",50,60],["CM",72,52],["LW",16,28],["ST",50,20],["RW",84,28]],
+"4-4-2":[["GK",50,92],["LB",14,73],["CB",37,78],["CB",63,78],["RB",86,73],["LM",14,48],["CM",38,52],["CM",62,52],["RM",86,48],["ST",36,22],["ST",64,22]],
+"4-2-3-1":[["GK",50,92],["LB",14,73],["CB",37,78],["CB",63,78],["RB",86,73],["CDM",38,60],["CDM",62,60],["LAM",18,38],["CAM",50,40],["RAM",82,38],["ST",50,18]],
+"3-5-2":[["GK",50,92],["CB",26,78],["CB",50,80],["CB",74,78],["LWB",10,50],["CM",32,52],["CDM",50,60],["CM",68,52],["RWB",90,50],["ST",38,22],["ST",62,22]],
+"3-4-3":[["GK",50,92],["CB",26,78],["CB",50,80],["CB",74,78],["LM",14,50],["CM",38,54],["CM",62,54],["RM",86,50],["LW",20,26],["ST",50,18],["RW",80,26]],
+"5-3-2":[["GK",50,92],["LWB",8,66],["CB",28,78],["CB",50,80],["CB",72,78],["RWB",92,66],["CM",30,50],["CM",50,54],["CM",70,50],["ST",38,22],["ST",62,22]]
+};
+function drawFormation(){
+  const p=document.getElementById("fm-pitch");
+  if(!p) return;
+  p.querySelectorAll(".pdot").forEach(function(d){d.remove();});
+  (FORMATIONS[document.getElementById("fm-sel").value]||[]).forEach(function(pos){
+    const d=document.createElement("div");
+    d.className="pdot";
+    d.textContent=pos[0];
+    d.style.left=pos[1]+"%";
+    d.style.top=pos[2]+"%";
+    p.appendChild(d);
+  });
+}
+drawFormation();
+
+// ── 도구 15: 승부차기 도우미 ────────────────────────────
+function pkDraw(){
+  const names=(document.getElementById("pk-names").value||"").split(/[\n,]/).map(function(s){return s.trim();}).filter(Boolean);
+  const out=document.getElementById("pk-out");
+  const first=Math.random()<0.5?"우리 팀 선축! ⚽":"상대 팀 선축 (우리는 후축) 🧤";
+  out.className="result show";
+  let html="🪙 동전 결과: <b>"+first+"</b>";
+  if(names.length>=2){
+    const order=qShuffle(names.slice());
+    html+="<br>키커 순서: "+order.map(function(n,i){return "<b>"+(i+1)+"</b>."+n;}).join(" → ")
+      +"<div class='small'>5명 이후는 서든데스 순서입니다. 다시 누르면 새로 추첨됩니다.</div>";
+  }else{
+    html+="<div class='small'>명단을 입력하면 키커 순서도 추첨해 드립니다.</div>";
+  }
+  out.innerHTML=html;
+}
+
+// ── 도구 16: 경기 종료 시각 계산기 ──────────────────────
+function calcEndTime(){
+  const ko=document.getElementById("et-ko").value;
+  const extra=parseInt(document.getElementById("et-extra").value,10)||0;
+  const ot=parseInt(document.getElementById("et-ot").value,10);
+  const out=document.getElementById("et-out");
+  out.className="result show";
+  if(!ko){out.innerHTML="킥오프 시각을 입력해 주세요.";return;}
+  const parts=ko.split(":");
+  const base=new Date(2000,0,1,parseInt(parts[0],10),parseInt(parts[1],10));
+  const fmt=function(min){
+    const t=new Date(base.getTime()+min*60000);
+    const h=t.getHours(),m=("0"+t.getMinutes()).slice(-2);
+    return (t.getDate()>1?"다음 날 ":"")+h+":"+m;
+  };
+  const htStart=45+Math.round(extra/2);
+  const end=45+15+45+extra;
+  out.innerHTML="하프타임 시작 약 <b>"+fmt(htStart)+"</b> · 후반 킥오프 약 <b>"+fmt(htStart+15)+"</b><br>"
+    +"정규시간 종료 약 <b>"+fmt(end)+"</b>"
+    +(ot?"<br>연장 포함 종료 약 <b>"+fmt(end+35)+"</b> · 승부차기까지 가면 +10~15분":"")
+    +"<div class='small'>추가시간은 예상치입니다. VAR·부상 등으로 ±5분 여유를 두세요.</div>";
+}
+
+// ── 도구 17: 득점 페이스 계산기 ─────────────────────────
+function calcPace(){
+  const goals=parseInt(document.getElementById("gp-goals").value,10);
+  const games=parseInt(document.getElementById("gp-games").value,10);
+  const total=parseInt(document.getElementById("gp-total").value,10);
+  const out=document.getElementById("gp-out");
+  out.className="result show";
+  if([goals,games,total].some(isNaN)||games<1||total<games){out.innerHTML="입력을 확인해 주세요.";return;}
+  const pace=Math.round(goals/games*total*10)/10;
+  let grade;
+  if(pace>=30) grade="🚀 역대급 페이스! (38경기 EPL 최다는 홀란의 36골)";
+  else if(pace>=20) grade="👑 득점왕 경쟁권 페이스";
+  else if(pace>=13) grade="⭐ 리그 정상급 공격수 페이스";
+  else if(pace>=8) grade="👍 준수한 주전 공격수 페이스";
+  else grade="🌱 더 많은 슛이 필요합니다";
+  out.innerHTML=games+"경기 "+goals+"골 → 시즌 "+total+"경기 환산 <b>"+pace+"골 페이스</b><div class='small'>"+grade+" · 경기당 "+(Math.round(goals/games*100)/100)+"골</div>";
+}
+
+// ── 도구 18: 나의 포지션 테스트 ─────────────────────────
+const POSQ=[
+{q:"1. 경기에서 가장 짜릿한 순간은?",o:[["상대의 결정적 슛을 막아냈을 때","g"],["완벽한 태클로 공격을 끊었을 때","d"],["내 스루패스가 그대로 연결됐을 때","m"],["골망이 흔들리는 걸 봤을 때","f"]]},
+{q:"2. 팀원들이 말하는 나는?",o:[["위기에도 침착한 사람","g"],["묵묵히 자리를 지키는 사람","d"],["시야가 넓고 눈치 빠른 사람","m"],["승부욕이 불타는 사람","f"]]},
+{q:"3. 선호하는 플레이는?",o:[["마지막 보루로서 집중 유지","g"],["몸싸움과 공중볼 경합","d"],["볼 배급과 템포 조절","m"],["수비 뒷공간 침투","f"]]},
+{q:"4. 스스로 아쉬운 점은?",o:[["발재간이 부족하다","g"],["스피드가 아쉽다","d"],["마무리 슛이 아쉽다","m"],["수비 가담이 귀찮다","f"]]},
+{q:"5. 가장 닮고 싶은 유형은?",o:[["빌드업까지 하는 골키퍼","g"],["라인을 지휘하는 센터백","d"],["경기를 지배하는 미드필더","m"],["한 방이 있는 스트라이커","f"]]}
+];
+const POSR={
+g:["🧤 골키퍼 (GK)","팀의 마지막 보루. 침착함과 집중력이 무기입니다. 빌드업 시대의 GK는 발밑도 훈련하세요!"],
+d:["🛡️ 수비수 (DF)","묵묵한 헌신형. 위치 선정과 몸싸움으로 팀을 지킵니다. 센터백 또는 풀백이 어울립니다."],
+m:["🎩 미드필더 (MF)","경기의 지휘자. 넓은 시야와 패스로 팀을 움직입니다. 중원 장악이 곧 승리입니다."],
+f:["⚡ 공격수 (FW)","골에 진심인 승부사. 순간 스피드와 결정력으로 경기를 끝냅니다."]
+};
+(function(){
+  const box=document.getElementById("pt-box");
+  if(!box) return;
+  box.innerHTML=POSQ.map(function(item,qi){
+    return '<div class="qitem"><div class="qq">'+item.q+'</div>'
+      +item.o.map(function(op,oi){
+        return '<label class="qopt"><input type="radio" name="pt'+qi+'" value="'+op[1]+'">'+op[0]+'</label>';
+      }).join("")+'</div>';
+  }).join("");
+})();
+function gradePos(){
+  const score={g:0,d:0,m:0,f:0};
+  let answered=0;
+  POSQ.forEach(function(_,qi){
+    const sel=document.querySelector('input[name="pt'+qi+'"]:checked');
+    if(sel){score[sel.value]++;answered++;}
+  });
+  const out=document.getElementById("pt-out");
+  out.className="result show";
+  if(answered<POSQ.length){out.innerHTML="아직 "+(POSQ.length-answered)+"문항이 남았습니다.";return;}
+  const best=Object.keys(score).sort(function(a,b){return score[b]-score[a];})[0];
+  window.lastPos=POSR[best][0];
+  out.innerHTML="당신의 포지션: <b>"+POSR[best][0]+"</b><div class='small'>"+POSR[best][1]+" (G"+score.g+" D"+score.d+" M"+score.m+" F"+score.f+")</div>"
+    +'<button class="go" style="margin-top:8px" onclick="sharePos()">📤 결과 공유하기</button>';
+}
+
+// ── 도구 19: 직구 환율 계산기 ───────────────────────────
+async function fxRate(cur){
+  const key="fx:"+cur+":"+new Date().toISOString().slice(0,10);
+  try{const c=localStorage.getItem(key); if(c) return parseFloat(c);}catch(e){}
+  const res=await fetch("https://open.er-api.com/v6/latest/"+cur);
+  if(!res.ok) throw new Error("rate");
+  const j=await res.json();
+  const r=j&&j.rates&&j.rates.KRW;
+  if(!r) throw new Error("rate");
+  try{localStorage.setItem(key,r);}catch(e){}
+  return r;
+}
+async function fxCalc(){
+  const cur=document.getElementById("fx-cur").value;
+  const amt=parseFloat(document.getElementById("fx-amt").value);
+  const manual=parseFloat(document.getElementById("fx-manual").value);
+  const out=document.getElementById("fx-out");
+  out.className="result show";
+  if(!amt||amt<=0){out.innerHTML="금액을 입력해 주세요.";return;}
+  let rate,src;
+  if(manual&&manual>0){rate=manual;src="직접 입력 환율";}
+  else{
+    out.innerHTML="실시간 환율 조회 중…";
+    try{rate=await fxRate(cur);src="실시간 환율 (exchangerate-api, 1일 캐시)";}
+    catch(e){out.innerHTML="환율 조회에 실패했습니다. '환율 직접 입력' 칸에 환율을 넣고 다시 눌러주세요.";return;}
+  }
+  const krw=Math.round(amt*rate);
+  out.innerHTML=amt.toLocaleString()+" "+cur+" ≈ <b>"+krw.toLocaleString()+"원</b>"
+    +"<div class='small'>"+src+": 1 "+cur+" = "+Math.round(rate*100)/100+"원 · 카드 수수료·배송비 별도</div>";
+}
+
+// ── 도구 20: 축구공 사이즈 가이드 ───────────────────────
+const BALLS={
+adult:["5호","성인·만 13세 이상 표준 (둘레 68~70cm). 11인제 정식 경기 규격으로, 중학생부터는 5호로 훈련하는 것이 표준입니다."],
+kid:["4호","만 8~12세 (초등) 권장 (둘레 63.5~66cm). 유소년 리그 공식 규격으로, 어른 공(5호)은 아이 발목에 무리를 줄 수 있습니다."],
+child:["3호","만 8세 미만 권장 (둘레 58~60cm). 가볍고 작아 첫 공으로 적합합니다."],
+futsal:["풋살 전용구 (4호 크기·저반발)","크기는 4호지만 반발력을 낮추고 무게를 높인 전용구입니다. 일반 4호 축구공과 달라서, 풋살엔 반드시 '풋살볼'을 고르세요."]
+};
+function pickBall(){
+  const k=document.getElementById("bl-sel").value;
+  const out=document.getElementById("bl-out");
+  out.className="result show";
+  out.innerHTML="추천: <b>"+BALLS[k][0]+"</b><div class='small'>"+BALLS[k][1]+"</div>";
+}
+
+// ══════════════════════════════════════════════════════
+// 미니 도구 레지스트리 (80종) — 데이터로 정의하면 화면·홈 디렉터리·인기 랭킹에 자동 반영
+// kind: calc(입력→계산) / select(선택→답) / random(명단→추첨) / custom(전용 UI)
+// ══════════════════════════════════════════════════════
+// 코어 도구 20종 목록 (인기 랭킹·홈 디렉터리 공용) — 반드시 아래 window.ALLT보다 먼저 선언
+const TOOLLIST=[
+  ["boot-size","⚽","축구화 사이즈 변환기"],["kickoff","🕐","킥오프 한국시간 변환기"],
+  ["dday","⏳","경기·개막 D-day"],["uniform","👕","유니폼 사이즈 가이드"],
+  ["fanquiz","🧠","축구 팬 레벨 테스트"],["points-sim","🏆","승점 시뮬레이터"],
+  ["winrate","📈","승률 계산기"],["futsal-split","🤝","풋살 팀 나누기·정산"],
+  ["stud-pick","👟","스터드 선택기"],["trip-cost","✈️","직관 경비 계산기"],
+  ["fpl-budget","📊","FPL 예산 트래커"],["marking","🎽","유니폼 마킹 미리보기"],
+  ["term-search","🔎","축구 용어 검색"],["formation","🧩","포메이션 뷰어"],
+  ["pk-helper","🥅","승부차기 도우미"],["endtime","⏱️","경기 종료 시각"],
+  ["goal-pace","🎯","득점 페이스 계산기"],["pos-test","🧬","포지션 테스트"],
+  ["fx-calc","💱","직구 환율 계산기"],["ball-size","⚽","축구공 사이즈 가이드"]
+];
+const WON=function(n){return Math.round(n).toLocaleString()+"원";};
+const MINI_ALL=[
+// ── 📊 기록·통계 (10) ──
+{id:"ga-point",cat:"📊 기록·통계",icon:"🅰️",name:"공격포인트 계산기",desc:"골+도움을 합산하고 경기당 생산성을 계산합니다.",kind:"calc",fields:[{k:"g",label:"골",ph:"12"},{k:"a",label:"도움",ph:"7"},{k:"m",label:"경기 수",ph:"25"}],fn:function(v){if(!v.m)return"";const p=(v.g||0)+(v.a||0);return "공격포인트 <b>"+p+"개</b> ("+(v.g||0)+"골 "+(v.a||0)+"도움)<div class='small'>경기당 "+(Math.round(p/v.m*100)/100)+"P — 대회와 출전 시간을 함께 고려해 비교하세요.</div>";}},
+{id:"avg-goal",cat:"📊 기록·통계",icon:"⚽",name:"경기당 득점 계산기",desc:"팀 득점력을 경기당 평균으로 환산합니다.",kind:"calc",fields:[{k:"g",label:"총 득점",ph:"48"},{k:"m",label:"경기 수",ph:"26"}],fn:function(v){if(!v.m)return"";const a=Math.round(v.g/v.m*100)/100;return "경기당 <b>"+a+"골</b><div class='small'>2.0 이상 화력 우승권 · 1.5 준수 · 1.0 미만이면 공격 보강이 필요합니다.</div>";}},
+{id:"cleansheet",cat:"📊 기록·통계",icon:"🧤",name:"클린시트율 계산기",desc:"무실점 경기 비율로 수비력을 평가합니다.",kind:"calc",fields:[{k:"c",label:"클린시트",ph:"9"},{k:"m",label:"경기 수",ph:"26"}],fn:function(v){if(!v.m)return"";return "클린시트율 <b>"+Math.round(v.c/v.m*1000)/10+"%</b><div class='small'>40% 이상이면 리그 최상위권 수비입니다.</div>";}},
+{id:"pk-rate",cat:"📊 기록·통계",icon:"🎯",name:"PK 성공률 계산기",desc:"페널티킥 성공률을 계산하고 평균과 비교합니다.",kind:"calc",fields:[{k:"s",label:"성공",ph:"8"},{k:"t",label:"시도",ph:"10"}],fn:function(v){if(!v.t)return"";return "성공률 <b>"+Math.round(v.s/v.t*1000)/10+"%</b><div class='small'>프로 평균은 약 75~80%로 알려져 있습니다. 90%가 넘으면 전담 키커 자격!</div>";}},
+{id:"minutes",cat:"📊 기록·통계",icon:"⏳",name:"출전 시간 비율",desc:"로테이션인지 핵심인지, 출전 비중으로 확인합니다.",kind:"calc",fields:[{k:"p",label:"출전 시간(분)",ph:"1800"},{k:"m",label:"팀 경기 수",ph:"26"}],fn:function(v){if(!v.m)return"";const r=Math.round(v.p/(v.m*90)*1000)/10;return "출전 비율 <b>"+r+"%</b> (풀타임 환산 "+Math.round(v.p/90*10)/10+"경기)<div class='small'>70% 이상 핵심 · 40~70% 로테이션 · 40% 미만 백업 자원.</div>";}},
+{id:"card-pace",cat:"📊 기록·통계",icon:"🟨",name:"경고 누적 계산기",desc:"5장까지 남은 경기를 현재 경고 비율로 단순 추정합니다. 징계 기준은 대회마다 다릅니다.",kind:"calc",fields:[{k:"y",label:"경고 수",ph:"3"},{k:"m",label:"치른 경기",ph:"15"}],fn:function(v){if(!v.m||!v.y)return "양수인 경기 수와 경고 수를 입력해 주세요.";const per=v.y/v.m;const left=Math.max(0,Math.ceil((5-v.y)/per));return "경기당 경고 <b>"+Math.round(per*100)/100+"장</b><div class='small'>이 페이스면 약 "+left+"경기 뒤 5장에 도달합니다. 실제 출전 정지는 대회 규정을 확인하세요.</div>";}},
+{id:"assist-pace",cat:"📊 기록·통계",icon:"👟",name:"도움 페이스 계산기",desc:"현재 도움 수를 시즌 전체로 환산합니다.",kind:"calc",fields:[{k:"a",label:"도움",ph:"6"},{k:"m",label:"치른 경기",ph:"14"},{k:"t",label:"총 경기",val:"38"}],fn:function(v){if(!v.m||!v.t)return"";const p=Math.round(v.a/v.m*v.t*10)/10;return "시즌 환산 <b>"+p+"도움 페이스</b><div class='small'>EPL 단일 시즌 최다는 앙리·더브라위너의 20도움입니다.</div>";}},
+{id:"attendance",cat:"📊 기록·통계",icon:"🏟️",name:"평균 관중 계산기",desc:"총 관중을 홈경기 수로 나눠 평균 관중을 구합니다.",kind:"calc",fields:[{k:"t",label:"누적 관중",ph:"250000"},{k:"m",label:"홈경기 수",ph:"13"}],fn:function(v){if(!v.m)return"";return "평균 관중 <b>"+Math.round(v.t/v.m).toLocaleString()+"명</b>";}},
+{id:"survival-gap",cat:"📊 기록·통계",icon:"🚨",name:"잔류 경쟁 격차 계산기",desc:"강등권과의 승점차가 몇 경기 안전선인지 계산합니다.",kind:"calc",fields:[{k:"my",label:"우리 승점",ph:"34"},{k:"dz",label:"강등권(18위) 승점",ph:"26"},{k:"left",label:"남은 경기",ph:"10"}],fn:function(v){if(isNaN(v.my)||isNaN(v.dz))return"";const gap=v.my-v.dz;const games=Math.floor(gap/3);return "강등권과 <b>"+gap+"점차</b> — 상대가 전승해도 약 "+games+"경기 버퍼<div class='small'>남은 "+(v.left||"?")+"경기 · 통상 EPL 잔류 안전선은 38~40점입니다.</div>";}},
+{id:"goal-diff",cat:"📊 기록·통계",icon:"➕",name:"골득실 계산기",desc:"득점·실점으로 골득실과 순위 경쟁력을 확인합니다.",kind:"calc",fields:[{k:"f",label:"득점",ph:"41"},{k:"a",label:"실점",ph:"28"}],fn:function(v){const d=(v.f||0)-(v.a||0);return "골득실 <b>"+(d>0?"+":"")+d+"</b><div class='small'>승점이 같으면 대부분 리그가 골득실로 순위를 가립니다(라리가는 상대전적 우선).</div>";}},
+// ── 📚 리그·구단 사전 (9) ──
+{id:"league-name",cat:"📚 리그·구단 사전",icon:"🌍",name:"나라별 1부 리그 이름",desc:"이 나라 1부 리그 이름이 뭐더라? 바로 확인하세요.",kind:"select",label:"국가",opts:[["잉글랜드","<b>프리미어리그 (EPL)</b> — 20팀"],["스페인","<b>라리가</b> — 20팀"],["독일","<b>분데스리가</b> — 18팀"],["이탈리아","<b>세리에 A</b> — 20팀"],["프랑스","<b>리그 1</b> — 18팀"],["네덜란드","<b>에레디비시</b>"],["포르투갈","<b>프리메이라 리가</b>"],["브라질","<b>브라질레이랑 (세리이 A)</b>"],["아르헨티나","<b>리가 프로페시오날</b>"],["대한민국","<b>K리그1</b> — 12팀"],["일본","<b>J1리그</b>"],["미국","<b>MLS</b> — 단일 시즌제(봄~가을)"],["사우디아라비아","<b>사우디 프로리그</b>"]]},
+{id:"league-size",cat:"📚 리그·구단 사전",icon:"🔢",name:"리그별 팀 수·강등 규정",desc:"리그마다 다른 팀 수와 강등 방식을 확인합니다.",kind:"select",label:"리그",opts:[["프리미어리그","<b>20팀 · 하위 3팀 자동 강등</b>"],["라리가","<b>20팀 · 하위 3팀 자동 강등</b>"],["분데스리가","<b>18팀 · 2팀 자동 강등 + 16위 승강 플레이오프</b>"],["세리에 A","<b>20팀 · 하위 3팀 자동 강등</b>"],["리그 1","<b>18팀 · 2팀 자동 강등 + 16위 승강 플레이오프</b>"],["K리그1","<b>12팀 · 최하위 자동 강등 + 승강 플레이오프</b>"]]},
+{id:"derby-dict",cat:"📚 리그·구단 사전",icon:"🔥",name:"세계 더비 사전",desc:"유명 더비의 이름과 두 팀을 확인합니다.",kind:"select",label:"더비",opts:[["엘 클라시코","<b>레알 마드리드 vs 바르셀로나</b> — 세계 최대의 라이벌전"],["북런던 더비","<b>아스널 vs 토트넘</b>"],["맨체스터 더비","<b>맨체스터 유나이티드 vs 맨체스터 시티</b>"],["머지사이드 더비","<b>리버풀 vs 에버턴</b> — 잉글랜드에서 가장 오래된 더비 중 하나"],["데어 클라시커","<b>바이에른 뮌헨 vs 도르트문트</b>"],["밀라노 더비","<b>AC 밀란 vs 인터 밀란</b> — 같은 산 시로를 홈으로 씁니다"],["수페르클라시코","<b>보카 주니어스 vs 리버 플레이트</b>"],["올드 펌","<b>셀틱 vs 레인저스</b> (글래스고)"],["슈퍼매치","<b>FC서울 vs 수원 삼성</b> — K리그 대표 라이벌전"]]},
+{id:"number-mean",cat:"📚 리그·구단 사전",icon:"🔟",name:"등번호 전통 의미",desc:"축구에서 등번호가 갖는 전통적 역할입니다.",kind:"select",label:"등번호",opts:[["1번","<b>골키퍼</b>의 번호"],["4·5번","<b>센터백</b> (남미에선 5번이 수비형 MF)"],["2·3번","<b>풀백</b> (2 오른쪽, 3 왼쪽 전통)"],["6번","<b>수비형 미드필더</b>"],["7번","<b>윙어·에이스</b> — 맨유 7번, 호날두의 번호"],["8번","<b>박스 투 박스 미드필더</b>"],["9번","<b>정통 스트라이커</b>"],["10번","<b>플레이메이커·팀의 심장</b> — 펠레·마라도나·메시"],["11번","<b>왼쪽 윙어</b> 전통"]]},
+{id:"pos-abbr",cat:"📚 리그·구단 사전",icon:"🔤",name:"포지션 약어 사전",desc:"FM·경기 기록에서 보는 포지션 약어를 풀어드립니다.",kind:"select",label:"약어",opts:[["GK","골키퍼"],["CB","센터백(중앙 수비수)"],["LB / RB","왼쪽/오른쪽 풀백"],["LWB / RWB","윙백 (3백에서 측면 전담)"],["CDM (DM)","수비형 미드필더"],["CM","중앙 미드필더"],["CAM (AM)","공격형 미드필더"],["LW / RW","왼쪽/오른쪽 윙어"],["CF","중앙 공격수 (처진 스트라이커 포함)"],["ST","스트라이커(최전방)"],["SS","세컨드 스트라이커"]]},
+{id:"cont-cup",cat:"📚 리그·구단 사전",icon:"🌐",name:"대륙별 클럽 대항전",desc:"각 대륙의 챔피언스리그급 대회를 확인합니다.",kind:"select",label:"대륙",opts:[["유럽","<b>UEFA 챔피언스리그</b> (2위 티어: 유로파리그, 3위: 컨퍼런스리그)"],["남미","<b>코파 리베르타도레스</b>"],["아시아","<b>AFC 챔피언스리그 엘리트</b>"],["아프리카","<b>CAF 챔피언스리그</b>"],["북중미","<b>CONCACAF 챔피언스컵</b>"],["대륙 챔피언 맞대결","<b>FIFA 인터컨티넨털컵 / 클럽 월드컵</b>"]]},
+{id:"nt-nick",cat:"📚 리그·구단 사전",icon:"🏳️",name:"국가대표팀 별명 사전",desc:"각국 대표팀의 별명과 뜻입니다.",kind:"select",label:"국가",opts:[["대한민국","<b>태극전사</b> (해외에선 Taegeuk Warriors)"],["브라질","<b>셀레상</b> — '선발된 자들'"],["아르헨티나","<b>알비셀레스테</b> — 하늘색·흰색 줄무늬"],["프랑스","<b>레 블뢰</b> — 파란 군단"],["이탈리아","<b>아주리</b> — 푸른 물결"],["독일","<b>디 만샤프트</b> — '팀'"],["네덜란드","<b>오라녜</b> — 오렌지 군단"],["잉글랜드","<b>삼사자 군단</b> (Three Lions)"],["일본","<b>사무라이 블루</b>"]]},
+{id:"season-window",cat:"📚 리그·구단 사전",icon:"📅",name:"리그별 시즌 기간",desc:"리그마다 다른 시즌 운영 기간을 확인합니다.",kind:"select",label:"리그",opts:[["유럽 5대 리그","<b>8월~5월</b> (추춘제) — 겨울 이적시장은 1월"],["K리그","<b>2~3월 개막 ~ 11~12월 종료</b> (춘추제)"],["MLS (미국)","<b>2월 말 ~ 10월</b> + 플레이오프(11~12월)"],["J리그 (일본)","<b>2월~12월</b> 춘추제 (추춘제 전환 논의 진행)"],["국제 이적시장","<b>여름(6~8월末)·겨울(1월)</b> 두 차례가 표준"]]},
+{id:"turf-dict",cat:"📚 리그·구단 사전",icon:"🌱",name:"구장 잔디 종류 사전",desc:"천연·하이브리드·인조 잔디의 차이를 알려드립니다.",kind:"select",label:"잔디 종류",opts:[["천연 잔디","최고의 볼 구름과 쿠션. 관리 비용이 크고 겨울·과사용에 약합니다."],["하이브리드 잔디","천연 잔디에 인조 섬유를 5% 안팎 섞어 내구성 강화 — 유럽 빅클럽 구장의 표준입니다."],["인조 잔디","관리비가 낮아 생활체육 구장의 대부분. 마찰·화상과 관절 부담이 상대적으로 큽니다."],["풋살 코트(마루·우레탄)","실내 전용 — 전용 풋살화(IC)를 신어야 합니다."]]},
+// ── ⚖️ 규칙 도우미 (8) ──
+{id:"offside-check",cat:"⚖️ 규칙 도우미",icon:"🚩",name:"오프사이드 상황 판정기",desc:"공을 받는 위치가 아니라 동료가 플레이한 순간부터 확인합니다.",kind:"select",label:"확인할 내용",opts:[["동료의 패스를 받음","동료가 공을 플레이한 순간 상대 진영에서 공과 마지막에서 두 번째 상대 선수보다 골라인에 가까운 위치였는지, 이후 플레이에 관여했는지를 함께 판단합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["스로인·골킥·코너킥을 직접 받음","직접 받는 경우에는 오프사이드 반칙이 없습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["자기 진영에서 공을 받음","공을 받은 곳만으로 판단할 수 없습니다. 동료가 플레이한 순간의 위치를 확인해야 합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["상대 선수에게 맞은 공","의도적인 플레이와 단순 굴절·리바운드는 다릅니다. 의도적인 세이브도 별도로 구분합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["오프사이드 위치에 서 있기만 함","위치만으로는 반칙이 아닙니다. 플레이 관여나 상대 방해 등을 함께 봅니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."]]},
+{id:"handball-check",cat:"⚖️ 규칙 도우미",icon:"✋",name:"핸드볼 판정 가이드",desc:"손·팔 접촉만으로 판정을 확정할 수는 없습니다.",kind:"select",label:"확인할 내용",opts:[["손·팔에 공이 닿음","의도적으로 손·팔을 공 쪽으로 움직였는지, 팔로 몸을 부자연스럽게 크게 만들었는지 등을 확인합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["넘어지며 짚은 손","지지하는 손이라는 이유만으로 자동 면제되지 않습니다. 움직임과 팔의 위치를 함께 봅니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["공격수의 손·팔과 득점","손·팔로 직접 득점하거나 우연히 손·팔에 닿은 직후 그 선수가 득점하는 경우를 구분해 확인합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."]]},
+{id:"card-guide",cat:"⚖️ 규칙 도우미",icon:"🟥",name:"카드 기준 가이드",desc:"이 반칙이면 무슨 카드? 통상 기준을 안내합니다.",kind:"select",label:"반칙 유형",opts:[["전술적 파울 (역습 끊기)","<b>옐로카드</b> — 명백한 득점 기회 저지(DOGSO)면 레드까지 가능"],["명백한 득점 기회를 파울로 저지 (DOGSO)","<b>레드카드</b> — 단, 박스 안에서 볼을 향한 시도였다면 PK+옐로로 경감"],["과도한 힘의 태클 (발바닥·높은 발)","<b>레드카드</b> — 상대 안전을 위협하는 태클은 즉시 퇴장"],["유니폼 잡기 (기회 저지 아님)","<b>옐로카드</b> 또는 파울만"],["시뮬레이션 (다이빙)","<b>옐로카드</b>"],["침 뱉기·폭력 행위","<b>레드카드</b> — 예외 없음"],["세리머니로 상의 탈의","<b>옐로카드</b> — 규정상 자동 경고입니다"]]},
+{id:"var-check",cat:"⚖️ 규칙 도우미",icon:"📺",name:"VAR 개입 대상 확인",desc:"2026/27 IFAB 기준입니다. 대회별 적용 여부를 확인하세요.",kind:"select",label:"확인할 내용",opts:[["득점·페널티킥·퇴장·선수 오인","명백한 오류나 중대한 누락이 있으면 검토 대상이 될 수 있습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["두 번째 경고로 인한 퇴장","2026/27 개정 규칙에서는 명백히 잘못된 두 번째 경고로 인한 퇴장도 검토할 수 있습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["잘못 주어진 코너킥","대회가 선택적으로 도입할 수 있습니다. 즉시 수정 가능하고 경기 재개를 지연하지 않는 경우에 한합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["일반적인 경고·스로인 방향","모든 판정이 독립적인 VAR 검토 대상은 아닙니다. 득점 과정 등 다른 검토 상황과 연결되는지 구분해야 합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."]]},
+{id:"sub-rule",cat:"⚖️ 규칙 도우미",icon:"🔄",name:"교체 규정 확인",desc:"교체 인원과 기회는 대회별 규정을 먼저 확인하세요.",kind:"select",label:"확인할 내용",opts:[["공식 대회의 교체","교체 인원·명단·기회는 대회 규정에 명시됩니다. 모든 경기에서 동일하게 5명을 교체하는 것은 아닙니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["교체 기회와 하프타임","5명·3회 기회를 적용하는 대회에서 하프타임 교체는 교체 기회로 세지 않습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["재투입·연장·뇌진탕","재투입이 허용되는 경기나 추가 교체를 적용하는 대회가 있습니다. 주최 측 규정을 확인하세요. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."]]},
+{id:"pso-rule",cat:"⚖️ 규칙 도우미",icon:"🥅",name:"승부차기 규정 안내",desc:"승부차기 참가 자격과 순서는 경기 규칙에 따릅니다.",kind:"select",label:"확인할 내용",opts:[["동률이면","양 팀이 기본 5회씩 실시하되 역전이 불가능해지면 일찍 끝납니다. 동률이면 같은 수의 킥을 찬 뒤 한 팀이 앞설 때까지 계속합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["참가 자격·골키퍼 교체","경기 종료 시 참가 자격을 가진 선수와 골키퍼 교체 예외를 규칙에서 확인하세요. 단순히 교체 횟수가 남았다고 자유롭게 바꿀 수는 없습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["모두 한 번씩 찼다면","참가 자격이 있는 선수가 모두 한 번씩 찬 후 다시 찰 수 있습니다. 다음 순환의 순서는 바꿀 수 있습니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."]]},
+{id:"addtime-est",cat:"⚖️ 규칙 도우미",icon:"⏰",name:"추가시간 추정기",desc:"이벤트 수로 예상 추가시간을 계산해 봅니다. (재미용 추정)",kind:"calc",fields:[{k:"sub",label:"교체 횟수",ph:"5"},{k:"goal",label:"골 수",ph:"3"},{k:"varc",label:"VAR 판독",ph:"1"},{k:"inj",label:"부상 치료",ph:"1"}],fn:function(v){const t=Math.round(((v.sub||0)*0.5+(v.goal||0)*1+(v.varc||0)*2+(v.inj||0)*1.5)*10)/10;return "예상 추가시간 <b>약 "+t+"분</b><div class='small'>교체 30초·골 1분·VAR 2분·부상 1.5분 기준의 추정치입니다. 최근에는 세리머니 시간까지 엄격히 반영해 더 길어지는 추세입니다.</div>";}},
+{id:"goal-line",cat:"⚖️ 규칙 도우미",icon:"📏",name:"골 인정 기준 확인",desc:"골라인 통과와 반칙 여부를 함께 확인합니다.",kind:"select",label:"확인할 내용",opts:[["공 일부만 라인을 넘음","공 전체가 골라인을 통과하지 않았다면 득점이 아닙니다."],["공 전체가 라인을 넘음","골포스트 사이·크로스바 아래로 공 전체가 넘어가고 득점 팀의 반칙이 없어야 합니다. <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 규칙 원문</a>에서 적용 시즌을 확인하세요."],["골라인 판독 기술","GLT를 설치해 사용하는 경기에서만 기술의 도움을 받을 수 있습니다. 모든 구장에 있는 장비는 아닙니다."]]},
+// ── 🤝 동호회 운영 (10) ──
+{id:"roundrobin",cat:"🤝 동호회 운영",icon:"🔁",name:"풀리그 경기 수 계산기",desc:"n팀이 풀리그를 돌면 총 몇 경기인지 계산합니다.",kind:"calc",fields:[{k:"n",label:"팀 수",ph:"6"},{k:"ha",label:"홈&어웨이? (1=예, 0=아니오)",ph:"0",val:"0"}],fn:function(v){if(!v.n||v.n<2)return"";const single=v.n*(v.n-1)/2;const total=v.ha?single*2:single;return "총 <b>"+total+"경기</b> · 팀당 "+(v.ha?(v.n-1)*2:v.n-1)+"경기<div class='small'>"+(v.n%2?"홀수 팀이라 매 라운드 1팀은 휴식(부전)입니다.":"라운드 수: "+(v.ha?(v.n-1)*2:v.n-1)+"라운드")+"</div>";}},
+{id:"tourney-draw",cat:"🤝 동호회 운영",icon:"🏆",name:"토너먼트 대진 추첨기",desc:"팀 명단을 넣으면 1회전 대진표를 랜덤으로 만듭니다.",kind:"random",label:"팀 명단 (쉼표/줄바꿈)",ph:"A팀, B팀, C팀, D팀 ...",btn:"대진 추첨",fn:function(names){if(names.length<2)return"";const s=qShuffle(names.slice());let html="";let r=1;while(s.length>=2){html+="<b>경기 "+r+++"</b>: "+s.shift()+" vs "+s.shift()+"<br>";}if(s.length)html+="<b>부전승</b>: "+s[0];return html+"<div class='small'>다시 누르면 새로 추첨됩니다.</div>";}},
+{id:"ref-pick",cat:"🤝 동호회 운영",icon:"👨‍⚖️",name:"심판·총무 로테이션 추첨",desc:"오늘 심판 볼 사람, 공정하게 뽑아드립니다.",kind:"random",btn:"오늘의 심판 추첨",fn:function(names){if(names.length<1)return"";const s=qShuffle(names.slice());return "오늘의 심판: <b>"+s[0]+"</b>"+(s[1]?" · 대기: "+s[1]:"")+"<div class='small'>공정한 무작위 추첨 결과입니다. 이의 제기는 기각!</div>";}},
+{id:"mvp-count",cat:"🤝 동호회 운영",icon:"🗳️",name:"MVP 투표 집계기",desc:"'이름 표수' 형식으로 한 줄씩 넣으면 순위를 매깁니다.",kind:"calc",fields:[{k:"raw",label:"집계 입력 (예: 철수 5)",type:"textarea",ph:"철수 5\n영희 3\n민수 4",wide:true}],btn:"집계",fn:function(v){const rows=(v.raw||"").split(/\n/).map(function(l){const m=l.trim().match(/^(.+?)[\s:]+(\d+)$/);return m?[m[1],parseInt(m[2],10)]:null;}).filter(Boolean);if(!rows.length)return"";rows.sort(function(a,b){return b[1]-a[1];});const total=rows.reduce(function(a,r){return a+r[1];},0);return rows.map(function(r,i){return (i===0?"🏆 ":"")+"<b>"+(i+1)+"위</b> "+r[0]+" — "+r[1]+"표 ("+Math.round(r[1]/total*100)+"%)";}).join("<br>");}},
+{id:"dues-calc",cat:"🤝 동호회 운영",icon:"💰",name:"회비 정산기",desc:"월회비 수입과 지출로 잔액을 계산합니다.",kind:"calc",fields:[{k:"fee",label:"월회비(원)",ph:"20000"},{k:"n",label:"납부 인원",ph:"15"},{k:"spent",label:"이번 달 지출(원)",ph:"250000"}],fn:function(v){const inc=(v.fee||0)*(v.n||0);const bal=inc-(v.spent||0);return "수입 "+WON(inc)+" − 지출 "+WON(v.spent||0)+" = 잔액 <b style='color:"+(bal<0?"var(--danger)":"inherit")+"'>"+WON(bal)+"</b>"+(bal<0?"<div class='small'>⚠️ 적자입니다. 회비 인상 또는 지출 조정이 필요해요.</div>":"");}},
+{id:"equal-time",cat:"🤝 동호회 운영",icon:"⚖️",name:"균등 출전시간 계산기",desc:"교체 인원이 많을 때 1인당 뛰는 시간을 공평하게 나눕니다.",kind:"calc",fields:[{k:"n",label:"전체 인원",ph:"9"},{k:"court",label:"코트 위 인원",val:"5"},{k:"t",label:"총 경기시간(분)",val:"60"}],fn:function(v){if(!v.n||!v.court||!v.t||v.n<v.court)return"";const per=Math.round(v.t*v.court/v.n);const rest=v.t-per;return "1인당 출전 <b>약 "+per+"분</b> · 휴식 "+rest+"분<div class='small'>"+Math.ceil(v.t/10)+"회(10분 단위) 교체 기준으로 짜면 관리가 쉽습니다.</div>";}},
+{id:"bib-color",cat:"🤝 동호회 운영",icon:"🦺",name:"조끼 색 추첨기",desc:"팀 나눈 뒤 조끼 색까지 랜덤으로 배정합니다.",kind:"calc",fields:[{k:"n",label:"팀 수",ph:"2",val:"2"}],btn:"색 추첨",fn:function(v){const colors=qShuffle(["🔴 레드","🔵 블루","🟡 옐로","🟢 그린","⚪ 화이트","🟠 오렌지"].slice());const n=Math.min(Math.max(v.n||2,2),6);let html="";for(let i=0;i<n;i++)html+="<b>팀 "+(i+1)+"</b>: "+colors[i]+"<br>";return html;}},
+{id:"penalty-pick",cat:"🤝 동호회 운영",icon:"😅",name:"벌칙 추첨기",desc:"진 팀 벌칙, 원한 없이 랜덤으로 정하세요.",kind:"calc",fields:[],btn:"벌칙 뽑기",fn:function(){const p=["음료수 쏘기","다음 모임 조끼 세탁","골대 정리 당번","패자팀 세리머니 재연","다음 경기 공 가져오기","단체 사진 찍어 올리기","스트레칭 리드하기","MVP에게 음료 상납"];return "오늘의 벌칙: <b>"+qPick(p)+"</b><div class='small'>다시 누르면 새로 뽑습니다.</div>";}},
+{id:"squad-assign",cat:"🤝 동호회 운영",icon:"📋",name:"포지션 랜덤 배정기",desc:"명단을 넣으면 GK/DF/MF/FW를 랜덤 배정합니다.",kind:"random",btn:"포지션 배정",fn:function(names){if(names.length<2)return"";const s=qShuffle(names.slice());const n=s.length;const gk=1,df=Math.round((n-1)*0.35),mf=Math.round((n-1)*0.4);let html="🧤 <b>GK</b>: "+s[0];if(df)html+="<br>🛡️ <b>DF</b>: "+s.slice(1,1+df).join(", ");if(mf)html+="<br>🎩 <b>MF</b>: "+s.slice(1+df,1+df+mf).join(", ");const fw=s.slice(1+df+mf);if(fw.length)html+="<br>⚡ <b>FW</b>: "+fw.join(", ");return html;}},
+{id:"next-meet",cat:"🤝 동호회 운영",icon:"📆",name:"다음 모임 날짜 계산기",desc:"매주 정기 모임 요일의 다음 3회 날짜를 알려드립니다.",kind:"calc",fields:[{k:"dow",label:"모임 요일 (0=일 ~ 6=토)",ph:"6",val:"6"}],btn:"날짜 보기",fn:function(v){const d=new Date();const target=Math.min(Math.max(v.dow||0,0),6);let add=(target-d.getDay()+7)%7;if(add===0)add=7;const days=["일","월","화","수","목","금","토"];let html="";for(let i=0;i<3;i++){const t=new Date(d.getTime()+(add+i*7)*86400000);html+=(i+1)+"회차: <b>"+(t.getMonth()+1)+"월 "+t.getDate()+"일 ("+days[t.getDay()]+")</b><br>";}return html;}},
+// ── 💪 훈련·피지컬 (8) ──
+{id:"futsal-cal",cat:"💪 훈련·피지컬",icon:"🔥",name:"풋살 칼로리 계산기",desc:"체중과 뛴 시간으로 소모 칼로리를 추정합니다.",kind:"calc",fields:[{k:"w",label:"체중(kg)",ph:"70"},{k:"t",label:"뛴 시간(분)",ph:"60"}],fn:function(v){if(!v.w||!v.t)return"";const kcal=Math.round(8*v.w*(v.t/60)*1.05);return "약 <b>"+kcal.toLocaleString()+"kcal</b> 소모<div class='small'>축구/풋살 MET 약 8 기준 추정치 — 치킨 반 마리("+Math.round(kcal/900*10)/10+"마리분)와 맞먹습니다!</div>";}},
+{id:"sprint-speed",cat:"💪 훈련·피지컬",icon:"💨",name:"스프린트 속도 계산기",desc:"거리와 시간으로 최고 속도를 계산합니다.",kind:"calc",fields:[{k:"d",label:"거리(m)",ph:"30"},{k:"t",label:"기록(초)",ph:"4.5",step:"0.01"}],fn:function(v){if(!v.d||!v.t)return"";const kmh=Math.round(v.d/v.t*3.6*10)/10;return "평균 <b>"+kmh+"km/h</b><div class='small'>프로 최고 스프린트는 약 36~38km/h 수준으로 알려져 있습니다. 아마추어 30km/h면 준족!</div>";}},
+{id:"cooper-test",cat:"💪 훈련·피지컬",icon:"🏃",name:"쿠퍼 테스트 판정기",desc:"12분 달리기 거리로 심폐 지구력 등급을 확인합니다. (성인 남성 기준 참고표)",kind:"calc",fields:[{k:"d",label:"12분 주행 거리(m)",ph:"2600"}],fn:function(v){if(!v.d)return"";let g;if(v.d>=2800)g="🏅 우수 — 아마추어 최상위권";else if(v.d>=2400)g="👍 양호 — 90분 풀타임 가능 체력";else if(v.d>=2000)g="😐 보통 — 후반 체력 저하 주의";else g="🌱 노력 필요 — 주 2회 유산소부터";return v.d.toLocaleString()+"m → <b>"+g+"</b><div class='small'>연령·성별에 따라 기준이 다른 일반 참고표입니다.</div>";}},
+{id:"hr-zone",cat:"💪 훈련·피지컬",icon:"❤️",name:"심박존 계산기",desc:"나이를 이용한 단순 추정값입니다. 개인별 운동 강도 처방에 사용할 수 없습니다.",kind:"calc",fields:[{k:"age",label:"나이",ph:"30"}],fn:function(v){if(!v.age)return"";const max=220-v.age;const z=function(a,b){return Math.round(max*a)+"~"+Math.round(max*b)+" bpm";};return "최대심박 약 <b>"+max+" bpm</b> (220−나이 공식)<div class='small'>추정 최대심박의 60~70% "+z(.6,.7)+"<br>70~80% "+z(.7,.8)+"<br>80~90% "+z(.8,.9)+"<br>90~100% "+z(.9,1)+"</div>";}},
+{id:"hydration",cat:"💪 훈련·피지컬",icon:"💧",name:"수분 섭취 가이드",desc:"운동 시간에 맞는 물 섭취량을 안내합니다.",kind:"calc",fields:[{k:"w",label:"체중(kg)",ph:"70"},{k:"t",label:"운동 시간(분)",ph:"90"}],fn:function(v){if(!v.w||!v.t)return"";const before=Math.round(v.w*5);const during=Math.round(v.t/15)*150;return "운동 2시간 전 <b>약 "+before+"ml</b> · 운동 중 <b>15분마다 150ml</b> (총 약 "+during.toLocaleString()+"ml)<div class='small'>일반 가이드라인 기준 — 더운 날엔 전해질 음료를 섞으세요.</div>";}},
+{id:"interval-timer",cat:"💪 훈련·피지컬",icon:"⏲️",name:"인터벌 타이머",desc:"운동/휴식 인터벌을 실제로 카운트다운합니다.",kind:"custom",html:'<div class="frow"><div class="field"><label>운동(초)</label><input type="number" id="it-work" value="30"></div><div class="field"><label>휴식(초)</label><input type="number" id="it-rest" value="15"></div><div class="field"><label>라운드</label><input type="number" id="it-rounds" value="8"></div><button class="go" onclick="itStart()">시작</button><button class="go" style="background:var(--sub)" onclick="itStop()">정지</button></div><div class="result show" id="it-disp">설정 후 시작을 누르세요.</div>'},
+{id:"run-pace",cat:"💪 훈련·피지컬",icon:"👟",name:"러닝 페이스 변환기",desc:"거리·시간을 km당 페이스로 변환합니다.",kind:"calc",fields:[{k:"d",label:"거리(km)",ph:"5",step:"0.1"},{k:"t",label:"시간(분)",ph:"28"}],fn:function(v){if(!v.d||!v.t)return"";const pace=v.t/v.d;const m=Math.floor(pace),s=("0"+Math.round((pace-m)*60)).slice(-2);return "페이스 <b>"+m+"'"+s+"\"/km</b> · 평균 "+(Math.round(v.d/(v.t/60)*10)/10)+"km/h";}},
+{id:"warmup-gen",cat:"💪 훈련·피지컬",icon:"🤸",name:"몸풀기 루틴 생성기",desc:"가용 시간에 맞는 워밍업 루틴을 만들어드립니다.",kind:"select",label:"가용 시간",opts:[["5분 (급할 때)","① 제자리 조깅 1분 → ② 다리 스윙 앞뒤/좌우 각 10회 → ③ 무릎 들어 걷기 1분 → ④ 사이드 런지 좌우 8회 → ⑤ 점프 10회<div class='small'>부상 방지 최소한의 루틴입니다.</div>"],["10분 (표준)","① 가벼운 조깅 2분 → ② 동적 스트레칭(다리 스윙·힙 오프너) 3분 → ③ 카리오카 스텝 왕복 2회 → ④ 가속 달리기 50%→80% 3회 → ⑤ 볼터치 2분"],["15분 (경기 전)","표준 10분 루틴 + ⑥ 2:2 압박 패스게임 3분 + ⑦ 슈팅 5회<div class='small'>심박을 경기 강도까지 끌어올리고 시작하세요.</div>"]]},
+// ── 🏟️ 직관·집관 (12) ──
+{id:"depart-time",cat:"🏟️ 직관·집관",icon:"🚇",name:"직관 출발 시각 계산기",desc:"킥오프에 늦지 않는 출발 시각을 계산합니다.",kind:"calc",fields:[{k:"ko",label:"킥오프",type:"time",val:"19:00"},{k:"move",label:"이동 시간(분)",ph:"50"},{k:"buf",label:"여유(입장·굿즈)",val:"40"}],btn:"출발 시각",fn:function(v){if(!v.ko||isNaN(v.move))return"";const p=v.ko.split(":");const t=new Date(2000,0,1,+p[0],+p[1]);const dep=new Date(t.getTime()-((v.move||0)+(v.buf||0))*60000);return "늦어도 <b>"+dep.getHours()+":"+("0"+dep.getMinutes()).slice(-2)+"</b>에는 출발!<div class='small'>이동 "+v.move+"분 + 여유 "+(v.buf||0)+"분 반영. 빅매치는 여유를 20분 더 두세요.</div>";}},
+{id:"seasonpass-break",cat:"🏟️ 직관·집관",icon:"🎫",name:"시즌권 손익분기 계산기",desc:"몇 경기 이상 가면 시즌권이 이득인지 계산합니다.",kind:"calc",fields:[{k:"pass",label:"시즌권 가격(원)",ph:"250000"},{k:"single",label:"장당 티켓(원)",ph:"20000"},{k:"total",label:"홈경기 수",val:"19"}],fn:function(v){if(!v.pass||!v.single)return"";const be=Math.ceil(v.pass/v.single);return "<b>"+be+"경기</b> 이상 직관하면 시즌권이 이득"+(v.total?" (홈 "+v.total+"경기 중 "+Math.round(be/v.total*100)+"%)":"")+"<div class='small'>선예매·전용 입구 같은 부가 혜택은 덤입니다.</div>";}},
+{id:"chicken-calc",cat:"🏟️ 직관·집관",icon:"🍗",name:"집관 치킨 수량 계산기",desc:"몇 명이 모이면 치킨 몇 마리? 과학적으로 계산합니다.",kind:"calc",fields:[{k:"n",label:"인원",ph:"5"},{k:"hungry",label:"대식가 수",ph:"1",val:"0"}],fn:function(v){if(!v.n)return"";const m=Math.ceil(((v.n||0)+(v.hungry||0)*0.5)/2.5);return "치킨 <b>"+m+"마리</b> 권장<div class='small'>1마리=2.5인 기준 + 대식가 보정. 연장전 가능성이 있으면 +1마리가 국룰입니다.</div>";}},
+{id:"drink-calc",cat:"🏟️ 직관·집관",icon:"🥤",name:"음료 수량 계산기",desc:"경기 시청 인원에 맞는 음료 수량을 계산합니다.",kind:"calc",fields:[{k:"n",label:"인원",ph:"5"},{k:"g",label:"경기 수",val:"1"}],fn:function(v){if(!v.n)return"";const cans=Math.ceil(v.n*2.5*(v.g||1));return "500ml 기준 <b>약 "+cans+"개</b><div class='small'>1인 경기당 2~3개 기준. 연장·승부차기 대비 여분도 준비하세요.</div>";}},
+{id:"watch-checklist",cat:"🏟️ 직관·집관",icon:"✅",name:"집관 준비 체크리스트",desc:"모임 유형을 고르면 준비물 목록을 만들어드립니다.",kind:"select",label:"모임 유형",opts:[["혼자 집관","□ 시청 구독권 로그인 확인 □ 간식·음료 □ 무선 이어폰(새벽) □ 담요 □ 휴대폰 무음(스포 방지)"],["친구들과 집관","□ 치킨·피자 예약(킥오프 40분 전 주문) □ 음료 인원×2.5 □ 여분 방석 □ TV 음량 사전 협의 □ 쓰레기봉투"],["새벽 경기","□ 무선 이어폰 필수 □ 무릎담요 □ 저조도 간접등 □ 다음 날 알람 재확인 □ 카페인은 전반전까지만"]]},
+{id:"tv-dist",cat:"🏟️ 직관·집관",icon:"📺",name:"TV 시청거리 계산기",desc:"TV 크기에 맞는 최적 시청 거리를 계산합니다.",kind:"calc",fields:[{k:"inch",label:"TV 크기(인치)",ph:"65"}],fn:function(v){if(!v.inch)return"";const cm=v.inch*2.54;const d=Math.round(cm*1.2)/100;return "권장 시청거리 <b>약 "+d+"m</b><div class='small'>4K 기준(화면 대각선×1.2배). 축구는 넓은 화면 정보가 많아 살짝 멀어도 좋습니다.</div>";}},
+{id:"euro-clock",cat:"🏟️ 직관·집관",icon:"🕰️",name:"유럽 현지 시각 시계",desc:"주요 리그 도시의 현재 시각을 실시간으로 보여줍니다.",kind:"custom",html:'<div class="result show" id="ec-disp">불러오는 중…</div>'},
+{id:"ko-countdown",cat:"🏟️ 직관·집관",icon:"⏳",name:"킥오프 카운트다운",desc:"경기 시각을 설정하면 실시간으로 카운트다운합니다.",kind:"custom",html:'<div class="frow"><div class="field"><label>킥오프 일시</label><input type="datetime-local" id="kc-when"></div><button class="go" onclick="kcStart()">카운트다운 시작</button></div><div class="result" id="kc-disp"></div>'},
+{id:"season-prog",cat:"🏟️ 직관·집관",icon:"📊",name:"시즌 진행률",desc:"2026-27 유럽 시즌이 얼마나 진행됐는지 자동 표시합니다.",kind:"custom",html:'<div class="result show" id="sp-disp"></div>'},
+{id:"trip-checklist",cat:"🏟️ 직관·집관",icon:"🧳",name:"원정 짐 체크리스트",desc:"직관 유형별 준비물 목록입니다.",kind:"select",label:"직관 유형",opts:[["당일 국내 직관","□ 티켓·모바일 예매 확인 □ 유니폼/머플러 □ 보조배터리 □ 우비(우천) □ 현금 소액(구장 매점)"],["1박 2일 원정","당일 목록 + □ 숙소 예약 확인 □ 세면도구 □ 여벌 옷 □ 다음 날 교통편"],["해외 직관","□ 여권(유효기간 6개월+) □ 티켓 구단 앱 로그인 □ 유심/로밍 □ 여행자보험 □ 환전(현지 소액) □ 어댑터 □ 경기장 반입금지 물품 확인"]]},
+{id:"seat-helper",cat:"🏟️ 직관·집관",icon:"💺",name:"좌석 선택 도우미",desc:"직관 목적에 맞는 좌석 구역을 추천합니다.",kind:"select",label:"직관 목적",opts:[["전술·경기 흐름을 보고 싶다","<b>2층 중앙</b> — 중계 화면과 가장 비슷한 시야로 대형 변화가 한눈에 들어옵니다."],["선수를 가까이 보고 싶다","<b>1층 중앙 앞열</b> — 현장감 최고. 단, 반대편 상황은 멀어집니다."],["응원 열기를 느끼고 싶다","<b>골대 뒤 응원석</b> — 90분 서서 응원하는 구역임을 각오하세요."],["가족·데이트 관람","<b>테이블석·지정석 중앙</b> — 좌석 여유와 편의시설 접근성이 좋습니다."],["사진을 찍고 싶다","<b>1층 코너</b> — 코너킥·세리머니가 가까이 옵니다. 반대편 골 장면은 포기."]]},
+{id:"snack-budget",cat:"🏟️ 직관·집관",icon:"🌭",name:"직관 간식 예산 계산기",desc:"구장 먹거리 예산을 인원 기준으로 잡아드립니다.",kind:"calc",fields:[{k:"n",label:"인원",ph:"3"},{k:"per",label:"1인 예산(원)",ph:"15000",val:"15000"}],fn:function(v){if(!v.n)return"";return "총 간식 예산 <b>"+WON(v.n*(v.per||0))+"</b><div class='small'>구장 물가는 시중보다 20~30% 높게 잡는 것이 안전합니다.</div>";}},
+// ── 🔁 변환기 (8) ──
+{id:"field-area",cat:"🔁 변환기",icon:"🟩",name:"축구장 넓이 변환기",desc:"'축구장 몇 개 크기' 기사 표현을 실감나게 변환합니다.",kind:"calc",fields:[{k:"a",label:"면적(㎡)",ph:"50000"}],fn:function(v){if(!v.a)return"";const f=Math.round(v.a/7140*10)/10;return v.a.toLocaleString()+"㎡ = <b>축구장 약 "+f+"개</b> (표준 105×68m 기준) · 약 "+Math.round(v.a/3.3058).toLocaleString()+"평";}},
+{id:"fee-convert",cat:"🔁 변환기",icon:"💶",name:"이적료 원화 환산기",desc:"€m 단위 이적료를 원화로 환산합니다. (실시간 환율)",kind:"calc",fields:[{k:"m",label:"이적료 (€m)",ph:"80",step:"0.1"}],btn:"환산",fn:function(v){if(!v.m)return"";miniOut("fee-convert","환율 조회 중…");fxRate("EUR").then(function(r){miniOut("fee-convert","€"+v.m+"m ≈ <b>약 "+Math.round(v.m*1000000*r/100000000)+"억 원</b><div class='small'>실시간 환율 1€="+Math.round(r)+"원 적용</div>");}).catch(function(){miniOut("fee-convert","환율 조회 실패 — 직구 환율 계산기에서 수동 환율로 계산해 보세요.");});return "환율 조회 중…";}},{id:"wage-calc",cat:"🔁 변환기",icon:"💷",name:"주급 → 연봉 환산기",desc:"영국식 주급(£)을 연봉과 원화로 환산합니다. (실시간 환율)",kind:"calc",fields:[{k:"w",label:"주급 (파운드)",ph:"200000"}],btn:"환산",fn:function(v){if(!v.w)return"";miniOut("wage-calc","환율 조회 중…");fxRate("GBP").then(function(r){var yr=v.w*52;miniOut("wage-calc","주급 £"+Math.round(v.w).toLocaleString()+" = 연봉 <b>£"+(Math.round(yr/1e5)/10)+"m</b> ≈ <b>약 "+(Math.round(yr*r/1e7)/10)+"억 원</b><div class='small'>주급 원화 약 "+(Math.round(v.w*r/1e7)/10)+"억 원 · 실시간 환율 1£≈"+Math.round(r).toLocaleString()+"원 · 구단 발표 주급은 통상 세전 기준입니다.</div>");}).catch(function(){miniOut("wage-calc","환율 조회 실패 — 잠시 후 다시 시도해 주세요.");});return "환율 조회 중…";}},{id:"best11",cat:"🎲 재미·랜덤",icon:"⭐",name:"나만의 베스트11 메이커",desc:"포메이션을 고르고 이름을 넣으면 라인업 이미지를 만들어 저장할 수 있습니다.",kind:"custom",html:'<div class="small" style="margin:6px 0">포메이션을 고르고 1번(GK)부터 11번까지 이름을 넣은 뒤 버튼을 누르세요.</div><select id="b11-f" style="margin:4px 0"><option>4-3-3</option><option>4-4-2</option><option>3-5-2</option><option>4-2-3-1</option></select> <input id="b11-team" placeholder="팀 이름 (선택)" style="width:150px"><div id="b11-ins"></div><button class="btn" onclick="return b11Draw()">🎨 라인업 이미지 만들기</button><div><canvas id="b11-cv" width="720" height="1000" style="max-width:100%;height:auto;display:none;border-radius:12px;margin-top:8px"></canvas></div><a id="b11-dl" class="btn" style="display:none" download="best11-chukguchanggo.png">💾 PNG 저장</a>'},
+{id:"mile-km",cat:"🔁 변환기",icon:"🛣️",name:"마일 ↔ km 변환기",desc:"영국 기사의 마일 표기를 km로 바꿉니다.",kind:"calc",fields:[{k:"v",label:"값",ph:"10",step:"0.1"},{k:"dir",label:"방향 (1=마일→km, 2=km→마일)",val:"1"}],fn:function(v){if(!v.v)return"";return v.dir===2?v.v+"km = <b>"+Math.round(v.v/1.609*100)/100+"마일</b>":v.v+"마일 = <b>"+Math.round(v.v*1.609*100)/100+"km</b>";}},
+{id:"ftin-cm",cat:"🔁 변환기",icon:"📏",name:"피트·인치 → cm (선수 키)",desc:"6ft 2in 같은 해외 선수 키 표기를 cm로 바꿉니다.",kind:"calc",fields:[{k:"ft",label:"피트(ft)",ph:"6"},{k:"inch",label:"인치(in)",ph:"2",val:"0"}],fn:function(v){if(!v.ft&&!v.inch)return"";const cm=Math.round(((v.ft||0)*30.48+(v.inch||0)*2.54)*10)/10;return (v.ft||0)+"ft "+(v.inch||0)+"in = <b>"+cm+"cm</b>";}},
+{id:"lb-kg",cat:"🔁 변환기",icon:"⚖️",name:"파운드 ↔ kg 변환기",desc:"해외 기사의 몸무게 표기를 변환합니다.",kind:"calc",fields:[{k:"v",label:"값",ph:"170"},{k:"dir",label:"방향 (1=lb→kg, 2=kg→lb)",val:"1"}],fn:function(v){if(!v.v)return"";return v.dir===2?v.v+"kg = <b>"+Math.round(v.v*2.2046*10)/10+"lb</b>":v.v+"lb = <b>"+Math.round(v.v/2.2046*10)/10+"kg</b>";}},
+{id:"yard-m",cat:"🔁 변환기",icon:"📐",name:"야드 ↔ 미터 변환기",desc:"'30야드 중거리 슛' — 몇 미터인지 바로 확인.",kind:"calc",fields:[{k:"v",label:"값",ph:"30"},{k:"dir",label:"방향 (1=야드→m, 2=m→야드)",val:"1"}],fn:function(v){if(!v.v)return"";return v.dir===2?v.v+"m = <b>"+Math.round(v.v/0.9144*10)/10+"야드</b>":v.v+"야드 = <b>"+Math.round(v.v*0.9144*10)/10+"m</b><div class='small'>페널티박스 폭이 약 40야드(36.6m)입니다.</div>";}},
+{id:"eur-gbp",cat:"🔁 변환기",icon:"💱",name:"유로 ↔ 파운드 환산기",desc:"이적료 기사에서 €와 £가 섞여 나올 때 씁니다.",kind:"calc",fields:[{k:"v",label:"금액",ph:"100",step:"0.1"},{k:"dir",label:"방향 (1=€→£, 2=£→€)",val:"1"}],btn:"환산",fn:function(v){if(!v.v)return"";miniOut("eur-gbp","환율 조회 중…");fxRate("EUR").then(function(ek){return fxRate("GBP").then(function(gk){const r=ek/gk;const res=v.dir===2?("£"+v.v+" ≈ <b>€"+Math.round(v.v/r*100)/100+"</b>"):("€"+v.v+" ≈ <b>£"+Math.round(v.v*r*100)/100+"</b>");miniOut("eur-gbp",res+"<div class='small'>실시간 교차 환율 적용</div>");});}).catch(function(){miniOut("eur-gbp","환율 조회 실패 — 잠시 후 다시 시도해 주세요.");});return "환율 조회 중…";}},
+{id:"player-age",cat:"🔁 변환기",icon:"🎂",name:"선수 나이 계산기",desc:"생년월일로 만 나이와 연령대회 자격을 확인합니다.",kind:"calc",fields:[{k:"b",label:"생년월일",type:"date"}],btn:"계산",fn:function(v){if(!v.b)return"";const b=new Date(v.b);const now=new Date();let age=now.getFullYear()-b.getFullYear();const md=(now.getMonth()-b.getMonth())||(now.getDate()-b.getDate());if(md<0)age--;return "만 <b>"+age+"세</b><div class='small'>U-23: "+(age<=23?"가능성 있음":"초과")+" · U-20: "+(age<=20?"가능성 있음":"초과")+" — 연령 대회는 '대회 기준일' 나이로 판정하므로 실제 자격은 대회 규정을 확인하세요.</div>";}},
+// ── 🎲 재미·랜덤 (8) ──
+{id:"fortune",cat:"🎲 재미·랜덤",icon:"🔮",name:"오늘의 축구 운세",desc:"오늘 하루 나의 축구 운세를 확인하세요. (매일 자동 변경)",kind:"calc",fields:[],btn:"운세 보기",fn:function(){const day=Math.floor(Date.now()/86400000);const luck=["골 운이 트이는 날 — 과감히 슛하세요","도움 운 — 오늘은 어시스트에 집중","수비 운 — 클린시트가 보입니다","벤치 운 — 무리하면 부상, 로테이션 데이","이적 운 — 새 팀(모임)의 제안이 들어올지도","심판 운 — 오늘은 항의 금지, 카드 조심"][day%6];const item=["양말 새 것","왼발 먼저 신기","경기 전 바나나","파란색 아이템","스트레칭 2배","일찍 도착하기"][ (day+3)%6];return "오늘의 운세: <b>"+luck+"</b><div class='small'>행운 아이템: "+item+" · 내일 다시 확인해 보세요!</div>";}},
+{id:"teamname-gen",cat:"🎲 재미·랜덤",icon:"✨",name:"팀 이름 생성기",desc:"동호회 팀명이 고민될 때 — 무작위 조합으로 뽑아드립니다.",kind:"calc",fields:[],btn:"팀명 뽑기",fn:function(){const a=["번개","무쇠","질주","불꽃","심야","강철","바람","전설의","동네","월요일의"];const b=["호랑이","골잡이","수비수","유나이티드","시티","레알","일레븐","돌격대","라이온즈","FC"];return "추천 팀명: <b>"+qPick(a)+" "+qPick(b)+"</b><div class='small'>마음에 들 때까지 다시 뽑으세요. 상표 검색은 필수!</div>";}},
+{id:"number-pick",cat:"🎲 재미·랜덤",icon:"🔢",name:"등번호 추천기",desc:"포지션에 어울리는 등번호를 추천합니다.",kind:"select",label:"포지션",opts:[["골키퍼","<b>1번</b> — 전통의 GK 번호. 개성파라면 21·31번도 인기."],["센터백","<b>4·5번</b> — 리더 냄새가 나는 번호입니다."],["풀백","<b>2·3번</b> — 요즘은 12·23번도 세련된 선택."],["수비형 MF","<b>6번</b> — 조용한 지배자의 번호."],["중앙 MF","<b>8번</b> — 박스 투 박스의 상징."],["공격형 MF","<b>10번</b> — 팀의 심장. 부담도 함께 옵니다."],["윙어","<b>7·11번</b> — 스피드스터의 전통 번호."],["스트라이커","<b>9번</b> — 골에 진심이라면 이 번호."]]},
+{id:"balance-game",cat:"🎲 재미·랜덤",icon:"🤔",name:"축구 밸런스 게임",desc:"모임 대화가 끊겼을 때 — 논쟁 유발 질문을 뽑아드립니다.",kind:"calc",fields:[],btn:"질문 뽑기",fn:function(){const q=["메시 vs 호날두 — 커리어 한 명만 소유 가능하다면?","우리 팀 우승 1회 vs 라이벌 팀 10년 무관","평생 직관 무료 vs 평생 모든 중계 무료","친선경기 해트트릭 vs 결승전 결승골 어시스트","전성기 앙리 영입 vs 전성기 지단 영입","월드컵 우승(내 나라) vs 챔스 우승(내 응원팀)","감독 전술 전권 vs 구단주 이적 전권","VAR 폐지 vs 추가시간 폐지"];return "<b>"+qPick(q)+"</b><div class='small'>다시 누르면 새 질문이 나옵니다. 싸움은 말리지 않습니다.</div>";}},
+{id:"celebration",cat:"🎲 재미·랜덤",icon:"🎉",name:"골 세리머니 추첨기",desc:"다음 골 세리머니를 미리 정해두세요.",kind:"calc",fields:[],btn:"세리머니 뽑기",fn:function(){const c=["코너 깃발 펀치","무릎 슬라이딩","동료와 등 맞대기 점프","포효 후 유니폼 움켜쥐기","요람 흔들기(아기 헌정)","심장 두드리고 하늘 가리키기","단체 얼음 땡","벤치까지 전력 질주"];return "다음 골은: <b>"+qPick(c)+"</b><div class='small'>상의 탈의는 옐로카드이니 목록에서 뺐습니다.</div>";}},
+{id:"league-roulette",cat:"🎲 재미·랜덤",icon:"🎡",name:"오늘 뭐 볼까 룰렛",desc:"볼 경기를 못 정했다면 룰렛에 맡기세요.",kind:"calc",fields:[],btn:"돌리기",fn:function(){const l=[["EPL","속도와 피지컬의 향연 — 실패 없는 선택"],["라리가","기술과 빌드업의 미학"],["분데스리가","골 폭죽과 압박 축구"],["세리에 A","전술 체스의 세계"],["K리그","직관 가능한 우리 리그!"],["하이라이트 몰아보기","시간이 없다면 이게 정답"]];const p=qPick(l);return "오늘은 <b>"+p[0]+"</b><div class='small'>"+p[1]+"</div>";}},
+{id:"captain-pick",cat:"🎲 재미·랜덤",icon:"🎽",name:"주장 뽑기",desc:"오늘의 주장과 부주장을 랜덤으로 정합니다.",kind:"random",btn:"주장 추첨",fn:function(names){if(names.length<1)return"";const s=qShuffle(names.slice());return "⭐ 주장: <b>"+s[0]+"</b>"+(s[1]?"<br>부주장: "+s[1]:"")+"<div class='small'>주장 완장 차는 순간 슛 정확도 +10% (기분상)</div>";}},
+{id:"predict-coin",cat:"🎲 재미·랜덤",icon:"🪙",name:"승부 예측 코인",desc:"이 경기 어디가 이길까 — 코인의 계시를 받으세요.",kind:"calc",fields:[{k:"a",label:"팀 A",type:"text",ph:"아스널"},{k:"b",label:"팀 B",type:"text",ph:"리버풀"}],btn:"코인 던지기",fn:function(v){if(!v.a||!v.b)return"";const r=Math.random();const pick=r<0.4?v.a:r<0.8?v.b:"무승부";return "코인의 계시: <b>"+pick+"</b><div class='small'>적중해도 우연입니다. 베팅 근거로 쓰지 마세요! 참여마당의 진짜 예측 투표도 해보세요.</div>";}},
+// ── 🏆 역사 조회 (7) ──
+{id:"wc-winner",cat:"🏆 역사 조회",icon:"🏆",name:"월드컵 역대 우승국",desc:"1930~2022년 중 수록된 대회의 우승국을 확인합니다.",kind:"select",label:"대회 연도",opts:[["2022 카타르","<b>아르헨티나</b> — 결승 vs 프랑스, 승부차기 끝 메시의 대관식"],["2018 러시아","<b>프랑스</b>"],["2014 브라질","<b>독일</b> — 준결승서 브라질에 7-1"],["2010 남아공","<b>스페인</b>"],["2006 독일","<b>이탈리아</b>"],["2002 한일","<b>브라질</b> — 호나우두 8골, 한국은 4강 신화"],["1998 프랑스","<b>프랑스</b> — 지단의 결승 2골"],["1994 미국","<b>브라질</b>"],["1990 이탈리아","<b>서독</b>"],["1986 멕시코","<b>아르헨티나</b> — 마라도나의 대회"],["1982 스페인","<b>이탈리아</b>"],["1978 아르헨티나","<b>아르헨티나</b>"],["1974 서독","<b>서독</b>"],["1970 멕시코","<b>브라질</b> — 펠레의 세 번째 우승"],["1966 잉글랜드","<b>잉글랜드</b> — 유일한 우승"],["1930 우루과이 (초대 대회)","<b>우루과이</b>"]]},
+{id:"ballon-hist",cat:"🏆 역사 조회",icon:"🥇",name:"발롱도르 역대 수상자",desc:"1995~2023년 중 수록된 연도의 남자 발롱도르 수상자를 확인합니다.",kind:"select",label:"연도",opts:[["2023","<b>리오넬 메시</b> (통산 8회)"],["2022","<b>카림 벤제마</b>"],["2021","<b>리오넬 메시</b>"],["2020","<b>수상 취소</b> — 팬데믹으로 시상 없음"],["2019","<b>리오넬 메시</b>"],["2018","<b>루카 모드리치</b> — 메시·호날두 10년 독식을 깬 해"],["2013·2014","<b>크리스티아누 호날두</b>"],["2009~2012","<b>리오넬 메시</b> 4연속"],["2007","<b>카카</b>"],["2006","<b>파비오 칸나바로</b> — 수비수 수상"],["2005","<b>호나우지뉴</b>"],["1998","<b>지네딘 지단</b>"],["1995","<b>조지 웨아</b> — 아프리카 최초, 훗날 라이베리아 대통령"]]},
+{id:"euro-winner",cat:"🏆 역사 조회",icon:"🇪🇺",name:"유로 역대 우승국",desc:"유럽선수권 우승국을 확인합니다.",kind:"select",label:"대회",opts:[["유로 2024 (독일)","<b>스페인</b> — 통산 4회로 최다 우승"],["유로 2020 (2021 개최)","<b>이탈리아</b> — 웸블리 결승서 잉글랜드 제압"],["유로 2016","<b>포르투갈</b> — 호날두의 첫 메이저"],["유로 2012","<b>스페인</b> — 결승서 이탈리아에 4-0"],["유로 2008","<b>스페인</b> — 티키타카 시대 개막"],["유로 2004","<b>그리스</b> — 역대급 이변 우승"],["유로 2000","<b>프랑스</b>"],["유로 1996","<b>독일</b> — 골든골 결승"]]},
+{id:"asian-winner",cat:"🏆 역사 조회",icon:"🌏",name:"아시안컵 역대 우승국",desc:"아시안컵 우승국 — 한국의 기록도 확인하세요.",kind:"select",label:"대회",opts:[["2023 카타르 (2024년 1월 개최)","<b>카타르</b> — 개최국 2연패"],["2019 UAE","<b>카타르</b>"],["2015 호주","<b>호주</b> — 결승서 한국에 연장 승"],["2011 카타르","<b>일본</b>"],["2007 동남아 4개국","<b>이라크</b> — 감동의 우승"],["한국의 우승 기록","<b>1956·1960 — 초대·2회 대회 2연패</b> 이후 준우승만 4회. 통산 우승 2회입니다."],["최다 우승국","<b>일본 4회</b> (1992·2000·2004·2011)"]]},
+{id:"wc-host",cat:"🏆 역사 조회",icon:"🗺️",name:"월드컵 개최지 연혁",desc:"역대·미래 월드컵 개최지를 확인합니다.",kind:"select",label:"대회",opts:[["2026","<b>미국·캐나다·멕시코 공동 개최</b> — 사상 첫 3개국, 48팀 체제"],["2030 (예정)","<b>스페인·포르투갈·모로코</b> + 100주년 기념 남미 3개국 개막전"],["2034 (예정)","<b>사우디아라비아</b>"],["2022","카타르 — 첫 겨울 개최"],["2018","러시아"],["2002","<b>한국·일본</b> — 아시아 최초, 첫 공동 개최"],["1930 (초대)","우루과이"]]},
+{id:"ucl-recent",cat:"🏆 역사 조회",icon:"⭐",name:"챔피언스리그 최근 우승",desc:"최근 10년 챔스 우승팀을 확인합니다. (2024년까지)",kind:"select",label:"시즌",opts:[["2023-24","<b>레알 마드리드</b> — 통산 15회"],["2022-23","<b>맨체스터 시티</b> — 트레블 달성"],["2021-22","<b>레알 마드리드</b>"],["2020-21","<b>첼시</b>"],["2019-20","<b>바이에른 뮌헨</b> — 전승 우승"],["2018-19","<b>리버풀</b>"],["2017-18","<b>레알 마드리드</b> — 3연패 완성"],["2014-15","<b>바르셀로나</b> — MSN 트리오"],["이후 시즌","2024-25 이후 결과는 검증 후 업데이트 예정입니다."]]},
+{id:"kfa-first",cat:"🏆 역사 조회",icon:"🇰🇷",name:"한국 축구 첫 기록 사전",desc:"한국 축구의 역사적 '최초'들을 확인합니다.",kind:"select",label:"기록",opts:[["첫 월드컵 출전","<b>1954 스위스 대회</b> — 아시아 최초 출전국 중 하나"],["첫 월드컵 승리","<b>2002년 폴란드전 2-0</b> — 본선 첫 승이 홈 대회에서"],["월드컵 최고 성적","<b>2002 한일 대회 4강</b> — 아시아 최초"],["첫 월드컵 원정 16강","<b>2010 남아공 대회</b>"],["아시안컵 우승","<b>1956·1960 — 통산 2회</b> (초대 대회 우승국)"],["여자 대표팀 주요 기록","<b>2022 아시안컵 준우승</b> — 역대 최고 성적"]]}
+];
+// ── 실용성 큐레이션: 아래 목록은 비활성(화면·홈·랭킹에서 제외) ──
+// 기준: 단순 나눗셈 수준, 다른 도구와 중복, 축구 특화 아님, 근거 약한 기준표, 일회성 개그.
+// 다시 살리려면 이 목록에서 id를 빼면 됩니다.
+const MINI_DISABLED=[
+  "avg-goal","cleansheet","pk-rate","minutes","assist-pace","attendance","survival-gap","goal-diff", // 얇은 계산
+  "cont-cup","nt-nick","season-window","turf-dict",   // 얇은 사전
+  "addtime-est",                                       // 재미용 추정
+  "ref-pick","bib-color","penalty-pick","squad-assign","next-meet", // 추첨류 중복
+  "cooper-test","hydration","run-pace","warmup-gen",  // 근거 약함·축구 특화 아님
+  "drink-calc","watch-checklist","tv-dist","season-prog","trip-checklist","seat-helper","snack-budget", // 얇은 집관류
+  "mile-km","lb-kg","yard-m","eur-gbp",               // 범용 변환기 중복
+  "number-pick","celebration","league-roulette","captain-pick","predict-coin", // 개그성 중복
+  "ucl-recent"                                        // 최신 시즌 공백으로 어색
+];
+const MINI=MINI_ALL.filter(function(m){return MINI_DISABLED.indexOf(m.id)<0;});
+// ── 미니 도구 렌더링 엔진 ──
+function miniSection(m){
+  let body="";
+  if(m.kind==="calc"){
+    body='<div class="frow"'+((m.fields||[]).some(function(f){return f.type==="textarea";})?' style="align-items:stretch"':'')+'>'
+      +(m.fields||[]).map(function(f){
+        const fid=m.id+"-"+f.k;
+        const inner=f.type==="textarea"
+          ?'<textarea id="'+fid+'" rows="3" placeholder="'+(f.ph||"")+'"></textarea>'
+          :'<input type="'+(f.type||"number")+'" id="'+fid+'" placeholder="'+(f.ph||"")+'"'+(f.step?' step="'+f.step+'"':'')+(f.val!==undefined?' value="'+f.val+'"':'')+'>';
+        return '<div class="field"'+(f.wide?' style="flex:1;min-width:220px"':'')+'><label>'+f.label+'</label>'+inner+'</div>';
+      }).join("")
+      +'<button class="go" onclick="miniRun(\''+m.id+'\')">'+(m.btn||"계산")+'</button></div>'
+      +'<div class="result" id="'+m.id+'-out"></div>';
+  }else if(m.kind==="select"){
+    body='<div class="frow"><div class="field"><label>'+(m.label||"선택")+'</label><select id="'+m.id+'-sel">'
+      +m.opts.map(function(o,i){return '<option value="'+i+'">'+o[0]+'</option>';}).join("")
+      +'</select></div><button class="go" onclick="miniSel(\''+m.id+'\')">'+(m.btn||"확인")+'</button></div>'
+      +'<div class="result" id="'+m.id+'-out"></div>';
+  }else if(m.kind==="random"){
+    body='<div class="frow" style="align-items:stretch"><div class="field" style="flex:1;min-width:220px"><label>'+(m.label||"명단 (쉼표 또는 줄바꿈)")+'</label><textarea id="'+m.id+'-names" rows="2" placeholder="'+(m.ph||"철수, 영희, 민수, 지훈 ...")+'"></textarea></div></div>'
+      +'<div class="frow"><button class="go" onclick="miniRand(\''+m.id+'\')">'+(m.btn||"추첨")+'</button></div>'
+      +'<div class="result" id="'+m.id+'-out"></div>';
+  }else{ body=m.html||""; }
+  return '<section class="tool" id="'+m.id+'"><h2>'+m.icon+' '+m.name+'</h2><div class="desc">'+m.desc+'</div>'+body+'</section>';
+}
+function miniRun(id){
+  const m=MINI.find(function(x){return x.id===id;});
+  if(!m) return;
+  const v={};
+  (m.fields||[]).forEach(function(f){
+    const el=document.getElementById(m.id+"-"+f.k);
+    const raw=el?el.value:"";
+    v[f.k]=(f.type==="text"||f.type==="time"||f.type==="date"||f.type==="datetime-local"||f.type==="textarea")?raw:parseFloat(raw);
+  });
+  if((m.fields||[]).some(function(f){return !f.type && (!Number.isFinite(v[f.k]) || v[f.k]<0);})){miniOut(id,"모든 숫자 항목에 0 이상의 값을 입력해 주세요.");return;}
+  const r=m.fn(v);
+  if(r) miniOut(id,r);
+  else miniOut(id,"입력을 확인해 주세요.");
+}
+function miniSel(id){
+  const m=MINI.find(function(x){return x.id===id;});
+  miniOut(id,m.opts[document.getElementById(id+"-sel").value][1]);
+}
+function miniRand(id){
+  const m=MINI.find(function(x){return x.id===id;});
+  const names=(document.getElementById(id+"-names").value||"").split(/[\n,]/).map(function(s){return s.trim();}).filter(Boolean);
+  miniOut(id,m.fn(names)||"명단을 입력해 주세요.");
+}
+function miniOut(id,html){
+  const o=document.getElementById(id+"-out");
+  if(o){o.className="result show";o.innerHTML=html;}
+  if(LANG==="en") setTimeout(function(){translateView("tools");},60); // EN 모드: 계산 결과도 번역
+}
+(function(){
+  const wrap=document.getElementById("mini-wrap");
+  if(!wrap) return;
+  const cats={};
+  MINI.forEach(function(m){(cats[m.cat]=cats[m.cat]||[]).push(m);});
+  wrap.innerHTML=Object.keys(cats).map(function(c){
+    return '<h2 class="sec">'+c+' <span style="font-size:12px;color:var(--sub);font-weight:400">'+cats[c].length+'개</span></h2>'+cats[c].map(miniSection).join("");
+  }).join("");
+})();
+// ── 커스텀 도구 동작 ──
+let itTimer=null;
+function itStart(){
+  itStop();
+  let work=parseInt(document.getElementById("it-work").value,10)||30;
+  let rest=parseInt(document.getElementById("it-rest").value,10)||15;
+  let rounds=parseInt(document.getElementById("it-rounds").value,10)||8;
+  let phase="work",left=work,round=1;
+  const disp=document.getElementById("it-disp");
+  function tick(){
+    disp.innerHTML="라운드 <b>"+round+"/"+rounds+"</b> · "+(phase==="work"?"🏃 <b style='color:var(--danger)'>운동":"😮‍💨 <b>휴식")+"</b> <b style='font-size:26px'>"+left+"</b>초";
+    if(--left<0){
+      if(phase==="work"){phase="rest";left=rest;}
+      else{round++;if(round>rounds){disp.innerHTML="✅ <b>완료!</b> 수고하셨습니다. 정리 스트레칭 잊지 마세요.";itStop();return;}phase="work";left=work;}
+    }
+  }
+  tick();
+  itTimer=setInterval(tick,1000);
+}
+function itStop(){if(itTimer){clearInterval(itTimer);itTimer=null;}}
+setInterval(function(){
+  const d=document.getElementById("ec-disp");
+  if(!d) return;
+  const cities=[["🇬🇧 런던","Europe/London"],["🇪🇸 마드리드","Europe/Madrid"],["🇩🇪 베를린","Europe/Berlin"],["🇮🇹 로마","Europe/Rome"],["🇫🇷 파리","Europe/Paris"]];
+  d.innerHTML=cities.map(function(c){return c[0]+" <b>"+new Date().toLocaleTimeString("ko-KR",{timeZone:c[1],hour:"2-digit",minute:"2-digit",second:"2-digit"})+"</b>";}).join(" · ")+"<div class='small'>서머타임 자동 반영 · 한국은 런던보다 8~9시간 빠릅니다.</div>";
+},1000);
+let kcTimer=null;
+function kcStart(){
+  const w=document.getElementById("kc-when").value;
+  const disp=document.getElementById("kc-disp");
+  if(!w){disp.className="result show";disp.innerHTML="일시를 선택해 주세요.";return;}
+  if(kcTimer)clearInterval(kcTimer);
+  const target=new Date(w).getTime();
+  function tick(){
+    const diff=target-Date.now();
+    disp.className="result show";
+    if(diff<=0){disp.innerHTML="⚽ <b>킥오프!</b> 즐거운 관전 되세요.";clearInterval(kcTimer);return;}
+    const dd=Math.floor(diff/86400000),h=Math.floor(diff/3600000)%24,m2=Math.floor(diff/60000)%60,s=Math.floor(diff/1000)%60;
+    disp.innerHTML="킥오프까지 <b style='font-size:22px'>"+(dd?dd+"일 ":"")+h+"시간 "+m2+"분 "+s+"초</b>";
+  }
+  tick();
+  kcTimer=setInterval(tick,1000);
+}
+(function(){
+  const d=document.getElementById("sp-disp");
+  if(!d) return;
+  const start=new Date(2026,7,22),end=new Date(2027,4,30),now=new Date();
+  if(now<start){
+    d.innerHTML="2026-27 유럽 시즌 개막(8/22)까지 <b>D-"+Math.ceil((start-now)/86400000)+"</b><div class='small'>지금은 월드컵과 프리시즌의 시간!</div>";
+  }else if(now>end){
+    d.innerHTML="2026-27 시즌 종료 — 다음 시즌 일정 업데이트 예정";
+  }else{
+    const p=Math.round((now-start)/(end-start)*100);
+    d.innerHTML="2026-27 시즌 진행률 <b>"+p+"%</b><div class='vrow'><div class='vtrack'><div class='vfill' style='width:"+p+"%'></div></div><span class='vpct'>"+p+"%</span></div><div class='small'>종료(5/30)까지 "+Math.ceil((end-now)/86400000)+"일 남았습니다.</div>";
+  }
+})();
+// ── 전체 도구 통합: 홈 디렉터리 + 인기 랭킹 100개 연동 ──
+const CORE_CATS={"boot-size":"👟 사이즈·장비","uniform":"👟 사이즈·장비","stud-pick":"👟 사이즈·장비","ball-size":"👟 사이즈·장비","marking":"👟 사이즈·장비","kickoff":"🕐 시간·일정","dday":"🕐 시간·일정","endtime":"🕐 시간·일정","points-sim":"📊 기록·통계","winrate":"📊 기록·통계","goal-pace":"📊 기록·통계","fpl-budget":"📊 기록·통계","futsal-split":"🤝 동호회 운영","pk-helper":"🤝 동호회 운영","trip-cost":"🏟️ 직관·집관","fx-calc":"🔁 변환기","fanquiz":"🎲 재미·랜덤","pos-test":"🎲 재미·랜덤","term-search":"📚 리그·구단 사전","formation":"📚 리그·구단 사전"};
+window.ALLT=TOOLLIST.map(function(t){return [t[0],t[1],t[2]];}).concat(MINI.map(function(m){return [m.id,m.icon,m.name];}));
+// ── ⭐ 즐겨찾기 ──
+function getFavs(){try{return JSON.parse(localStorage.getItem("favTools")||"[]");}catch(e){return [];}}
+function favStar(id){
+  const on=getFavs().indexOf(id)>-1;
+  return '<span onclick="toggleFav(\''+id+'\',event)" style="cursor:pointer" title="즐겨찾기">'+(on?"⭐":"☆")+'</span> ';
+}
+function toggleFav(id,ev){
+  if(ev){ev.stopPropagation();ev.preventDefault();}
+  const f=getFavs(); const i=f.indexOf(id);
+  if(i>-1) f.splice(i,1); else f.push(id);
+  try{localStorage.setItem("favTools",JSON.stringify(f));}catch(e){}
+  buildToolIndex(); toolSearch();
+}
+// ── 카테고리 색인 (즐겨찾기 그룹이 맨 앞에) ──
+function buildToolIndex(){
+  const box=document.getElementById("home-cats");
+  if(!box) return;
+  const all={};
+  const favs=getFavs();
+  if(favs.length){
+    all["⭐ 즐겨찾기"]=favs.map(function(id){
+      return window.ALLT.find(function(t){return t[0]===id;});
+    }).filter(Boolean);
+  }
+  TOOLLIST.forEach(function(t){const c=CORE_CATS[t[0]]||"기타";(all[c]=all[c]||[]).push(t);});
+  MINI.forEach(function(m){(all[m.cat]=all[m.cat]||[]).push([m.id,m.icon,m.name]);});
+  let total=0;
+  box.innerHTML=Object.keys(all).map(function(c){
+    if(c!=="⭐ 즐겨찾기") total+=all[c].length;
+    return '<div class="agroup"><h3>'+c+' <span style="font-weight:400;color:var(--sub);font-size:11px">'+all[c].length+'개</span></h3>'
+      +all[c].map(function(t){return '<a href="#" onclick="return navToolA(\''+t[0]+'\')">'+favStar(t[0])+t[1]+' '+t[2]+'</a>';}).join("")+'</div>';
+  }).join("");
+  const tc=document.getElementById("tool-count");
+  if(tc) tc.textContent="총 "+total+"개 · ☆를 누르면 즐겨찾기에 고정됩니다";
+}
+buildToolIndex();
+// ── 🔎 도구 빠른 검색 ──
+function toolSearch(){
+  const el=document.getElementById("tool-search");
+  const out=document.getElementById("tool-search-out");
+  if(!el||!out) return;
+  const q=(el.value||"").trim().toLowerCase();
+  if(!q){out.innerHTML="";return;}
+  const hits=window.ALLT.filter(function(t){return t[2].toLowerCase().indexOf(q)>-1;}).slice(0,8);
+  out.innerHTML=hits.length
+    ?'<ul class="plist">'+hits.map(function(t){
+        return '<li><a href="#" onclick="return navToolA(\''+t[0]+'\')">'+favStar(t[0])+t[1]+' <b>'+t[2]+'</b></a></li>';
+      }).join("")+'</ul>'
+    :'<div class="note">"'+escHtml(q)+'" 검색 결과가 없습니다. 카테고리에서 찾아보세요.</div>';
+}
+setTimeout(renderRank,0); // 전체 스크립트 로드가 끝난 뒤 100개 풀로 랭킹 계산 (선언 순서 문제 방지)
+
+/* ── (구) 10문항 고정 퀴즈 — 랜덤 출제 은행으로 대체되어 비활성화 ──
+const QUIZ=[
+  {q:"1. 다음 중 오프사이드가 선언될 수 있는 상황은?",
+   o:["스로인으로 받은 공","골킥으로 받은 공","코너킥으로 받은 공","프리킥으로 받은 공"],a:3,
+   exp:"오프사이드는 스로인·골킥·코너킥에서 직접 받은 경우 적용되지 않습니다. 프리킥은 예외가 아닙니다."},
+  {q:"2. 월드컵을 2회 이상 우승한 나라가 아닌 것은?",
+   o:["우루과이","아르헨티나","스페인","프랑스"],a:2,
+   exp:"스페인은 2010년 1회 우승. 우루과이 2회, 아르헨티나 3회, 프랑스 2회입니다."},
+  {q:"3. EPL 38경기 무패 우승 '디 인빈시블스(The Invincibles)'를 달성한 팀은?",
+   o:["맨체스터 유나이티드","아스널","첼시","리버풀"],a:1,
+   exp:"2003-04 시즌 아스널이 26승 12무로 무패 우승했습니다."},
+  {q:"4. 페널티킥 상황에서 골키퍼에게 허용되는 것은?",
+   o:["킥 전에 골라인 앞으로 나와 있기","킥 순간 한 발만 골라인에 닿아 있기","골대를 흔들어 시야 방해하기","키커에게 다가가 말 걸기"],a:1,
+   exp:"현행 규칙상 킥이 이뤄지는 순간 최소 한 발이 골라인 위(또는 선상)에 있으면 됩니다."},
+  {q:"5. 전술 용어 '하프스페이스(half-space)'가 가리키는 곳은?",
+   o:["중앙과 측면 사이의 세로 공간","하프라인 부근 중원 지역","페널티박스 안쪽 절반","후반전에 생기는 뒷공간"],a:0,
+   exp:"피치를 세로로 5등분했을 때 중앙 레인과 측면 레인 사이 공간을 말합니다."},
+  {q:"6. '노부인(The Old Lady)'이라는 별명으로 불리는 클럽은?",
+   o:["AC 밀란","유벤투스","레알 마드리드","리버풀"],a:1,
+   exp:"유벤투스의 별명 'La Vecchia Signora'(노부인)입니다."},
+  {q:"7. 다음 중 챔피언스리그(유러피언컵 포함)를 한 번도 우승하지 못한 클럽은?",
+   o:["아스톤 빌라","노팅엄 포레스트","토트넘 홋스퍼","FC 포르투"],a:2,
+   exp:"함정 문제! 아스톤 빌라(1982)와 노팅엄 포레스트(1979·80), 포르투(1987·2004)는 모두 우승 경험이 있습니다. 토트넘은 2019 준우승이 최고 성적입니다."},
+  {q:"8. 축구 데이터 지표 'xG'의 의미는?",
+   o:["골키퍼 선방 지수","경기 지배력 점수","패스 성공률","슛이 골이 될 확률의 합(기대득점)"],a:3,
+   exp:"xG(expected Goals)는 각 슛의 득점 확률을 합산한 기대득점 지표입니다."},
+  {q:"9. 골키퍼가 손으로 잡으면 백패스 반칙이 되는 경우는?",
+   o:["같은 팀 선수가 발로 의도적으로 보낸 공","같은 팀 선수가 머리로 보낸 공","같은 팀 선수가 가슴으로 보낸 공","상대 선수가 찬 공"],a:0,
+   exp:"발로 의도적으로 보낸 백패스만 손 처리 금지입니다. 머리·가슴 패스는 잡을 수 있습니다."},
+  {q:"10. 남미 최대 더비 '수페르클라시코(Superclásico)'는 어느 두 팀의 경기인가?",
+   o:["상파울루 vs 코린치안스","플라멩구 vs 플루미넨세","보카 주니어스 vs 리버 플레이트","페냐롤 vs 나시오날"],a:2,
+   exp:"아르헨티나 부에노스아이레스의 보카 주니어스와 리버 플레이트의 더비입니다."}
+];
+const qbox=document.getElementById("quiz-box");
+QUIZ.forEach((item,qi)=>{
+  const div=document.createElement("div");
+  div.className="qitem";
+  div.innerHTML=`<div class="qq">${item.q}</div>`
+    +item.o.map((opt,oi)=>`<label class="qopt" data-q="${qi}" data-o="${oi}"><input type="radio" name="q${qi}" value="${oi}">${opt}</label>`).join("")
+    +`<div class="qexp" id="exp${qi}">💡 ${item.exp}</div>`;
+  qbox.appendChild(div);
+});
+function gradeQuiz(){
+  let score=0, answered=0;
+  QUIZ.forEach((item,qi)=>{
+    const sel=document.querySelector(`input[name="q${qi}"]:checked`);
+    document.querySelectorAll(`.qopt[data-q="${qi}"]`).forEach(l=>l.classList.remove("correct","wrong"));
+    if(!sel) return;
+    answered++;
+    const chosen=parseInt(sel.value,10);
+    const correctLabel=document.querySelector(`.qopt[data-q="${qi}"][data-o="${item.a}"]`);
+    correctLabel.classList.add("correct");
+    if(chosen===item.a){score++;}
+    else{document.querySelector(`.qopt[data-q="${qi}"][data-o="${chosen}"]`).classList.add("wrong");}
+    document.getElementById("exp"+qi).classList.add("show");
+  });
+  const out=document.getElementById("qz-out");
+  out.className="result show";
+  if(answered<QUIZ.length){
+    out.innerHTML=`아직 ${QUIZ.length-answered}문항이 남았습니다. 모두 답하고 채점해 주세요.`;
+    return;
+  }
+  let level,msg;
+  if(score<=3){level="⚽ 유망주";msg="이제 막 입덕하셨군요. '축구 용어 사전'부터 읽어보세요!";}
+  else if(score<=6){level="🔄 로테이션 멤버";msg="기본기는 탄탄합니다. 하이라이트 말고 풀경기에 도전!";}
+  else if(score<=8){level="⭐ 주전 멤버";msg="친구들 사이에서 축구 좀 본다는 소리 듣는 레벨.";}
+  else{level="🏆 레전드 (해설위원급)";msg="이 정도면 직접 분석 글을 쓰셔야 합니다.";}
+  window.lastQuizScore=score;
+  out.innerHTML=`<b>${score} / ${QUIZ.length}</b> — ${level}<div class="small">${msg} 참여마당의 명예의 전당에 점수를 등록해 보세요!</div>`;
+  out.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+── (구) 퀴즈 코드 끝 ── */
+
+// ── 글 읽기(아티클 리더) ───────────────────────────────
+const ARTICLES={
+kangin:{t:"이강인 소식 확인하기 — 공식 프로필과 경기 기록",cat:"해외축구",body:
+"<p>선수의 이적 여부는 구단 발표와 공식 선수 명단을 확인해야 합니다. 협상 중이라는 보도만으로 이적이 끝났다고 볼 수는 없습니다.</p><h3>프로필과 최근 소식</h3><p><a href='https://www.psg.fr/joueurs/lee-kang-in'>PSG의 이강인 공식 프로필</a>에서 선수 정보를 확인할 수 있습니다. 경기 출전 여부와 기록은 해당 경기의 공식 명단·결과를 함께 확인하세요.</p><h3>기사를 읽을 때</h3><ul><li>기사 발행일과 실제 경기일을 구분합니다.</li><li>선발·교체 출전과 벤치 대기는 서로 다른 기록입니다.</li><li>이적료나 계약 기간은 발표에 공개된 범위만 확인합니다.</li></ul><p><a href='/players/lee-kang-in/'>이강인 관련 소식 보기</a></p>"},
+wchistory:{t:"월드컵 우승 기록 읽기 — 1930~2022년 기준",cat:"축구 역사",body:
+"<p>이 글은 2022년 대회까지의 남자 월드컵 우승 기록을 다룹니다. 이후 대회 결과와 최신 누적 기록은 FIFA에서 확인하세요.</p><h3>2022년까지 우승한 8개국</h3><ul><li>브라질 5회</li><li>독일 4회(서독 기록 포함), 이탈리아 4회</li><li>아르헨티나 3회</li><li>프랑스 2회, 우루과이 2회</li><li>잉글랜드 1회, 스페인 1회</li></ul><h3>기록을 비교할 때</h3><p>우승 횟수와 결승 진출 횟수는 다릅니다. 집계가 어느 대회까지인지 먼저 확인하고, 여자 월드컵이나 연령별 대회 기록과 구분하세요.</p><p><a href='/#wc-winner'>수록된 연도의 우승국 찾아보기</a></p><p class='editorial-source'>참고: <a href='https://www.fifa.com/tournaments/mens/worldcup'>FIFA 월드컵</a> · 내용 정리 2026.09.08</p>"},
+stats:{t:"점유율 70%인데 왜 졌을까 — 중계 그래픽 숫자 제대로 읽는 법",cat:"데이터",body:
+"<p>점유율 70%를 기록하고도 지는 경기는 드물지 않습니다. 중계 화면에 뜨는 숫자들은 경기를 요약해 주는 것 같지만, 그대로 믿으면 오히려 경기를 잘못 읽게 됩니다. 이 글은 점유율·슈팅 수·패스 성공률이라는 대표적인 세 숫자의 함정과, 대신 봐야 할 지표를 정리합니다.</p><h3>1. 점유율 — 지배가 아니라 스타일이다</h3><p>점유율은 누가 잘했는지가 아니라 누가 공을 오래 가졌는지만 말해 줍니다. 일부러 공을 내주고 역습을 노리는 팀에게 낮은 점유율은 전술이지 열세가 아닙니다. 점유율이 의미를 가지려면 어디서 공을 소유했는지(상대 진영인지 자기 진영인지)를 함께 봐야 합니다.</p><h3>2. 슈팅 수 — 개수보다 질</h3><p>슈팅 15개 중 13개가 박스 바깥 중거리라면, 박스 안 결정적 기회 3개를 만든 팀보다 낫다고 단정할 수 없습니다. 그래서 현대 축구 데이터는 슈팅의 개수 대신 슈팅 하나하나의 득점 확률을 더한 기대득점(xG)을 씁니다. xG 개념은 <a href='#' onclick=\"return openArticle('xg')\">xG 읽는 법 — 축구 데이터 입문</a>에서 자세히 다룹니다.</p><h3>3. 패스 성공률의 착시</h3><p>패스 성공률 90%는 대단해 보이지만, 뒤로 돌리는 안전한 패스만 반복해도 나오는 숫자입니다. 반대로 성공률이 낮아도 수비 라인을 부수는 전진 패스를 시도한 선수가 경기에 더 크게 기여했을 수 있습니다. 성공률은 시도의 난이도와 함께 읽어야 합니다.</p><h3>4. 그럼 무엇을 봐야 하나</h3><ul><li><b>xG(기대득점)</b> — 만든 기회의 질을 요약하는 가장 널리 쓰이는 지표</li><li><b>박스 안 슈팅 비중</b> — 공격이 실제 위험 지역까지 도달했는지</li><li><b>결정적 기회(빅 찬스) 수</b> — 골키퍼와 1대1 같은 장면이 몇 번 나왔는지</li><li><b>전진 패스·최종 3분의 1 진입</b> — 점유가 전진으로 이어졌는지</li></ul><p>이 네 가지만 함께 봐도 경기 내용을 더 다양한 관점에서 볼 수 있습니다.</p><h3>5. 직접 계산해 보기</h3><p>우리 팀 성적을 숫자로 보려면 <a href='#' onclick=\"return navToolA('winrate')\">승률 계산기</a>로 경기당 평균 승점을, 공격수 생산성은 <a href='#' onclick=\"return navToolA('ga-point')\">공격포인트 계산기</a>와 <a href='#' onclick=\"return navToolA('goal-pace')\">득점 페이스 계산기</a>로 확인할 수 있습니다. 낯선 용어는 <a href='#' onclick=\"return openArticle('glossary')\">축구 용어 사전</a>에서 찾아보세요.</p><p style='color:#888;font-size:13px'>기준: 축구 데이터 분석에서 일반적으로 통용되는 개념(xG·빅 찬스·필드 틸트 등)을 축구창고가 입문자 눈높이로 재구성한 글입니다.</p>"},
+rules:{t:"축구 규칙 입문 — 판정을 이해하는 기본 기준",cat:"생활축구",body:
+"<p>이 글은 규칙을 읽는 출발점입니다. 실제 판정은 장면의 세부 상황과 해당 대회에 적용되는 규정에 따라 달라집니다.</p><h3>오프사이드</h3><p>동료가 공을 플레이한 순간의 위치와 이후 플레이 관여를 함께 봅니다. 오프사이드 위치에 서 있는 것만으로 반칙은 아닙니다.</p><h3>핸드볼</h3><p>공이 손·팔에 닿았다는 사실만으로 반칙이 되는 것은 아닙니다. 의도적인 동작, 몸을 부자연스럽게 크게 만든 팔의 위치, 득점 상황 등을 확인합니다.</p><h3>교체와 VAR</h3><p>교체 인원과 기회, VAR 운영 범위는 적용 시즌과 대회 규정을 확인해야 합니다. 과거 중계에서 들은 설명이 지금도 그대로 적용된다고 단정하지 마세요.</p><p><p class='editorial-source'>참고: <a href='https://theifab.com/laws-of-the-game-documents/'>IFAB 공식 경기 규칙</a> · 내용 정리 2026.09.08</p></p>"},
+coachvoid:{t:"대표팀 소식 확인하기 — 소집 명단부터 경기 일정까지",cat:"국내축구",body:
+"<p>대표팀 감독, 소집 명단, 경기 일정은 대한축구협회의 공식 발표를 기준으로 확인하세요. 과거 기사나 예상 명단을 현재 상황으로 오해하지 않는 것이 중요합니다.</p><h3>확인 순서</h3><ol><li><a href='https://www.kfa.or.kr/'>대한축구협회 공식 홈페이지</a>에서 공지 날짜를 확인합니다.</li><li>남자 A대표팀·여자대표팀·연령별 대표팀 중 어느 팀의 소식인지 살펴봅니다.</li><li>경기 날짜, 킥오프 시간, 장소와 예매 공지를 함께 확인합니다.</li></ol><h3>명단은 바뀔 수 있습니다</h3><p>최초 소집 이후에도 부상이나 일정에 따라 명단이 변경될 수 있습니다. 경기 직전에는 추가 공지와 최종 출전 명단을 확인하세요.</p><p><a href='/teams/korea/'>대한민국 대표팀 페이지</a> · <a href='/news/'>수집한 축구 뉴스</a></p>"},
+watch:{t:"해외축구 시청 가이드 — 결제 전 확인할 것",cat:"해외축구",body:
+"<p>중계 서비스는 국가·시즌·대회에 따라 달라집니다. 구독 전에 보고 싶은 경기의 실제 편성표를 확인하세요.</p><h3>경기부터 찾으세요</h3><ol><li>리그나 구단의 공식 일정에서 대회명과 경기일을 확인합니다.</li><li>국내 중계 서비스의 편성표에서 같은 경기를 찾습니다.</li><li>해당 경기가 포함된 이용권과 추가 요금을 확인합니다.</li></ol><h3>이용권 비교 기준</h3><ul><li>지원 기기와 최대 화질</li><li>동시 재생 수와 계정 이용 조건</li><li>다시보기·하이라이트 제공 여부와 공개 시간</li><li>자동 결제, 해지 시점, 환불 조건</li></ul><p>장기 이용권을 고를 때는 남은 시즌과 총 결제액을 비교하세요. 무료 체험이나 할인은 제공되는 경우에만 적용됩니다.</p><p><a href='/#kickoff'>한국시간으로 킥오프 확인하기</a></p>"},
+london:{t:"런던 축구 직관 준비 — 티켓과 이동 일정",cat:"해외축구",body:
+"<p>항공·숙박을 예약하기 전에 경기 날짜와 공식 티켓 판매 조건을 확인하세요. 대회 일정과 중계 편성에 따라 경기일이 바뀔 수 있습니다.</p><h3>공식 예매 경로</h3><p>구단 공식 홈페이지에서 판매 일정, 멤버십 조건, 추첨 여부와 공식 재판매 제도를 확인하세요. 멤버십 가입이 티켓 구매를 보장하는 것은 아닙니다.</p><h3>총비용 계산</h3><p>티켓, 항공, 숙박, 현지 교통, 식비를 나눠 계산하세요. 변경 가능한 예약인지, 취소 시 얼마를 돌려받는지도 살펴보세요.</p><h3>경기 당일</h3><p>구단이 안내한 도착 시간과 가방 반입 규정을 따르세요. 출입구·좌석 구역과 경기 후 교통편을 미리 확인하면 이동에 도움이 됩니다.</p><p><a href='/#trip-cost'>직관 경비 계산기</a></p>"},
+calendar:{t:"킥오프 시간 읽는 법 — 날짜와 시간대 확인하기",cat:"해외축구",body:
+"<p>일정표의 시간이 현지시간인지, 한국시간인지 먼저 확인하세요. 사이트가 기기 설정에 맞춰 시간을 자동으로 바꾸기도 합니다.</p><h3>날짜까지 함께 확인</h3><p>시차를 더하면 날짜가 다음 날로 넘어갈 수 있습니다. 예를 들어 영국 표준시 15시는 한국시간 다음 날 0시이고, 영국 여름시간 15시는 같은 날 23시입니다.</p><h3>서머타임 전환일</h3><p>서머타임 적용 여부는 도시와 날짜에 따라 달라집니다. 대회 이름만 보고 시차를 정하지 말고, 일정표에 표시된 시간대와 경기 날짜를 사용하세요.</p><h3>확인 후 알람 설정</h3><p>경기 일정은 변경될 수 있으므로 당일 공식 일정도 다시 확인하세요. 변환기에 이미 한국시간인 값을 현지시간으로 입력하면 시차가 중복 적용됩니다.</p><p><a href='/#kickoff'>킥오프 한국시간 변환기</a></p>"},
+xg:{t:"xG 읽는 법 — 기회의 질을 보는 참고 지표",cat:"데이터",body:
+"<p>xG(기대득점)는 슈팅 상황의 득점 가능성을 모델로 추정한 값입니다. 위치·각도 등 사용하는 정보와 계산 방식에 따라 제공사별 수치가 달라질 수 있습니다.</p><h3>확률과 결과는 다릅니다</h3><p>설명용 예로 xG 0.2는 모델이 해당 슈팅의 득점 가능성을 20%로 추정했다는 뜻입니다. 실제 슈팅의 결과는 골 또는 실패로 나타납니다.</p><h3>합계를 읽는 방법</h3><p>한 경기 슈팅의 xG를 더하면 만든 기회를 비교하는 데 도움이 됩니다. 다만 높은 xG가 경기 지배나 승리의 당위성을 증명하지는 않습니다.</p><h3>비교할 때 확인할 것</h3><ul><li>같은 제공사의 지표인지</li><li>페널티킥을 포함한 값인지</li><li>한 경기인지 여러 경기의 누적인지</li><li>스코어 변화·퇴장 등 경기 상황이 어땠는지</li></ul><p>실제 득점과 xG의 차이만으로 다음 경기의 반등이나 부진을 확정할 수는 없습니다.</p>"},
+ucl:{t:"챔피언스리그 새 포맷 완벽 정리 — 36팀 리그 페이즈의 모든 것",cat:"해외축구",body:
+"<p>2024-25시즌부터 챔피언스리그는 조별리그가 사라지고 36팀이 하나의 순위표에서 경쟁하는 '리그 페이즈' 체제로 바뀌었습니다. 처음 보면 헷갈리지만, 원리만 알면 오히려 단순합니다.</p><h3>기본 구조 — 조 편성이 없다</h3><p>참가팀은 32팀에서 36팀으로 늘었고, 4팀씩 8개 조로 나누던 방식이 폐지됐습니다. 대신 모든 팀이 하나의 통합 순위표에 들어가고, 각 팀은 서로 다른 상대 8팀과 8경기(홈 4·원정 4)를 치릅니다. 상대는 시드 포트에서 추첨으로 정해지며, 추첨의 세부 조건은 해당 시즌 UEFA 규정에서 확인하세요.</p><h3>토너먼트 진출 방식</h3><ul><li><b>1~8위</b>: 16강 직행. 상위 시드로 대진에서도 유리합니다.</li><li><b>9~24위</b>: 플레이오프(홈&어웨이)를 거쳐 16강에 도전합니다. 9~16위는 플레이오프에서 시드를 받습니다.</li><li><b>25~36위</b>: 탈락. 예전과 달리 유로파리그로 내려가는 구제도 없습니다.</li></ul><h3>보는 사람 입장에서 달라지는 점</h3><ul><li>순위표 하나만 보면 됩니다. 다만 팀마다 상대 난이도가 달라서, 승점이 같아도 체감 성적이 다를 수 있습니다.</li><li>마지막 8라운드는 전 경기 동시 킥오프 — 순위가 실시간으로 요동치는 '단두대 매치데이'가 연출됩니다.</li><li>16강 직행(8위 이내)과 플레이오프행의 가치 차이가 커서, 리그 페이즈 막판까지 순위 싸움이 치열합니다.</li></ul><div class='abox'>🕐 챔스는 한국시간 새벽 4~5시 킥오프가 많습니다. <a href='#' onclick=\"return navToolA('kickoff')\">킥오프 한국시간 변환기</a>로 정확한 시간을 확인하세요.</div><p class='editorial-source'>참고: <a href='https://www.uefa.com/uefachampionsleague/news/0268-12157d69ce2d-9f011c70f6fa-1000--new-format-for-c/'>UEFA 대회 방식 안내</a> · 내용 정리 2026.09.08</p>"},
+kleague:{t:"K리그 직관 준비 — 예매부터 입장까지",cat:"국내축구",body:
+"<p>응원할 팀과 경기일을 정한 뒤 구단 공식 홈페이지에서 예매 공지를 확인하세요.</p><h3>예매할 때</h3><p>판매 일정, 가격, 할인 증빙, 홈·원정 구역을 확인하세요. 현장 판매 여부는 경기마다 다르며 매진될 수 있습니다.</p><h3>좌석과 이동</h3><p>응원 분위기, 시야, 동행인의 이동 편의를 고려해 좌석을 고르세요. 응원석 운영 방식과 착용 가능한 유니폼 등은 해당 경기 안내를 따릅니다.</p><h3>출발 전</h3><ul><li>전자 티켓이나 수령에 필요한 준비물</li><li>출입구와 대중교통·주차 안내</li><li>날씨와 경기 취소·변경 공지</li><li>음식·가방·우산 등 반입 규정</li></ul><p><a href='https://www.kleague.com/'>K리그 공식 홈페이지</a> · <a href='/#depart-time'>출발 시각 계산기</a></p>"},
+seats:{t:"경기장 좌석 고르는 법 — 예매 도면부터 확인하기",cat:"국내축구",body:
+"<p>서울월드컵경기장을 포함해 좌석 이름과 판매 구역은 주최 경기마다 다를 수 있습니다. 예매 페이지의 실제 좌석 도면을 기준으로 고르세요.</p><h3>보고 싶은 장면에 맞춰 고르기</h3><ul><li>중앙에 가까운 좌석: 양쪽 진영의 움직임을 비교하기 좋습니다.</li><li>그라운드에 가까운 좌석: 현장감을 느끼기 좋지만 반대편 플레이가 가려질 수 있습니다.</li><li>높은 좌석: 전체 배치를 보기 좋지만 선수와의 거리가 멉니다.</li></ul><h3>결제 전 확인</h3><p>홈·원정 응원 구역, 시야 제한석, 지붕 범위, 접근 가능한 좌석, 출입구 위치를 확인하세요. 공연 좌석 도면을 축구 경기 도면으로 사용하지 않도록 주의하세요.</p><p>좌석의 가격·층수·응원석 위치는 이 글에서 고정해서 안내하지 않습니다. 판매 중인 경기의 공지가 기준입니다.</p><p><a href='/#depart-time'>직관 출발 시각 계산하기</a></p>"},
+futsal:{t:"축구화 밑창 표기 읽는 법 — 구장과 제품 설명 확인",cat:"생활축구",body:
+"<p>구장 이름에 풋살장·축구장이라고 적혀 있어도 바닥 재질은 다를 수 있습니다. 시설 안내와 제조사의 제품별 사용 조건을 함께 확인하세요.</p><h3>자주 보이는 표기</h3><ul><li>TF: 터프용 제품에 사용되는 표기</li><li>AG: 인조잔디용 제품에 사용되는 표기</li><li>FG: 단단한 천연잔디용 제품에 사용되는 표기</li><li>SG: 부드러운 천연잔디용 제품에 사용되는 표기</li><li>IC·IN: 실내 코트용 제품에 사용되는 표기</li></ul><h3>표기만으로 대체 사용을 결정하지 마세요</h3><p>제조사가 안내한 표면에서 사용하고, 시설의 스터드·논마킹 밑창 제한도 확인하세요. 닳은 축구화를 다른 바닥용으로 사용하는 것을 권하지 않습니다.</p><p><a href='/mag/boots/'>사이즈와 착화감 확인하기</a></p>"},
+fpl:{t:"FPL 입문 — 스쿼드와 마감 시간 확인하기",cat:"FM·FPL",body:
+"<p>판타지 프리미어리그는 실제 선수의 경기 기록을 바탕으로 점수를 얻는 게임입니다. 세부 배점과 칩, 이적 규칙은 시즌마다 바뀔 수 있습니다.</p><h3>시작할 때</h3><ol><li><a href='https://fantasy.premierleague.com/help/rules'>FPL 공식 규칙</a>에서 현재 시즌의 예산·인원·구단별 제한을 확인합니다.</li><li>선수 가격과 부상·출전 관련 공지를 확인합니다.</li><li>게임위크 마감 전에 선발, 벤치 순서, 주장과 부주장을 점검합니다.</li></ol><h3>이적과 칩</h3><p>확정 버튼을 누르기 전에 차감 점수와 적용 기간을 확인하세요. 특정 선수를 고르거나 칩을 사용하는 방법이 점수를 보장하지는 않습니다.</p><p><a href='/#fpl-budget'>FPL 예산 트래커</a>는 입력한 가격을 합산하는 보조 도구입니다. 실제 게임 가격을 자동으로 가져오지는 않습니다.</p>"},
+boots:{t:"축구화 고르는 법 — 사이즈·밑창·착화감",cat:"장비",body:
+"<p>축구화는 사용할 구장의 바닥과 발에 맞는지부터 확인하세요. 포지션이나 가격만으로 알맞은 제품을 고르기는 어렵습니다.</p><h3>사이즈 확인</h3><p>브랜드와 모델마다 길이·발볼·핏이 다릅니다. 평소 운동화보다 무조건 작게 사거나 일괄적으로 한 치수 크게 사는 방법은 피하세요. 제조사 사이즈표와 교환 조건을 확인하고, 가능하면 경기용 양말을 신고 착용해 보세요.</p><h3>밑창 확인</h3><p>제품 설명에 적힌 사용 구장과 실제 구장의 이용 수칙이 맞는지 확인하세요. 같은 FG·AG 표시여도 제품별 사용 조건이 다를 수 있습니다.</p><h3>예산 안에서 비교</h3><p>발가락 압박, 뒤꿈치 들뜸, 발볼의 불편함을 살펴보세요. 소재와 등급은 제품별로 비교하고, 가격이 높으면 누구에게나 더 잘 맞는다고 생각하지 마세요.</p><p><a href='/#boot-size'>사이즈 참고표</a> · <a href='/mag/futsal/'>밑창 표기 읽는 법</a></p>"},
+jersey:{t:"유니폼 구매 가이드 — 정품·핏·교환 조건",cat:"장비",body:
+"<p>공식 팬용 레플리카는 가품을 뜻하지 않습니다. 어센틱과 팬용 제품은 제조사에 따라 소재·핏·마감이 다릅니다.</p><h3>사이즈는 실측표로</h3><p>같은 사이즈 표기라도 모델별 핏이 다릅니다. 가슴둘레와 총장을 가지고 있는 옷과 비교하세요. 한 치수 크게 사는 방법이 항상 맞지는 않습니다.</p><h3>정품 확인</h3><p>구단·브랜드 공식 판매처와 구매 증빙을 확인하세요. 가격, 제품 코드, 자수 상태 하나만으로 정품 여부를 확정할 수 없습니다.</p><h3>마킹과 해외 주문</h3><p>이름·번호 마킹 후에는 교환이나 환불이 제한될 수 있으니 주문 전 조건을 확인하세요. 해외 주문은 배송비·환전 비용·세금과 반품 비용까지 비교하세요. 세금 적용 여부는 관세청 안내를 확인하세요.</p><p><a href='/#uniform'>유니폼 사이즈 참고표</a> · <a href='/#marking'>마킹 미리보기</a></p>"},
+glossary:{t:"축구 용어 사전 — 하프스페이스부터 로우블록까지",cat:"데이터",body:
+"<p>해설이 갑자기 외국어처럼 들리기 시작했다면, 이 글 하나면 됩니다. 중계에서 실제로 쓰이는 맥락과 함께 정리했습니다.</p><h3>공간 용어</h3><ul><li><b>하프스페이스</b>: 피치를 세로 5등분했을 때 중앙과 측면 사이의 두 줄. 여기서 공을 잡으면 패스 각이 가장 많이 열려서 현대 축구의 노른자 공간으로 불립니다.</li><li><b>채널</b>: 상대 센터백과 풀백 사이 틈. \"채널로 침투\"는 이 사이 공간으로 달린다는 뜻입니다.</li><li><b>포켓</b>: 상대 미드필더와 수비 라인 사이 주머니 같은 공간. 여기서 턴하는 선수가 경기를 바꿉니다.</li></ul><h3>수비 용어</h3><ul><li><b>로우블록 / 미드블록 / 하이블록</b>: 수비 진영을 어디에 세우느냐. 로우블록은 자기 박스 앞 밀집수비, 하이블록은 상대 진영부터 압박입니다.</li><li><b>게겐프레싱</b>: 공을 잃은 직후 몇 초 안에 즉시 재압박해 되찾는 전술. '공 뺏긴 곳이 가장 좋은 찬스 지점'이라는 발상입니다.</li><li><b>커버 섀도</b>: 압박하면서 자기 등 뒤 패스 길목을 그림자처럼 차단하는 것. 한 명이 두 명을 지우는 기술입니다.</li><li><b>수적 우위/열세</b>: 특정 구역에서 우리가 몇 명 더 많은가 — 전술 해설의 절반은 이 얘기입니다.</li></ul><h3>공격·빌드업 용어</h3><ul><li><b>오버로드</b>: 한쪽에 선수를 몰아 수적 우위를 만든 뒤, 반대편 빈 곳으로 전환(스위치)하는 패턴.</li><li><b>오버랩 / 언더랩</b>: 풀백이 윙어의 바깥으로 도는 게 오버랩, 안쪽으로 파고드는 게 언더랩.</li><li><b>컷백</b>: 엔드라인 근처에서 골대 반대 방향으로 낮게 꺾어주는 패스 — 골문 쪽으로 달려오는 동료를 겨냥할 때 사용합니다.</li><li><b>라볼피아나</b>: 빌드업 때 수비형 미드필더가 센터백 사이로 내려와 3백처럼 만드는 변형.</li><li><b>인버티드 풀백/윙어</b>: 측면 선수가 안쪽으로 좁혀 들어와 중앙 미드필더처럼 움직이는 역할.</li></ul><h3>데이터 용어</h3><ul><li><b>xG·xA</b>: 기대득점·기대도움 — 자세한 읽는 법은 <a href='#' onclick=\"return openArticle('xg')\">xG 입문 글</a>에서.</li><li><b>프로그레시브 패스/캐리</b>: 상대 골문 쪽으로 의미 있게 전진시킨 패스/드리블. '전진 기여도'의 지표입니다.</li><li><b>PPDA</b>: 상대 패스 몇 개당 수비 액션 1회를 했나 — 낮은 값은 적극적인 수비 개입을 시사하지만 집계 범위와 경기 상황도 확인해야 합니다.</li></ul><div class='abox'>🔎 궁금한 용어가 더 있다면 <a href='#' onclick=\"return navToolA('term-search')\">축구 용어 검색</a>에 입력하는 즉시 뜻이 나옵니다.</div>"},
+fm:{t:"FM 전술 아카이브 — 전술의 세 기둥으로 배우는 실제 축구",cat:"FM·FPL",body:
+"<p>풋볼매니저(FM)의 전술 화면은 사실 실제 축구 전술의 훌륭한 교과서입니다. 어떤 전술이든 결국 세 가지 질문으로 정리됩니다 — 공이 있을 때, 없을 때, 그리고 뺏기거나 뺏은 직후.</p><h3>기둥 ① 형태 — 공이 있을 때 (빌드업 구조)</h3><p>포메이션 숫자보다 중요한 건 '폭과 깊이'입니다. 측면을 넓게 쓰는 팀은 상대 수비 간격을 벌려 중앙에 틈을 만들고, 좁게 서는 팀은 짧은 패스 연결과 즉각적인 재압박을 노립니다. FM에서 풀백을 오버랩시키고 윙어를 안으로 좁히는 조합(인버티드 윙어+공격 풀백)이 강력한 이유가 이것입니다. 실제 축구에서도 가장 흔한 측면 공략 구조죠.</p><h3>기둥 ② 압박 — 공이 없을 때 (수비 기준선)</h3><p>하이 프레스냐 로우 블록이냐는 '어디서부터 싸울 것인가'의 선택입니다. 핵심 개념은 압박 트리거 — 상대의 백패스, 나쁜 퍼스트터치, 측면으로 몰린 순간처럼 '지금 달려들면 뺏을 확률이 높은 신호'를 정해두고 팀 전체가 동시에 움직이는 것입니다. FM에서 압박 강도만 높이고 수비 라인을 안 올리면 간격이 벌어져 역효과가 나는데, 실제 팀들이 겪는 문제와 비슷하게 나타날 수 있습니다.</p><h3>기둥 ③ 전환 — 뺏긴 직후 5초, 뺏은 직후 5초</h3><p>현대 축구의 승부처입니다. 뺏긴 직후 즉시 되찾으러 가는 게 게겐프레싱, 뺏은 직후 상대 진형이 무너진 틈에 빠르게 찌르는 게 역습입니다. FM에서 '카운터' 지시와 '재압박' 지시가 따로 있는 이유죠. 자기 팀 선수 구성이 빠른 공격수 중심이면 전환에, 기술형 미드필더 중심이면 점유에 무게를 두는 게 정석입니다.</p><h3>FM에서 자주 하는 실수 3가지</h3><ul><li>역할을 화려한 것으로만 채우기 — 공을 잃었을 때 균형을 잡는 역할(수비형 미드필더, 스토퍼형 풀백)이 없으면 수비 균형이 무너질 수 있습니다.</li><li>모든 지시를 극단값으로 — 압박 최강+라인 최상단+템포 최고는 체력과 간격이 감당을 못 합니다.</li><li>선수 특성 무시 — 발 느린 수비수에게 하이 라인을 시키는 건 실제 축구에서도 FM에서도 뒷공간 대응에 어려움이 생길 수 있습니다.</li></ul><div class='abox'>🧩 포메이션이 머리에 안 그려질 땐 <a href='#' onclick=\"return navToolA('formation')\">포메이션 뷰어</a>, 전술 용어는 <a href='#' onclick=\"return openArticle('glossary')\">축구 용어 사전</a>에서 확인하세요.</div>"},
+dawn:{t:"새벽 축구 시청 준비 — 일정과 다시보기 활용",cat:"생활축구",body:
+"<p>라이브로 보고 싶은 경기와 다음 날 일정을 함께 살펴보세요. 일정이 빠듯한 날은 공식 다시보기나 하이라이트를 이용하는 것도 방법입니다.</p><h3>시청 전 준비</h3><ul><li>한국시간으로 경기 날짜와 킥오프 확인</li><li>중계 서비스 로그인과 재생 확인</li><li>이어폰 음량과 화면 밝기 조절</li><li>다시보기 제공 여부 확인</li></ul><h3>종료 시간은 예상입니다</h3><p>추가시간·연장전·승부차기·경기 지연으로 끝나는 시간이 달라집니다. 종료 시각 계산기는 대략적인 계획에 활용하세요.</p><p><a href='/#endtime'>예상 종료 시각 계산하기</a></p>"},
+};
+
+/* ══════════════════════════════════════════════════════════════════════
+   ↓↓↓ 재구성 복원 구간 ↓↓↓
+   이전 세션에서 이 지점 이후 스크립트가 잘려 나갔습니다.
+   아티클 리더 · 인기 랭킹 · 주간 챌린지 · 승부예측 · 뉴스 로더 ·
+   경기일정 위젯 · 이적창 카운트다운 · i18n 을 계약(요소 id·주석)대로 복원.
+   ══════════════════════════════════════════════════════════════════════ */
+
+// ── 공용 헬퍼 ──────────────────────────────────────────
+function escHtml(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function navToolA(id){navTool(id);return false;}
+function nowT(){return new Date().toLocaleString("ko-KR",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});}
+function stamp(id,txt){var e=document.getElementById(id);if(e)e.textContent=txt;}
+
+// ── 아티클 리더 ────────────────────────────────────────
+function openArticle(id){
+  var a=ARTICLES[id];
+  var box=document.getElementById("article-body");
+  if(box){
+    if(a){
+      box.innerHTML='<h1>'+a.t+'</h1><div class="ameta">킥오프 매거진 · '+escHtml(a.cat)+'</div>'+a.body;
+    }else{
+      box.innerHTML='<h1>글을 찾을 수 없습니다</h1><div class="ameta">킥오프 매거진</div><p>주소를 확인하거나 매거진 목록에서 다른 글을 선택하세요.</p>';
+    }
+  }
+  navTo("article");
+  setHash("article-"+id);
+  document.title=(a?a.t:"글을 찾을 수 없습니다")+" | 축구창고";
+  return false;
+}
+// ── 매거진 전체 목록 ───────────────────────────────────
+function buildMagList(){
+  var box=document.getElementById("mag-list"); if(!box) return;
+  var order=["watch","london","calendar","xg","ucl","boots","jersey","dawn","glossary","fm","fpl","kleague","seats","futsal","transfer"];
+  var seen={}, ids=[];
+  order.concat(Object.keys(ARTICLES)).forEach(function(id){ if(ARTICLES[id]&&!seen[id]){seen[id]=1;ids.push(id);} });
+  box.innerHTML='<ul class="plist">'+ids.map(function(id){
+    var a=ARTICLES[id];
+    return '<li><span class="pill">'+escHtml(a.cat)+'</span><a href="#" onclick="return openArticle(\''+id+'\')"><b>'+escHtml(a.t)+'</b></a></li>';
+  }).join("")+'</ul>';
+}
+
+// ── 🔥 추천 도구 랭킹 (일·주·월 자동 갱신) ──────────────
+// 백엔드가 없어 도구 id 해시 + 기간 시드로 결정적 순위를 만듭니다(기간마다 회전).
+function rankScore(id,salt){var h=2166136261;for(var i=0;i<id.length;i++){h^=id.charCodeAt(i);h=(h*16777619)>>>0;}h=(h^(salt*2654435761))>>>0;return h%100000;}
+function periodSalt(p){
+  var now=new Date();
+  if(p==="week"){var d=new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()));var day=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-day);var ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));return 1000+Math.ceil((((d-ys)/86400000)+1)/7);}
+  if(p==="month")return 500+now.getFullYear()*12+now.getMonth();
+  var s=new Date(now.getFullYear(),0,0);return 1+Math.floor((now-s)/86400000); // day of year
+}
+function renderRank(p){
+  p=(typeof p==="string")?p:"day";
+  document.querySelectorAll(".rk-tab[data-p]").forEach(function(b){b.classList.toggle("on",b.dataset.p===p);});
+  var list=document.getElementById("rank-list"); if(!list||!window.ALLT) return;
+  var salt=periodSalt(p);
+  var ranked=window.ALLT.slice().sort(function(a,b){return rankScore(b[0],salt)-rankScore(a[0],salt);}).slice(0,10);
+  var medal=["🥇","🥈","🥉"];
+  list.innerHTML=ranked.map(function(t,i){
+    return '<li><span class="pno2">'+(medal[i]||(i+1))+'</span><a href="#" onclick="return navToolA(\''+t[0]+'\')">'+t[1]+' <b>'+escHtml(t[2])+'</b></a></li>';
+  }).join("");
+}
+
+// ── 🏆 이번 주 퀴즈 챌린지 ─────────────────────────────
+function isoWeekKey(d){d=d||new Date();var dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var day=dt.getUTCDay()||7;dt.setUTCDate(dt.getUTCDate()+4-day);var ys=new Date(Date.UTC(dt.getUTCFullYear(),0,1));var wk=Math.ceil((((dt-ys)/86400000)+1)/7);return dt.getUTCFullYear()+"-W"+(wk<10?"0"+wk:wk);}
+var WK=isoWeekKey();
+function bestChal(){var v=-1;try{v=parseInt(localStorage.getItem("chal-"+WK)||"-1",10);}catch(e){}return v;}
+function renderChal(){
+  var stat=document.getElementById("chal-stat"); if(!stat) return;
+  var best=bestChal();
+  var sh=document.getElementById("chal-share");
+  if(best<0){
+    stat.innerHTML="이번 주 아직 기록이 없습니다. <b>축구 팬 레벨 테스트</b> 10문제 한 라운드에 도전해 첫 기록을 세워보세요!";
+    if(sh) sh.hidden=true;
+  }else{
+    stat.innerHTML="이번 주 최고 기록 <b style='font-size:20px;color:var(--pitch)'>"+best+" / 10</b> <span class='small' style='color:var(--sub)'>("+WK+" · 매주 월요일 초기화)</span>";
+    if(sh) sh.hidden=false;
+  }
+}
+function shareChal(){var b=bestChal();shareText("🏆 이번 주 축구 퀴즈 챌린지 최고 기록: "+(b<0?0:b)+"/10\n너도 도전해봐!");}
+
+// ── ⚽ 이번 주 축구 취향 투표 ──────────────────────────
+var VOTES=[
+  {id:"preference-play",q:"선호하는 경기 스타일은?",a:"점유와 패스",b:"빠른 역습"},
+  {id:"preference-watch",q:"더 즐기는 관전 방식은?",a:"현장 직관",b:"집에서 중계"},
+  {id:"preference-time",q:"주로 보는 콘텐츠는?",a:"경기 생중계",b:"하이라이트"}
+];
+function curVote(){var w=0;try{w=parseInt((WK.split("W")[1]||"1"),10);}catch(e){}return VOTES[w%VOTES.length];}
+function renderVote(){
+  var v=curVote();
+  var q=document.getElementById("vote-q"), btns=document.getElementById("vote-btns"), out=document.getElementById("vote-out");
+  if(!q||!btns||!out) return;
+  q.textContent=v.q;
+  var voted=null; try{voted=localStorage.getItem("vote-"+v.id);}catch(e){}
+  if(voted){btns.innerHTML="";showVoteResult(v,voted);}
+  else{
+    btns.innerHTML='<button class="go" onclick="castVote(\''+v.id+'\',\'a\')">'+escHtml(v.a)+'</button>'
+      +'<button class="go" style="background:var(--green-2)" onclick="castVote(\''+v.id+'\',\'b\')">'+escHtml(v.b)+'</button>';
+    out.innerHTML="";
+  }
+}
+function castVote(id,side){try{localStorage.setItem("vote-"+id,side);}catch(e){}renderVote();}
+function showVoteResult(v,side){var out=document.getElementById("vote-out");if(out)out.innerHTML='<p>내 선택: <b>'+escHtml(side==="a"?v.a:v.b)+'</b></p><p class="note">이 기기에만 저장되는 선택입니다. 다른 이용자의 응답은 집계하지 않습니다.</p>';}
+
+// ── 📌 이번 주 추천 글 (홈 CTA) ────────────────────────
+function renderWeeklyPick(){
+  var box=document.getElementById("weekly-pick"); if(!box) return;
+  var picks=["watch","london","xg","boots","ucl","fpl","kleague","dawn"];
+  var w=0;try{w=parseInt((WK.split("W")[1]||"1"),10);}catch(e){}
+  var id=picks[w%picks.length]; var a=ARTICLES[id]||ARTICLES.watch;
+  box.innerHTML='<b>📌 이번 주 추천 글</b>'+escHtml(a.t)+'<a href="#" onclick="return openArticle(\''+id+'\')">읽어보기 →</a>';
+}
+
+// ── 💡 아이디어·제보 제출 ──────────────────────────────
+function submitIdea(){
+  var t=document.getElementById("idea-text"), out=document.getElementById("idea-out");
+  if(!t||!out) return;
+  var v=(t.value||"").trim();
+  if(v.length<5){out.className="result show";out.innerHTML="조금 더 자세히(5자 이상) 적어 주세요.";return;}
+  try{var arr=JSON.parse(localStorage.getItem("ideas")||"[]");arr.push({t:v,d:Date.now()});localStorage.setItem("ideas",JSON.stringify(arr));}catch(e){}
+  t.value="";
+  out.className="result show";
+  out.innerHTML="✅ 소중한 의견 감사합니다! 확인 후 반영하겠습니다.<div class='small'>제안은 이 브라우저에 임시 저장되었습니다. 빠른 검토가 필요하면 문의 이메일도 이용해 주세요.</div>";
+}
+
+// ── 🌐 언어 전환(EN) — 기본 KO, EN은 best-effort 자동 번역 ──
+var LANG="ko";
+function setLang(l){
+  LANG=l;
+  var btn=document.getElementById("lang-btn");
+  if(btn) btn.textContent = (l==="en") ? "🌐 KO" : "🌐 EN";
+  if(l==="en"){ translateView(lastListView||"home"); }
+  else { location.reload(); } // 원문(한국어) 복원
+}
+function translateView(v){
+  if(LANG!=="en") return;
+  var root=document.querySelector('[data-view~="'+v+'"]')||document.body;
+  var nodes=[];
+  (function walk(n){
+    for(var c=n.firstChild;c;c=c.nextSibling){
+      if(c.nodeType===3){ if((c.nodeValue||"").trim().length>1) nodes.push(c); }
+      else if(c.nodeType===1 && c.tagName!=="SCRIPT" && c.tagName!=="STYLE" && !c.hasAttribute("data-notranslate")) walk(c);
+    }
+  })(root);
+  nodes.slice(0,60).forEach(function(node){
+    var txt=(node.nodeValue||"").trim();
+    if(!/[가-힣]/.test(txt)) return;
+    try{
+      fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q="+encodeURIComponent(txt))
+        .then(function(r){return r.json();})
+        .then(function(d){try{var en=d[0].map(function(s){return s[0];}).join("");if(en)node.nodeValue=node.nodeValue.replace(txt,en);}catch(e){}})
+        .catch(function(){});
+    }catch(e){}
+  });
+}
+
+// ── 📰 뉴스 로더 (정적 큐레이션 미러 + 자동 분류) ───────
+// 라이브 RSS는 프록시·CORS 환경에 따라 막힐 수 있어, 항상 큐레이션 헤드라인을
+// 확실히 표시하고 홈/월드컵/이적 보드로 자동 분류합니다.
+function domItems(ul){
+  var out=[]; if(!ul) return out;
+  [].slice.call(ul.querySelectorAll("li")).forEach(function(li){
+    var a=li.querySelector("a"); if(!a) return;
+    var pill=li.querySelector(".pill,.klcat"), meta=li.querySelector(".pmeta2");
+    out.push({title:((a.querySelector("b")||a).textContent||"").trim(),link:a.href,src:pill?pill.textContent.trim():"",meta:meta?meta.textContent.trim():""});
+  });
+  return out;
+}
+function buildHomeNews(items){
+  var box=document.getElementById("home-news"); if(!box||!items.length) return;
+  var hero=items[0], rest=items.slice(1,6);
+  var img="https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop";
+  box.innerHTML='<div class="nmain">'
+    +'<a class="nhero" href="'+hero.link+'" target="_blank" rel="noopener"><img src="'+img+'" alt="축구 뉴스 대표 이미지"><div class="nhero-t"><span class="pill">'+escHtml(hero.src||"뉴스")+'</span><b>'+escHtml(hero.title)+'</b><small>'+escHtml(hero.meta||"헤드라인")+'</small></div></a>'
+    +'<ul class="nlist">'+rest.map(function(n){return '<li><a href="'+n.link+'" target="_blank" rel="noopener"><b>'+escHtml(n.title)+'</b><small>'+escHtml((n.src?n.src+" · ":"")+(n.meta||""))+'</small></a></li>';}).join("")+'</ul></div>';
+}
+function seedWC(){
+  var wc=document.getElementById("wc-board"); if(!wc) return;
+  var items=domItems(document.getElementById("news-live")).filter(function(n){return /월드컵|World Cup|R16|16강|8강|4강/.test(n.title+" "+n.meta);});
+  if(!items.length){wc.innerHTML='<li><span class="pill">정보</span><b>현재 표시할 월드컵 헤드라인이 없습니다.</b><span class="pmeta2">대회 기간에 더 많이 표시됩니다</span></li>';}
+  else wc.innerHTML=items.map(function(n){return '<li><span class="pill">'+escHtml(n.src||"뉴스")+'</span><a href="'+n.link+'" target="_blank" rel="noopener"><b>'+escHtml(n.title)+'</b></a><span class="pmeta2">'+escHtml(n.meta||"월드컵")+'</span></li>';}).join("");
+  stamp("wc-stamp",nowT());
+}
+function seedTransfer(){
+  var tl=document.getElementById("transfer-live"); if(!tl) return;
+  var wRe=/women|wsl\b|nwsl|female|ladies|f[ée]?men[ií]|feminin|lioness|matildas|uswnt|\bshe\b|\bher\b|putellas|여자|위민/i;
+  var items=domItems(document.getElementById("news-live")).filter(function(n){return /이적|영입|감독|transfer|sign|deal|loan|£|€/i.test(n.title+" "+n.meta)&&!wRe.test(n.title+" "+n.link);});
+  if(!items.length){tl.innerHTML='<li><span class="pill">정보</span><b>현재 표시할 이적 헤드라인이 없습니다.</b><span class="pmeta2">해외축구 탭에서 전체 헤드라인 확인</span></li>';}
+  else tl.innerHTML=items.map(function(n){return '<li><span class="pill">'+escHtml(n.src||"뉴스")+'</span><a href="'+n.link+'" target="_blank" rel="noopener"><b>'+escHtml(n.title)+'</b></a><span class="pmeta2">'+escHtml(n.meta||"이적")+'</span></li>';}).join("");
+  stamp("tr-stamp",nowT());
+}
+function lgTab(c){
+  document.querySelectorAll(".lg-tab").forEach(function(b){b.classList.toggle("on",b.dataset.c===c);});
+  [].slice.call(document.querySelectorAll("#news-live li")).forEach(function(li){
+    li.style.display=(c==="all"||li.textContent.indexOf(c)>-1)?"":"none";
+  });
+}
+function loadNews(){
+  buildHomeNews(domItems(document.getElementById("news-live")));
+  seedWC(); seedTransfer();
+  stamp("hn-stamp","큐레이션 수집본 · "+nowT());
+  stamp("news-stamp","큐레이션 수집본 표시 중 · "+nowT());
+}
+
+// ── K리그 공식/언론 보드 ───────────────────────────────
+function klTab(c){
+  document.querySelectorAll(".kl-tab").forEach(function(b){b.classList.toggle("on",b.dataset.c===c);});
+  [].slice.call(document.querySelectorAll("#kl-board li")).forEach(function(li){
+    var cat=((li.querySelector(".klcat")||{}).textContent||"");
+    li.style.display=(c==="all"||cat.indexOf(c)>-1)?"":"none";
+  });
+}
+function loadKLeague(){ klTab("all"); stamp("kl-stamp","공식 발표 발췌 · "+nowT()+" 기준"); }
+var KNEWS=[
+  {t:"국가대표·해외파 최신 소식 — 다음 스포츠에서 보기",m:"국가대표",u:"https://sports.daum.net/soccer/"},
+  {t:"K리그 경기 결과·순위 — MSN 스포츠",m:"K리그",u:"https://www.msn.com/ko-kr/sports/soccer"},
+  {t:"여자축구·WK리그 소식 — 다음 스포츠",m:"여자축구",u:"https://sports.daum.net/soccer/"}
+];
+function loadKNews(){
+  var ul=document.getElementById("knews-live"); if(!ul) return;
+  ul.innerHTML=KNEWS.map(function(n){return '<li><span class="pill">'+escHtml(n.m)+'</span><a href="'+n.u+'" target="_blank" rel="noopener"><b>'+escHtml(n.t)+'</b></a><span class="pmeta2">포털 바로가기</span></li>';}).join("");
+  stamp("k-stamp",nowT()+" 갱신");
+}
+
+// ── 📅 경기 일정·결과 위젯 (TheSportsDB, best-effort) ──
+// 팀·국가명 한국어 사전 (미등록 이름은 영문 유지) — EN 모드에서는 영문 원명 표시
+var FX_KO={
+// K리그
+"FC Seoul":"FC서울","Ulsan HD":"울산 HD","Ulsan HD FC":"울산 HD","Ulsan Hyundai":"울산 HD",
+"Jeonbuk Hyundai Motors":"전북 현대","Jeonbuk Motors":"전북 현대","Pohang Steelers":"포항 스틸러스","Pohang":"포항 스틸러스",
+"Gimcheon Sangmu":"김천 상무","Jeju SK":"제주 SK","Jeju United":"제주 SK","Gwangju FC":"광주 FC",
+"Daejeon Hana Citizen":"대전 하나 시티즌","Daejeon Citizen":"대전 하나 시티즌","Suwon FC":"수원 FC","Gangwon FC":"강원 FC",
+"Daegu FC":"대구 FC","FC Anyang":"FC안양","Incheon United":"인천 유나이티드","Seoul E-Land":"서울 이랜드",
+"Jeonnam Dragons":"전남 드래곤즈","Suwon Samsung Bluewings":"수원 삼성","Suwon Bluewings":"수원 삼성",
+// EPL
+"Arsenal":"아스널","Aston Villa":"아스톤 빌라","AFC Bournemouth":"본머스","Bournemouth":"본머스",
+"Brentford":"브렌트퍼드","Brighton and Hove Albion":"브라이턴","Brighton":"브라이턴","Burnley":"번리",
+"Chelsea":"첼시","Crystal Palace":"크리스탈 팰리스","Everton":"에버턴","Fulham":"풀럼",
+"Ipswich Town":"입스위치","Leeds United":"리즈 유나이티드","Leeds":"리즈 유나이티드","Leicester City":"레스터 시티",
+"Liverpool":"리버풀","Luton Town":"루턴","Manchester City":"맨체스터 시티","Man City":"맨체스터 시티",
+"Manchester United":"맨체스터 유나이티드","Man United":"맨체스터 유나이티드","Newcastle United":"뉴캐슬","Newcastle":"뉴캐슬",
+"Nottingham Forest":"노팅엄 포레스트","Sheffield United":"셰필드 유나이티드","Southampton":"사우샘프턴","Sunderland":"선덜랜드",
+"Tottenham Hotspur":"토트넘","Tottenham":"토트넘","West Ham United":"웨스트햄","West Ham":"웨스트햄",
+"Wolverhampton Wanderers":"울버햄튼","Wolves":"울버햄튼",
+// 국가대표 (월드컵)
+"South Korea":"대한민국","Korea Republic":"대한민국","Japan":"일본","Brazil":"브라질","Argentina":"아르헨티나",
+"Germany":"독일","France":"프랑스","England":"잉글랜드","Spain":"스페인","Portugal":"포르투갈",
+"Netherlands":"네덜란드","Italy":"이탈리아","Belgium":"벨기에","Croatia":"크로아티아","Uruguay":"우루과이",
+"Colombia":"콜롬비아","Mexico":"멕시코","USA":"미국","United States":"미국","Canada":"캐나다",
+"Morocco":"모로코","Senegal":"세네갈","Ghana":"가나","Nigeria":"나이지리아","Egypt":"이집트",
+"Norway":"노르웨이","Sweden":"스웨덴","Denmark":"덴마크","Switzerland":"스위스","Austria":"오스트리아",
+"Poland":"폴란드","Ukraine":"우크라이나","Turkey":"튀르키예","Türkiye":"튀르키예","Scotland":"스코틀랜드",
+"Wales":"웨일스","Ireland":"아일랜드","Republic of Ireland":"아일랜드","Australia":"호주","New Zealand":"뉴질랜드",
+"Saudi Arabia":"사우디아라비아","Iran":"이란","Qatar":"카타르","Uzbekistan":"우즈베키스탄","Jordan":"요르단",
+"Ecuador":"에콰도르","Chile":"칠레","Paraguay":"파라과이","Peru":"페루","Bolivia":"볼리비아","Venezuela":"베네수엘라",
+"Panama":"파나마","Costa Rica":"코스타리카","Jamaica":"자메이카","Haiti":"아이티","Honduras":"온두라스",
+"Algeria":"알제리","Tunisia":"튀니지","Ivory Coast":"코트디부아르","Cameroon":"카메룬","Cape Verde":"카보베르데","Curacao":"퀴라소",
+// 추가 클럽 (승격·컵 상대 대비)
+"Coventry City":"코번트리 시티","West Bromwich Albion":"웨스트브롬","Norwich City":"노리치 시티","Watford":"왓포드",
+"Middlesbrough":"미들즈브러","Stoke City":"스토크 시티","Hull City":"헐 시티","Blackburn Rovers":"블랙번",
+"Bucheon FC 1995":"부천 FC","Gyeongnam FC":"경남 FC","Busan IPark":"부산 아이파크","Seongnam FC":"성남 FC",
+"Gimpo FC":"김포 FC","Ansan Greeners":"안산 그리너스","Cheonan City":"천안 시티","Chungbuk Cheongju":"충북 청주","Chungnam Asan":"충남 아산",
+// 추가 국가
+"Switzerland":"스위스","Colombia":"콜롬비아","Serbia":"세르비아","Slovenia":"슬로베니아","Slovakia":"슬로바키아",
+"Czech Republic":"체코","Czechia":"체코","Hungary":"헝가리","Romania":"루마니아","Greece":"그리스",
+"Georgia":"조지아","Albania":"알바니아","North Macedonia":"북마케도니아","Bosnia and Herzegovina":"보스니아",
+"Finland":"핀란드","Iceland":"아이슬란드","Russia":"러시아","Israel":"이스라엘",
+"Iraq":"이라크","United Arab Emirates":"아랍에미리트","China PR":"중국","China":"중국","Indonesia":"인도네시아",
+"Thailand":"태국","Vietnam":"베트남","North Korea":"북한","Bahrain":"바레인","Oman":"오만","Lebanon":"레바논",
+"South Africa":"남아공","Mali":"말리","Burkina Faso":"부르키나파소","DR Congo":"DR콩고","Guinea":"기니","Zambia":"잠비아",
+"Angola":"앙골라","Gabon":"가봉","Benin":"베냉","Mozambique":"모잠비크",
+"El Salvador":"엘살바도르","Guatemala":"과테말라","Trinidad and Tobago":"트리니다드 토바고","Suriname":"수리남","Cuba":"쿠바"
+};
+function fxName(n){ if(!n) return ""; return (LANG==="en") ? n : (FX_KO[n]||n); }
+// 구단 로고 (TheSportsDB 공식 배지 CDN — 실측 수집) + 국기 이모지
+var R2B="https://r2.thesportsdb.com/images/media/team/badge/";
+var TEAM_BADGE={
+"Arsenal":R2B+"uyhbfe1612467038.png","Chelsea":"https://www.thesportsdb.com/images/media/team/badge/pbf4ul1782638263.png",
+"Liverpool":R2B+"kfaher1737969724.png","Manchester City":R2B+"vwpvry1467462651.png","Man City":R2B+"vwpvry1467462651.png",
+"Manchester United":R2B+"xzqdr11517660252.png","Man United":R2B+"xzqdr11517660252.png","Man Utd":R2B+"xzqdr11517660252.png",
+"Tottenham":R2B+"i8s9ub1626549748.png","Spurs":R2B+"i8s9ub1626549748.png","Newcastle":R2B+"lhwuiz1621593302.png",
+"Aston Villa":R2B+"jykrpv1717309891.png","West Ham":R2B+"yutyxs1467459956.png","Everton":R2B+"eqayrf1523184794.png",
+"Brighton":R2B+"zn0x7h1605371909.png","Nottingham Forest":R2B+"1i2kvh1719918076.png",
+"Real Madrid":R2B+"vwvwrw1473502969.png","Barcelona":R2B+"wq9sir1639406443.png","Atletico":R2B+"0ulh3q1719984315.png",
+"Bayern":R2B+"01ogkh1716960412.png","Dortmund":R2B+"tqo8ge1716960353.png","Juventus":R2B+"uxf0gr1742983727.png",
+"Inter Milan":R2B+"ryhu6d1617113103.png","AC Milan":R2B+"wvspur1448806617.png","Napoli":R2B+"l8qyxv1742982541.png",
+"PSG":R2B+"rwqrrq1473504808.png","Paris Saint-Germain":R2B+"rwqrrq1473504808.png",
+"Rennes":R2B+"ypturx1473504818.png","FC Seoul":R2B+"31z1zf1579473186.png","Ulsan":R2B+"0wooic1706533767.png"
+};
+var FLAG_EMOJI={
+"South Korea":"🇰🇷","Korea Republic":"🇰🇷","Japan":"🇯🇵","Brazil":"🇧🇷","Argentina":"🇦🇷","Germany":"🇩🇪","France":"🇫🇷",
+"England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Spain":"🇪🇸","Portugal":"🇵🇹","Netherlands":"🇳🇱","Italy":"🇮🇹","Belgium":"🇧🇪","Croatia":"🇭🇷",
+"Uruguay":"🇺🇾","Colombia":"🇨🇴","Mexico":"🇲🇽","United States":"🇺🇸","USA":"🇺🇸","Canada":"🇨🇦","Morocco":"🇲🇦",
+"Senegal":"🇸🇳","Ghana":"🇬🇭","Nigeria":"🇳🇬","Egypt":"🇪🇬","Norway":"🇳🇴","Sweden":"🇸🇪","Denmark":"🇩🇰",
+"Switzerland":"🇨🇭","Austria":"🇦🇹","Poland":"🇵🇱","Ukraine":"🇺🇦","Turkey":"🇹🇷","Türkiye":"🇹🇷",
+"Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Wales":"🏴󠁧󠁢󠁷󠁬󠁳󠁿","Australia":"🇦🇺","Saudi Arabia":"🇸🇦","Iran":"🇮🇷","Qatar":"🇶🇦",
+"Ecuador":"🇪🇨","Chile":"🇨🇱","Paraguay":"🇵🇾","Panama":"🇵🇦","Costa Rica":"🇨🇷","Jamaica":"🇯🇲","Haiti":"🇭🇹",
+"Algeria":"🇩🇿","Tunisia":"🇹🇳","Cameroon":"🇨🇲","Ivory Coast":"🇨🇮","New Zealand":"🇳🇿","Uzbekistan":"🇺🇿","Jordan":"🇯🇴"
+};
+// 헤드라인에서 팀/국가 감지 → 로고 img 또는 국기 이모지 반환 (영문 원제 기준)
+function iconFor(t){
+  if(!t) return "";
+  var k;
+  for(k in TEAM_BADGE){ if(t.indexOf(k)>-1) return '<img class="fxbdg" src="'+TEAM_BADGE[k]+'" alt="" loading="lazy">'; }
+  for(k in FLAG_EMOJI){ if(t.indexOf(k)>-1) return '<span class="fxflag">'+FLAG_EMOJI[k]+'</span>'; }
+  return "";
+}
+
+// 한글 구단명 → 배지 (오피셜 이적 제목용 — 이적 전·후 구단 모두 아이콘 표시)
+var KO_CLUB={
+"노팅엄":"Nottingham Forest","맨체스터 시티":"Manchester City","맨시티":"Manchester City",
+"맨체스터 유나이티드":"Manchester United","맨유":"Manchester United",
+"뉴캐슬":"Newcastle","토트넘":"Tottenham","웨스트햄":"West Ham","바르셀로나":"Barcelona",
+"리버풀":"Liverpool","브라이턴":"Brighton","첼시":"Chelsea","레알 마드리드":"Real Madrid",
+"아스널":"Arsenal","아스톤 빌라":"Aston Villa","에버턴":"Everton","렌":"Rennes",
+"바이에른":"Bayern","도르트문트":"Dortmund","유벤투스":"Juventus","인테르":"Inter Milan",
+"AC 밀란":"AC Milan","나폴리":"Napoli","아틀레티코":"Atletico","파리 생제르맹":"PSG"
+};
+function clubIconize(){
+  var keys=Object.keys(KO_CLUB).sort(function(a,b){return b.length-a.length;});
+  var items=document.querySelectorAll("#official-live a b");
+  for(var i=0;i<items.length;i++){
+    var el=items[i]; if(el.getAttribute("data-badged")) continue;
+    var t=el.textContent, out="", pos=0;
+    while(pos<t.length){
+      var hitK="";
+      var prev=pos>0?t.charAt(pos-1):"";
+      if(!/[가-힣A-Za-z]/.test(prev)){
+        for(var j=0;j<keys.length;j++){
+          if(t.substr(pos,keys[j].length)===keys[j]){hitK=keys[j];break;}
+        }
+      }
+      if(hitK&&TEAM_BADGE[KO_CLUB[hitK]]){
+        out+='<img class="fxbdg" src="'+TEAM_BADGE[KO_CLUB[hitK]]+'" alt="" loading="lazy">'+escHtml(hitK);
+        pos+=hitK.length;
+      }else{ out+=escHtml(t.charAt(pos)); pos++; }
+    }
+    el.innerHTML=out; el.setAttribute("data-badged","1");
+  }
+}
+
+// 오피셜 이적 보드 페이지네이션 — 10개 초과 시 페이지 분할 (맨 위 = 최신)
+function ofPager(){
+  var ul=document.getElementById("official-live"); if(!ul) return;
+  var old=document.getElementById("of-pager"); if(old) old.parentNode.removeChild(old);
+  var items=Array.prototype.slice.call(ul.children);
+  items.forEach(function(li){li.style.display="";});
+  var per=10; if(items.length<=per) return;
+  var pages=Math.ceil(items.length/per), cur=0;
+  var nav=document.createElement("div");
+  nav.id="of-pager";
+  nav.style.cssText="display:flex;justify-content:center;align-items:center;gap:14px;margin:10px 0 6px";
+  var bst="border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--ink);cursor:pointer;font-family:inherit;font-size:12px;padding:4px 16px";
+  nav.innerHTML='<button id="of-prev" style="'+bst+'">‹ 이전</button>'
+    +'<span id="of-pgno" style="font-size:12px;color:var(--sub);font-weight:700"></span>'
+    +'<button id="of-next" style="'+bst+'">다음 ›</button>';
+  ul.parentNode.insertBefore(nav, ul.nextSibling);
+  function show(p){
+    cur=Math.max(0,Math.min(pages-1,p));
+    items.forEach(function(li,i){ li.style.display=(i>=cur*per&&i<(cur+1)*per)?"":"none"; });
+    document.getElementById("of-pgno").textContent=(cur+1)+" / "+pages;
+    document.getElementById("of-prev").style.opacity=cur===0?".4":"1";
+    document.getElementById("of-next").style.opacity=cur===pages-1?".4":"1";
+  }
+  document.getElementById("of-prev").onclick=function(){show(cur-1);};
+  document.getElementById("of-next").onclick=function(){show(cur+1);};
+  show(0);
+}
+var FX_TAG_EN={"월드컵":"World Cup","EPL":"EPL","K리그1":"K League 1"};
+function fxT(ts){
+  var d=new Date(ts.replace(" ","T")+(/Z$/.test(ts)?"":"Z"));
+  var wd=(LANG==="en")?["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()]:["일","월","화","수","목","금","토"][d.getDay()];
+  return (d.getMonth()+1)+"/"+d.getDate()+"("+wd+") "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+}
+var FX_LAST=[]; // 마지막 수집 데이터 — 언어 전환 시 재렌더용
+function renderFixtures(){
+  var box=document.getElementById("fx-box"), list=document.getElementById("fx-list");
+  if(!box||!list) return;
+  if(!FX_LAST.length){box.hidden=true;return;}
+  var en=(LANG==="en");
+  function bdg(u){return u?'<img class="fxbdg" src="'+escHtml(u)+'" alt="" loading="lazy">':"";}
+  list.innerHTML=FX_LAST.map(function(r){
+    var tag=en?(FX_TAG_EN[r.tag]||r.tag):r.tag;
+    if(r.done){
+      return '<div style="margin-bottom:4px"><span class="pill" style="margin-right:6px">'+tag+'</span><b>'
+        +bdg(r.hb)+escHtml(fxName(r.h))+' '+r.hs+':'+r.as+' '+bdg(r.ab)+escHtml(fxName(r.a))+'</b> <span style="color:var(--sub)">'+(en?"FT":"종료")+'</span></div>';
+    }
+    return '<div style="margin-bottom:4px"><span class="pill" style="margin-right:6px">'+tag+'</span>'
+      +bdg(r.hb)+escHtml(fxName(r.h))+' vs '+bdg(r.ab)+escHtml(fxName(r.a))+' <span style="color:var(--pitch);font-weight:700">'+fxT(r.ts)+'</span></div>';
+  }).join("");
+  box.hidden=false;
+}
+function loadFixtures(){
+  var API="https://www.thesportsdb.com/api/v1/json/3/";
+  var leagues=[{id:"4429",tag:"월드컵"},{id:"4328",tag:"EPL"},{id:"4689",tag:"K리그1"}];
+  function get(u){
+    return fetchDirect(u,6000).catch(function(){return fetchFeed(u);})
+      .then(function(t){return JSON.parse(t);});
+  }
+  Promise.allSettled(leagues.map(function(L){
+    return Promise.allSettled([get(API+"eventspastleague.php?id="+L.id),get(API+"eventsnextleague.php?id="+L.id)])
+      .then(function(pr){
+        var pa=(pr[0].status==="fulfilled"?pr[0].value:{}).events||[];
+        var nx=(pr[1].status==="fulfilled"?pr[1].value:{}).events||[];
+        var rows=[];
+        pa.filter(function(e){return e.intHomeScore!=null;}).slice(0,2).forEach(function(e){
+          rows.push({tag:L.tag,done:true,h:e.strHomeTeam,a:e.strAwayTeam,hs:e.intHomeScore,as:e.intAwayScore,
+            ts:e.strTimestamp || (e.dateEvent ? e.dateEvent + "T" + (e.strTime || "00:00:00") : ""),hb:e.strHomeTeamBadge||"",ab:e.strAwayTeamBadge||""});
+        });
+        var now=Date.now();
+        nx.filter(function(e){return e.strTimestamp&&new Date(e.strTimestamp+"Z")>now;})
+          .sort(function(a,b){return a.strTimestamp<b.strTimestamp?-1:1;}).slice(0,2)
+          .forEach(function(e){
+            rows.push({tag:L.tag,done:false,h:e.strHomeTeam,a:e.strAwayTeam,ts:e.strTimestamp,
+              hb:e.strHomeTeamBadge||"",ab:e.strAwayTeamBadge||""});
+          });
+        return rows;
+      });
+  })).then(function(results){
+    FX_LAST=results.filter(function(r){return r.status==="fulfilled";})
+      .reduce(function(a,r){return a.concat(r.value);},[]);
+    renderFixtures();
+  });
+}
+
+// ── ⏳ 이적창 D-day 카운트다운 ─────────────────────────
+function fmtD(d){return d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate();}
+function renderTransferWindow(){var box=document.getElementById('tw-box');if(box)box.style.display='none';}
+
+// ── 🔀 해시 라우팅(뒤로가기 지원) ──────────────────────
+var VIEW_NAMES=["home","tools","hot","mag","intl","domestic","transfer","part","about","privacy","contact"];
+function routeTo(h){
+  if(h.indexOf("board-")===0){navTo("part");boardJoin(SGBoards.find(h.slice(6))?h.slice(6):"all",true);return;}
+  if(h.indexOf("article-")===0) return openArticle(h.slice(8));
+  if(VIEW_NAMES.indexOf(h)>-1){ navTo(h); }
+  else if(document.getElementById(h)){ navTool(h); }
+  else { navTo("home"); }
+}
+window.addEventListener("popstate",function(){
+  var h=(location.hash||"").replace(/^#/,"")||"home";
+  NAV_SILENT=true; routeTo(h); NAV_SILENT=false;
+});
+
+// ═══════════ 📡 LIVE 뉴스 파이프라인 (RSS 자동 수집·번역·회전·매시 갱신) ═══════════
+// 아래 loadNews/loadKNews/loadKLeague 는 위의 정적 큐레이션 버전을 대체(재선언)합니다.
+// 수집 실패 시 HTML에 들어있는 큐레이션 헤드라인이 그대로 유지되어 빈 화면이 나오지 않습니다.
+
+// ① 프록시 레이스 수집기 (4곳 동시 요청, 먼저 "내용 있는" 응답을 사용, 9초 타임아웃)
+// 빈 몸통(200인데 내용 없음)도 실패로 간주해 다음 프록시로 넘어갑니다.
+var PROXIES=[
+  {mk:function(u){return "https://api.allorigins.win/raw?url="+encodeURIComponent(u);}},
+  {mk:function(u){return "https://corsproxy.io/?url="+encodeURIComponent(u);}},
+  {mk:function(u){return "https://api.codetabs.com/v1/proxy?quest="+encodeURIComponent(u);}},
+  {mk:function(u){return "https://api.allorigins.win/get?url="+encodeURIComponent(u);},
+   unwrap:function(t){try{return JSON.parse(t).contents||"";}catch(e){return "";}}}
+];
+function fetchFeed(u){
+  return Promise.any(PROXIES.map(function(p){
+    return new Promise(function(resolve,reject){
+      var t=setTimeout(function(){reject(new Error("timeout"));},9000);
+      fetch(p.mk(u)).then(function(r){
+        clearTimeout(t);
+        if(!r.ok){reject(new Error("http "+r.status));return;}
+        r.text().then(function(txt){
+          if(p.unwrap) txt=p.unwrap(txt);
+          if(txt&&txt.length>200) resolve(txt); else reject(new Error("empty"));
+        },reject);
+      },function(e){clearTimeout(t);reject(e);});
+    });
+  }));
+}
+// 직접 수신 (ESPN·TheSportsDB처럼 CORS를 여는 소스는 프록시 없이 0.3초 수신)
+function fetchDirect(u,ms){
+  return new Promise(function(resolve,reject){
+    var c=new AbortController(),t=setTimeout(function(){c.abort();reject(new Error("timeout"));},ms||5000);
+    fetch(u,{signal:c.signal}).then(function(r){
+      clearTimeout(t);
+      if(!r.ok){reject(new Error("http "+r.status));return;}
+      r.text().then(function(txt){
+        if(txt&&txt.length>200) resolve(txt); else reject(new Error("empty"));
+      },reject);
+    },function(e){clearTimeout(t);reject(e);});
+  });
+}
+// RSS→JSON 변환 서비스 (자체 CORS 허용이라 프록시가 전멸해도 동작 — 실측 0.3초)
+function rss2json(u){
+  return fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(u))
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(!j||j.status!=="ok"||!j.items||!j.items.length) throw new Error("rss2json fail");
+      return j.items.map(function(it){
+        var dimg=((it.description||"").match(/<img[^>]*src="([^"]+)"/i)||[])[1]||"";
+        return {t:it.title||"",l:it.link||"",d:new Date(it.pubDate||Date.now()).getTime(),
+          img:(it.thumbnail||(it.enclosure&&it.enclosure.link)||dimg||""),tag:""};
+      }).filter(function(n){return n.t&&n.l&&notWomen(n);});
+    });
+}
+// 🚫 여자축구 전면 제외 — 모든 수집 경로(rss2json·직접 XML·언론 발췌) 공통 적용
+var WOMEN_RE=/women|wsl\b|nwsl|female|ladies|\bgirls?\b|f[ée]?men[ií]|feminin|frauen|femenil|lioness|matildas|uswnt|w-league|\bshe\b|\bher\b|여자|위민|우먼|putellas|bonmat[ií]|batlle|aitana|caldentey|parall?uelo|\bpajor\b|miedema|hegerberg|katoto|oberdorf|\bgwinn\b|earps|\bhampton\b|\brusso\b|toone|\bhemp\b|stanway|wiegman|bompastor|chawinga|\bgirma\b|rodman|macario|\bdiani\b|graham hansen|le sommer|wubben|shemanina|바틀레|푸테야스|본마티|아이타나|wk리그|여성\s?축구|여자부|여심|위민스|지소연|이금민|케이시 페어|추효주|문미라|손화연/i;
+function notWomen(n){return !WOMEN_RE.test((n.t||"")+" "+(n.l||""));}
+function scheduleHourly(fn,minutes){ // 지정한 분 간격의 경계 +10초에 갱신
+  minutes=minutes||10;
+  (function arm(){
+    var now=new Date();
+    var nm=(Math.floor(now.getMinutes()/minutes)+1)*minutes;
+    var next=new Date(now.getFullYear(),now.getMonth(),now.getDate(),now.getHours(),nm,10);
+    setTimeout(function(){ try{fn();}finally{arm();} }, next-now);
+  })();
+}
+
+// ② 번역 (구글 gtx → MyMemory 폴백, localStorage 캐시) — EN 모드에서는 번역하지 않음
+// v0710-P: 헤드라인 자연화 — 번역 전 고유명사를 한국어 정식 표기로 치환(기계번역 오역 차단) + 번역 후 다듬기
+function trCache(k){try{return localStorage.getItem("tr4:"+k);}catch(e){return null;}}
+function trSave(k,v){try{localStorage.setItem("tr4:"+k,v);}catch(e){}}
+var KO_ENT=[ // [영어 표기, 한국어 정식 표기] — 번역기가 구단 별칭·인명을 직역(예: Gunners→포수)하는 것 방지
+  [/\bManchester United\b|\bMan Utd\b|\bMan United\b/gi,"맨체스터 유나이티드"],
+  [/\bManchester City\b|\bMan City\b/gi,"맨체스터 시티"],
+  [/\bTottenham Hotspur\b|\bTottenham\b|\bSpurs\b/gi,"토트넘"],
+  [/\bArsenal\b|\bGunners\b/gi,"아스널"],
+  [/\bChelsea\b/gi,"첼시"],[/\bLiverpool\b/gi,"리버풀"],
+  [/\bNewcastle United\b|\bNewcastle\b|\bMagpies\b/gi,"뉴캐슬"],
+  [/\bWest Ham United\b|\bWest Ham\b|\bHammers\b/gi,"웨스트햄"],
+  [/\bAston Villa\b|\bVillans\b/gi,"아스턴 빌라"],
+  [/\bEverton\b|\bToffees\b/gi,"에버턴"],
+  [/\bWolverhampton Wanderers\b|\bWolverhampton\b|\bWolves\b/gi,"울버햄프턴"],
+  [/\bBrighton\b/gi,"브라이턴"],[/\bFulham\b/gi,"풀럼"],[/\bBrentford\b/gi,"브렌트퍼드"],
+  [/\bCrystal Palace\b/gi,"크리스털 팰리스"],[/\bNottingham Forest\b/gi,"노팅엄 포레스트"],
+  [/\bLeicester City\b|\bLeicester\b|\bFoxes\b/gi,"레스터"],
+  [/\bBournemouth\b/gi,"본머스"],[/\bSunderland\b/gi,"선덜랜드"],[/\bLeeds United\b|\bLeeds\b/gi,"리즈"],
+  [/\bReal Madrid\b/gi,"레알 마드리드"],[/\bBarcelona\b|\bBar[cç]a\b/gi,"바르셀로나"],
+  [/\bAtl[eé]tico Madrid\b|\bAtl[eé]tico\b/gi,"아틀레티코 마드리드"],
+  [/\bBayern Munich\b|\bBayern\b/gi,"바이에른 뮌헨"],
+  [/\bBorussia Dortmund\b|\bDortmund\b/gi,"도르트문트"],
+  [/\bLeverkusen\b/gi,"레버쿠젠"],[/\bRB Leipzig\b|\bLeipzig\b/gi,"라이프치히"],
+  [/\bJuventus\b/gi,"유벤투스"],[/\bInter Milan\b|\bInter\b/gi,"인터 밀란"],[/\bAC Milan\b/gi,"AC밀란"],
+  [/\bNapoli\b/gi,"나폴리"],[/\bAS Roma\b/gi,"로마"],
+  [/\bParis Saint[- ]Germain\b/gi,"PSG"],[/\bMarseille\b/gi,"마르세유"],
+  [/\bClub World Cup\b/gi,"클럽 월드컵"],[/\bWorld Cup\b/gi,"월드컵"],
+  [/\bChampions League\b/gi,"챔피언스리그"],[/\bEuropa League\b/gi,"유로파리그"],
+  [/\bPremier League\b/gi,"프리미어리그"],[/\bFA Cup\b/gi,"FA컵"],
+  [/\bCarabao Cup\b|\bEFL Cup\b|\bLeague Cup\b/gi,"카라바오컵"],
+  [/\bLa ?Liga\b/gi,"라리가"],[/\bSerie A\b/gi,"세리에A"],[/\bBundesliga\b/gi,"분데스리가"],
+  [/\bLigue 1\b/gi,"리그1"],[/\bNations League\b/gi,"네이션스리그"],[/\bEuros?\b(?= \d{4})/g,"유로"],
+  [/\bSon Heung[- ]?min\b|\bHeung[- ]?min Son\b/gi,"손흥민"],
+  [/\bLee Kang[- ]?in\b|\bKang[- ]?in Lee\b/gi,"이강인"],
+  [/\bKim Min[- ]?jae\b|\bMin[- ]?jae Kim\b/gi,"김민재"],
+  [/\bHwang Hee[- ]?chan\b/gi,"황희찬"],
+  [/\bHaaland\b/gi,"홀란"],[/\bMbapp[eé]\b/gi,"음바페"],[/\bBellingham\b/gi,"벨링엄"],
+  [/\bYamal\b/gi,"야말"],[/\bMessi\b/gi,"메시"],[/\bRonaldo\b/gi,"호날두"],
+  [/\bSalah\b/gi,"살라"],[/\bKane\b/gi,"케인"],[/\bSaka\b/gi,"사카"],
+  [/\bVin[ií]cius( J[uú]nior)?\b/gi,"비니시우스"],[/\bLewandowski\b/gi,"레반도프스키"],
+  [/\bGuardiola\b/gi,"과르디올라"],[/\bArteta\b/gi,"아르테타"],[/\bArne Slot\b/g,"아르네 슬롯"],
+  [/\bAlexander[- ]Arnold\b/gi,"알렉산더아널드"],[/\bDe Bruyne\b/gi,"데브라위너"]
+];
+function koPrep(en){ // 번역 전: 언론사 꼬리표·피드 잡음만 제거 (혼합어 입력은 번역 품질을 떨어뜨려 치환하지 않음)
+  return en.replace(/^\s*(Copy of\s*)+/i,"")
+    .replace(/\s+[-–|]\s+(BBC Sport|Sky Sports( News)?|ESPN( FC)?|The Athletic)\s*$/i,"").trim();
+}
+function koEntFix(s){ // 번역 후: 결과에 남은 영어 고유명사를 한국 언론 표기로 치환
+  for(var i=0;i<KO_ENT.length;i++) s=s.replace(KO_ENT[i][0],KO_ENT[i][1]);
+  return s;
+}
+var KO_FIX=[ // 번역 결과 다듬기: 기계번역 특유의 어색한 표현 → 한국 축구 기사 관행 표기
+  [/이적 시장/g,"이적시장"],[/이적 창(?![가-힣])/g,"이적시장"],
+  [/프리미어 리그/g,"프리미어리그"],[/챔피언스 리그/g,"챔피언스리그"],[/유로파 리그/g,"유로파리그"],
+  [/세리에 A/g,"세리에A"],[/리그 1/g,"리그1"],
+  [/보스(?!니아|턴)/g,"감독"],[/매니저/g,"감독"],[/감독 감독/g,"감독"],
+  [/서명했다/g,"계약했다"],[/서명하다/g,"계약하다"],[/와 서명/g,"와 계약"],[/에 서명/g,"과 계약"],
+  [/사인했다/g,"계약했다"],
+  [/승진/g,"승격"],[/강등당/g,"강등되"],
+  [/무료 이적/g,"자유계약(FA) 이적"],[/대출(?= 이적|로|을 마| 계약)/g,"임대"],[/임대 대출/g,"임대"],
+  [/부상 업데이트/g,"부상 소식"],[/팀 뉴스/g,"팀 소식"],
+  [/할란드|홀랜드|하랜드/g,"홀란"],[/음바뻬|엠바페/g,"음바페"],[/손흥 민/g,"손흥민"],
+  [/토트넘 홋스퍼/g,"토트넘"],[/맨 시티/g,"맨체스터 시티"],[/맨 유나이티드/g,"맨체스터 유나이티드"],
+  [/【/g,"["],[/】/g,"]"],[/[“”]/g,'"'],[/[‘’]/g,"'"],
+  [/감독가/g,"감독이"],[/감독를/g,"감독을"],[/감독는/g,"감독은"],
+  [/준준결승/g,"8강"],[/준결승/g,"4강"],[/라운드 ?(오브 )?16/gi,"16강"],[/16강 라운드/g,"16강"],
+  [/(골든 ?부[트츠]|Golden Boot)\s*(추적기|트래커|tracker)?/gi,"득점왕 레이스"],
+  [/승부차기에서/g,"승부차기 끝에"],[/페널티 슛아웃/g,"승부차기"],
+  [/ ,/g,","],[/\s{2,}/g," "],[/\.\s*$/,""]
+];
+function koPolish(s){
+  for(var i=0;i<KO_FIX.length;i++) s=s.replace(KO_FIX[i][0],KO_FIX[i][1]);
+  return s.trim();
+}
+async function translateKo(text){
+  if(!text||/[가-힣]/.test(text)) return text;
+  var c=trCache(text); if(c) return c;
+  var q=koPrep(text);
+  try{
+    var r=await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q="+encodeURIComponent(q));
+    var j=await r.json();
+    var out=(j[0]||[]).map(function(s){return s[0];}).join("");
+    if(out){out=koPolish(koEntFix(out));trSave(text,out);return out;}
+  }catch(e){}
+  try{
+    var r2=await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q.slice(0,480))+"&langpair=en|ko");
+    var j2=await r2.json();
+    var out2=j2&&j2.responseData&&j2.responseData.translatedText;
+    if(out2){out2=koPolish(koEntFix(out2));trSave(text,out2);return out2;}
+  }catch(e){}
+  return text;
+}
+// 렌더 먼저, 번역은 뒤에: 화면의 각 항목을 순차적으로 한국어로 교체
+function translateNodes(sel){
+  if(LANG==="en") return; // EN 모드: 원문 유지
+  var nodes=[].slice.call(document.querySelectorAll(sel));
+  (function step(i){
+    if(i>=nodes.length) return;
+    var nd=nodes[i], en=nd.getAttribute("data-en")||nd.textContent;
+    if(/[가-힣]/.test(en)){step(i+1);return;}
+    translateKo(en).then(function(ko){
+      if(LANG!=="en") nd.textContent=ko;
+      step(i+1);
+    },function(){step(i+1);});
+  })(0);
+}
+
+// ③ RSS 파서 + 리그 자동 분류
+var FEEDS=[
+  {tag:"해외축구",url:"https://news.google.com/rss/search?q="+encodeURIComponent("해외축구")+"&hl=ko&gl=KR&ceid=KR:ko"},
+  {tag:"EPL",url:"https://news.google.com/rss/search?q="+encodeURIComponent("프리미어리그")+"&hl=ko&gl=KR&ceid=KR:ko"},
+  {tag:"유럽축구",url:"https://news.google.com/rss/search?q="+encodeURIComponent("라리가 OR 챔피언스리그 OR 분데스리가")+"&hl=ko&gl=KR&ceid=KR:ko"}
+];
+var LG_MAP=[
+  [/arsenal|chelsea|liverpool|man (city|utd|united)|manchester|tottenham|spurs|newcastle|everton|west ham|aston villa|premier league|epl/i,"EPL"],
+  [/real madrid|barcelona|atletico|sevilla|la liga|laliga/i,"라리가"],
+  [/bayern|dortmund|leverkusen|leipzig|bundesliga/i,"분데스리가"],
+  [/juventus|inter|milan|napoli|roma|lazio|serie a/i,"세리에A"],
+  [/psg|paris|marseille|monaco|ligue 1/i,"리그1"],
+  [/champions league|europa league|ucl|uel/i,"챔스·유로파"],
+  [/world cup|월드컵/i,"월드컵"]
+];
+function lgDetect(t){
+  for(var i=0;i<LG_MAP.length;i++) if(LG_MAP[i][0].test(t)) return LG_MAP[i][1];
+  return "해외축구";
+}
+// 썸네일 고화질 업그레이드 (CDN별 고해상 URL 패턴 — BBC 976px 실측 확인)
+function hiImg(u){
+  if(!u) return "";
+  if(u.indexOf("ichef.bbci.co.uk")>-1) return u.replace(/\/standard\/(240|480|624)\//,"/standard/976/");
+  var m=u.match(/365dm\.com\/.*?\/(\d{3,4})x\d{3,4}\//);
+  if(m&&parseInt(m[1],10)<1000) return u.replace(/\/\d{3,4}x\d{3,4}\//,"/1600x900/");
+  if(u.indexOf("espncdn.com/combiner")>-1) return u.replace(/([?&])w=\d+/,"$1w=1600");
+  if(u.indexOf("images.unsplash.com")>-1) return u.replace(/([?&])q=\d+/,"$1q=80").replace(/([?&])w=\d+/,"$1w=1600");
+  return u;
+}
+function rssImg(item){
+  var sels=["media\\:thumbnail","media\\:content","thumbnail","content","enclosure"];
+  for(var i=0;i<sels.length;i++){
+    var n=item.querySelector(sels[i]);
+    if(n&&n.getAttribute("url")&&/^https?:/.test(n.getAttribute("url"))) return n.getAttribute("url");
+  }
+  return "";
+}
+function parseRss(txt,tag){
+  var xml=new DOMParser().parseFromString(txt,"text/xml");
+  return [].slice.call(xml.querySelectorAll("item")).map(function(it){
+    var g=function(t){var n=it.querySelector(t);return n?n.textContent.trim():"";};
+    return {t:g("title"),l:g("link"),d:new Date(g("pubDate")||Date.now()).getTime(),img:rssImg(it),tag:tag};
+  }).filter(function(n){return n.t&&n.l&&(/football|soccer/i.test(n.l)||/[가-힣]/.test(n.t))&&notWomen(n);});
+}
+
+// ④ 홈 히어로 캐러셀 (3초 회전, 마우스 올리면 정지) + 헤드라인 리스트
+var HN_FALLBACK=[
+  "https://images.unsplash.com/photo-1529663297269-6d349ec39b57?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1766756467595-fd3f1f62d562?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1653273056548-9af3f97dfdca?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1709495034740-f6e6c22f1d1f?q=80&w=1600&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1676746424139-77f8bd8922a8?q=80&w=1600&auto=format&fit=crop"
+];
+var heroPool=[],heroIdx=0,heroTimer=null,heroPause=false;
+function heroCard(n,i){
+  var img=hiImg(n.img||HN_FALLBACK[i%HN_FALLBACK.length]);
+  return '<a class="nhero hfade" href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
+    +'<img src="'+escHtml(img)+'" alt="" '+(i===0?'fetchpriority="high"':'loading="lazy"')+'>'
+    +'<div class="nhero-t"><span class="pill">'+escHtml(n.tag)+'</span><b><span class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</span></b><small>'+lgDetect(n.t)+'</small></div></a>';
+}
+function showHero(i){
+  var slot=document.getElementById("nhero-slot");
+  if(!slot||!heroPool.length) return;
+  heroIdx=(i+heroPool.length)%heroPool.length;
+  slot.innerHTML=heroCard(heroPool[heroIdx],heroIdx);
+  translateNodes("#nhero-slot .tr-t");
+  slot.onmouseenter=function(){heroPause=true;};
+  slot.onmouseleave=function(){heroPause=false;};
+}
+function startHeroRotate(){
+  if(heroTimer) clearInterval(heroTimer);
+  heroTimer=setInterval(function(){ if(!heroPause&&heroPool.length>1) showHero(heroIdx+1); },4000);
+}
+// 홈 뉴스: 해외·월드컵·국내 기사를 중요도 점수로 섞어 배치
+var HOME_INTL=[],HOME_KR=[],HOME_NT=[];
+function newsScore(n){
+  var t=(n.t||"")+" "+(n.tag||"");
+  var s=0;
+  if(/world cup|월드컵/i.test(t)) s-=1;                                  // 대회 빅이슈
+  if(/final|semi[- ]?final|결승|준결승|4강|8강/i.test(t)) s+=1;
+  if(/손흥민|이강인|김민재|황희찬|이재성|국가대표|\bson\b|kang-in|min-jae/i.test(t)) s+=4; // 한국 관심사
+  if(/official|completes?|signs?|done deal|오피셜|영입|이적/i.test(t)) s+=2;
+  if(/record|역대|최고액|£\d|€\d/i.test(t)) s+=2;
+  if(/arsenal|liverpool|man (city|utd)|manchester|chelsea|tottenham|real madrid|barcelona|bayern/i.test(t)) s+=2;
+  if(/K리그|FC서울|울산|전북/i.test(t)) s+=1;
+  if(n.img) s+=1;                                                        // 사진 있으면 가산
+  return s;
+}
+function mixHomeNews(){
+  var all=HOME_INTL.concat(HOME_KR,HOME_NT);
+  if(!all.length) return;
+  var seen=new Set();
+  all=all.filter(function(n){if(seen.has(n.l)||seen.has(n.t))return false;seen.add(n.l);seen.add(n.t);return true;});
+  all.sort(function(a,b){
+    var d=newsScore(b)-newsScore(a);
+    return d!==0?d:((b.d||0)-(a.d||0));
+  });
+  renderHomeNewsLive(all);
+}
+function renderHomeNewsLive(items){
+  var box=document.getElementById("home-news");
+  if(!box||!items.length) return;
+  heroPool=items.filter(function(n){return n.img;}).slice(0,5);
+  if(!heroPool.length) heroPool=items.slice(0,3);
+  var heroSet=new Set(heroPool.map(function(n){return n.l;}));
+  var rest=items.filter(function(n){return !heroSet.has(n.l);}).slice(0,5);
+  box.innerHTML='<div class="nmain"><div id="nhero-slot"></div><ul class="nlist">'
+    +rest.map(function(n){
+      return '<li><a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
+        +'<b>'+iconFor(n.t)+'<span class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</span></b><small>'+escHtml(n.tag)+' · '+lgDetect(n.t)+'</small></a></li>';
+    }).join("")+'</ul></div>';
+  showHero(0); startHeroRotate();
+  translateNodes("#home-news .nlist .tr-t");
+}
+
+// ④-2 탭 상단 사진 헤드라인 캐러셀 (해외축구·국내축구·이적시장 공용, 4초 회전)
+var TABHERO={};
+function tabHeroShow(slot){
+  var st=TABHERO[slot],el=document.getElementById(slot);
+  if(!st||!el||!st.pool.length) return;
+  var n=st.pool[st.idx%st.pool.length];
+  var img=hiImg(n.img||HN_FALLBACK[st.idx%HN_FALLBACK.length]);
+  el.innerHTML='<a class="nhero hfade" href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
+    +'<img src="'+escHtml(img)+'" alt="" loading="lazy">'
+    +'<div class="nhero-t"><span class="pill">'+escHtml(n.tag||"뉴스")+'</span>'
+    +'<b><span class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</span></b></div></a>';
+  el.onmouseenter=function(){st.pause=true;};
+  el.onmouseleave=function(){st.pause=false;};
+  translateNodes("#"+slot+" .tr-t");
+}
+function setTabHero(slot,items){
+  var el=document.getElementById(slot);
+  if(!el) return;
+  var pool=(items||[]).filter(function(n){return n.img;}).slice(0,5);
+  if(!pool.length) pool=(items||[]).slice(0,4); // 기사 사진이 없으면 대체 이미지와 함께 회전
+  if(!pool.length){el.style.display="none";return;}
+  el.style.display="";
+  var st=TABHERO[slot]=TABHERO[slot]||{idx:0,pause:false,timer:null};
+  st.pool=pool; st.idx=0;
+  tabHeroShow(slot);
+  if(st.timer) clearInterval(st.timer);
+  st.timer=setInterval(function(){ if(!st.pause&&st.pool.length>1){st.idx++;tabHeroShow(slot);} },4000);
+}
+
+// ⑤ 해외축구 보드 + 월드컵 + 이적 + 오피셜 자동 감지
+var OFFICIAL_RE=/\b(completes?|signs?|confirmed?|done deal|joins?|agrees? deal|seals?|unveil(s|ed)?|announce(s|d)?)\b/i;
+var RUMOUR_RE=/\b(in talks|close in|closing in|target(s|ed)?|linked|interest(ed)?|considering|monitor(s|ing)?|could|rumou?r|want(s|ed)?|eye(s|ing)?|bid|offer(ed)?|race|battle)\b/i;
+OFFICIAL_RE=new RegExp(OFFICIAL_RE.source+"|오피셜|공식 ?발표|영입 ?완료|이적 ?완료|입단","i");
+RUMOUR_RE=new RegExp(RUMOUR_RE.source+"|루머|이적설|영입설|관심|협상|접촉|추진|임박|유력","i");
+function extractFee(t){
+  var m=t.match(/[£€]\s?(\d+(?:\.\d+)?)\s?m\b/i);
+  return m?(t.match(/[£€]/)[0]+m[1]+"m"):"";
+}
+var OF_SEED_HTML=null;
+function liIntl(n,meta){
+  return '<li class="intl-news-row"><div class="intl-news-meta"><span>'+escHtml(meta||lgDetect(n.t))+'</span><span>'+escHtml(n.tag||'')+'</span></div>'
+    +'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'">'
+    +'<b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a>'
+    +'</li>';
+}
+var LG_GROUPS=["EPL","라리가","분데스리가","세리에A","리그1","챔스·유로파"];
+function renderIntlLive(items){
+  setTabHero("intl-hero",items); // 해외축구 탭 상단 사진 캐러셀
+  var lgWrap=document.getElementById("lg-boards");
+  if(items.length){
+    if(lgWrap) lgWrap.replaceChildren();
+    var seenIntl=new Set();
+    var combined=items.slice().sort(function(a,b){return (Number(b.d)||0)-(Number(a.d)||0);}).filter(function(n){if(seenIntl.has(n.l))return false;seenIntl.add(n.l);return true;});
+    var ul=document.getElementById("news-live");
+    if(ul) ul.innerHTML=combined.map(function(n){return liIntl(n);}).join("");
+    translateNodes("#news-live .tr-t");
+    stamp("news-stamp",nowT()+" 업데이트");
+  }
+  var wc=document.getElementById("wc-board");
+  var wcItems=items.filter(function(n){return /world cup/i.test(n.t)||lgDetect(n.t)==="월드컵";}).slice(0,8);
+  if(wc&&wcItems.length){
+    wc.innerHTML=wcItems.map(function(n){
+      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">월드컵</span></li>';
+    }).join("");
+    translateNodes("#wc-board .tr-t");
+    stamp("wc-stamp",nowT());
+  }
+  var trWords=/\btransfer|sign(s|ed|ing)?|deal|loan|fee|move(s)?|join(s|ed)?|swap|release clause|bid\b/i;
+  // 이적 보드는 남자축구만 — 리그·팀명·인칭대명사·주요 선수명까지 다중 감지
+  var womenRe=/women|wsl\b|nwsl|female|ladies|f[ée]?men[ií]|feminin|lioness|matildas|uswnt|w-league|\bshe\b|\bher\b|putellas|bonmat[ií]|여자|위민/i;
+  var trItems=items.filter(function(n){return trWords.test(n.t)&&!womenRe.test(n.t+" "+n.l);}).slice(0,14);
+  setTabHero("tr-hero",trItems); // 이적시장 탭 상단 사진 캐러셀
+  var tl=document.getElementById("transfer-live");
+  if(tl&&trItems.length){
+    tl.innerHTML=trItems.map(function(n){
+      return '<li><span class="pill">'+escHtml(n.tag)+'</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(extractFee(n.t)||"이적")+'</span></li>';
+    }).join("");
+    translateNodes("#transfer-live .tr-t");
+    stamp("tr-stamp",nowT()+" 업데이트");
+  }
+  var ol=document.getElementById("official-live");
+  if(ol){
+    if(OF_SEED_HTML===null) OF_SEED_HTML=ol.innerHTML; // 검수(파란 배지) 원본 보존
+    var offs=trItems.filter(function(n){return OFFICIAL_RE.test(n.t)&&!RUMOUR_RE.test(n.t);}).slice(0,6);
+    if(offs.length){
+      ol.innerHTML=OF_SEED_HTML+offs.map(function(n){
+        var fee=extractFee(n.t);
+        return '<li><span class="klcat" style="background:#1f7a33;color:#fff">관련 보도</span>'+iconFor(n.t)+'<a href="'+escHtml(n.l)+'" target="_blank" rel="noopener" title="원문: '+escHtml(n.t)+'"><b class="tr-t" data-en="'+escHtml(n.t)+'">'+escHtml(n.t)+'</b></a><span class="pmeta2">'+(fee?'<span class="feechip">'+fee+'</span> · ':'')+escHtml(n.tag)+'</span></li>';
+      }).join("");
+      translateNodes("#official-live .tr-t");
+    }
+    stamp("of-stamp", window.__tmStamp || "수집한 기사 · 확정 여부는 구단 발표 확인");
+    try{ofPager();}catch(e){}
+  }
+}
+function loadNews(){
+  Promise.allSettled(FEEDS.map(function(f){
+    // 실측 최적 순서: ① 직접 수신 → ② rss2json → ③ 프록시 레이스
+    return fetchDirect(f.url).then(function(txt){return parseRss(txt,f.tag);})
+      .then(function(items){if(!items.length) throw new Error("no items"); return items;})
+      .catch(function(){
+        return rss2json(f.url).then(function(arr){
+          return arr.map(function(n){n.tag=f.tag;return n;})
+            .map(function(n){ n.t = String(n.t || ""); var di = n.t.lastIndexOf(" - "); if (di > 5 && n.t.length - di < 34) n.t = n.t.slice(0, di); return n; }).filter(function(n){return /football|soccer/i.test(n.l) || /[가-힣]/.test(n.t);});
+        });
+      })
+      .catch(function(){
+        return fetchFeed(f.url).then(function(txt){return parseRss(txt,f.tag);});
+      });
+  })).then(function(results){
+    var items=results.filter(function(r){return r.status==="fulfilled";})
+      .reduce(function(a,r){return a.concat(r.value);},[]);
+    if(!items.length){ // 수집 실패 → 큐레이션 유지 + 재분류만
+      seedWC(); seedTransfer(); buildHomeNews(domItems(document.getElementById("news-live")));
+      stamp("news-stamp","네트워크 제한 — 큐레이션 수집본 표시 중 · ↻ 재시도 가능"); return;
+    }
+    items.sort(function(a,b){return b.d-a.d;});
+    // 중복 제거 (같은 링크)
+    var seen=new Set();
+    items=items.filter(function(n){if(seen.has(n.l))return false;seen.add(n.l);return true;});
+    HOME_INTL=items; mixHomeNews(); // 홈은 해외+국내 중요도 혼합
+    renderIntlLive(items);
+    stamp("hn-stamp",nowT()+" 업데이트");
+  });
+}
+
+// ⑥ 국내축구: 구글뉴스 한국어 피드 (K리그·국가대표·여자축구) + 4초 회전
+// K리그 기사는 위의 K LEAGUE 보드가 전담 → 여기는 국가대표·여자축구 (중복 방지: KL_USED 제외)
+var KFEEDS=[{cat:"국가대표",q:"축구 국가대표팀"},{cat:"여자축구",q:"여자축구"}];
+var knPool=[],knIdx=0,knTimer=null;
+function knRow(n){
+  return '<li><span class="pill">'+escHtml(n.cat)+'</span><a href="'+escHtml(n.l)+'" target="_blank" rel="noopener"><b>'+escHtml(n.t)+'</b></a><span class="pmeta2">'+escHtml(n.src||"언론 보도")+'</span></li>';
+}
+function knShow(){
+  var ul=document.getElementById("knews-live");
+  if(!ul||!knPool.length) return;
+  var out=[];
+  for(var i=0;i<Math.min(5,knPool.length);i++) out.push(knRow(knPool[(knIdx+i)%knPool.length]));
+  ul.innerHTML=out.join("");
+}
+function loadKNews(){
+  Promise.allSettled(KFEEDS.map(function(f){
+    var url="https://news.google.com/rss/search?q="+encodeURIComponent(f.q)+"&hl=ko&gl=KR&ceid=KR:ko";
+    function toRow(t,l,d){
+      var src="",m=t.match(/^(.*)\s-\s([^-]+)$/);
+      if(m){t=m[1];src=m[2];}
+      return {t:t,l:l,cat:f.cat,src:src,d:d};
+    }
+    // 실측: 구글뉴스는 rss2json이 가장 빠르고 안정적 → 우선 사용, 실패 시 프록시
+    return rss2json(url).then(function(arr){
+      if(!arr.length) throw new Error("empty");
+      return arr.slice(0,6).map(function(n){return toRow(n.t,n.l,n.d);});
+    }).catch(function(){
+      return fetchFeed(url).then(function(txt){
+        var xml=new DOMParser().parseFromString(txt,"text/xml");
+        return [].slice.call(xml.querySelectorAll("item")).slice(0,6).map(function(it){
+          var g=function(t){var n=it.querySelector(t);return n?n.textContent.trim():"";};
+          return toRow(g("title"),g("link"),new Date(g("pubDate")||Date.now()).getTime());
+        }).filter(function(n){return n.t&&n.l&&notWomen(n);});
+      });
+    });
+  })).then(function(results){
+    var items=results.filter(function(r){return r.status==="fulfilled";})
+      .reduce(function(a,r){return a.concat(r.value);},[]);
+    if(!items.length){stamp("k-stamp","네트워크 제한 — ↻ 재시도 가능");return;}
+    items=items.filter(function(n){return !(window.KL_USED&&window.KL_USED.has(n.t));}); // K리그 보드와 중복 제거
+    items.sort(function(a,b){return b.d-a.d;});
+    knPool=items; knIdx=0; knShow();
+    HOME_NT=items;
+    mixHomeNews();
+    // 국내축구 캐러셀은 K리그 보드(연합뉴스 사진)가 전담 — 그쪽이 실패했을 때만 대신 채움
+    if(!(TABHERO["dom-hero"]&&TABHERO["dom-hero"].pool&&TABHERO["dom-hero"].pool.length)){
+      setTabHero("dom-hero",items.map(function(n){return {t:n.t,l:n.l,tag:n.cat,img:""};}));
+    }
+    if(knTimer) clearInterval(knTimer);
+    knTimer=setInterval(function(){knIdx=(knIdx+1)%knPool.length;knShow();},4000);
+    stamp("k-stamp",nowT()+" 업데이트");
+  });
+}
+
+// ⑦ K리그 공식 뉴스 발췌 (kleague.com — 서버 렌더링 페이지 파싱)
+// K리그 보드: 언론사 기사 자동 발췌 (네이버스포츠에 유통되는 동일 언론사 원문)
+// 소스 ①: 구글뉴스 "K리그" 검색 피드  ②: 연합뉴스 스포츠 RSS(축구만 선별) — 둘 다 실측 검증됨
+window.KL_USED=new Set(); // 아래 언론 로테이터와의 중복 방지용
+function klCat(t){
+  if(/이적|영입|임대|완전\s?이적|FA\b|재계약|계약 기간/.test(t)) return "이적";
+  if(/K리그2|2부/.test(t)) return "K리그2";
+  return "K리그1";
+}
+function loadKLeague(){
+  var srcs=[
+    rss2json("https://news.google.com/rss/search?q="+encodeURIComponent("K리그")+"&hl=ko&gl=KR&ceid=KR:ko")
+      .then(function(arr){
+        return arr.map(function(n){
+          var t=n.t,src="",m=t.match(/^(.*)\s-\s([^-]+)$/);
+          if(m){t=m[1];src=m[2];}
+          return {t:t,l:n.l,src:src,d:n.d,img:"",category:"domestic"};
+        });
+      }),
+    rss2json("https://www.yna.co.kr/rss/sports.xml")
+      .then(function(arr){
+        return arr.filter(function(n){
+          return /K리그|프로축구|축구/.test(n.t)&&!/야구|배구|농구|골프|롯데|한화|삼성 라이온즈|KBO/.test(n.t);
+        }).map(function(n){return {t:n.t,l:n.l,src:"연합뉴스",d:n.d,img:n.img||""};});
+      })
+  ];
+  Promise.allSettled(srcs).then(function(results){
+    var items=results.filter(function(r){return r.status==="fulfilled";})
+      .reduce(function(a,r){return a.concat(r.value);},[]);
+    if(!items.length){
+      stamp("kl-stamp","일시적으로 불러오지 못했습니다 — ↻로 재시도");
+      klTab("all"); return;
+    }
+    var seen=new Set();
+    items=items.filter(function(n){if(seen.has(n.l)||seen.has(n.t))return false;seen.add(n.l);seen.add(n.t);return true;});
+    items.sort(function(a,b){return b.d-a.d;});
+    // 국내축구 탭 사진 캐러셀: 연합뉴스 실사진 기사 우선
+    setTabHero("dom-hero",items.map(function(n){return {t:n.t,l:n.l,tag:n.src||"K리그",img:n.img||""};}));
+    // Keep the complete pool: category filtering must happen before the home limit.
+    HOME_KR=items.map(function(n){return {t:n.t,l:n.l,src:n.src,category:n.category,img:n.img||"",d:n.d};});
+    mixHomeNews();
+    items=items.slice(0,12);
+    window.KL_USED=new Set(items.map(function(n){return n.t;}));
+    var ul=document.getElementById("kl-board");
+    if(ul){
+      ul.innerHTML=items.map(function(n){
+        return '<li><span class="klcat">'+klCat(n.t)+'</span><a href="'+escHtml(n.l)+'" target="_blank" rel="noopener"><b>'+escHtml(n.t)+'</b></a><span class="pmeta2">'+escHtml(n.src||"언론 보도")+'</span></li>';
+      }).join("");
+    }
+    klTab("all");
+    stamp("kl-stamp","언론사 기사 모음 · "+nowT()+" 기준");
+  });
+}
+
+// ⑧ 🎬 공식 하이라이트 (유튜브 공식 채널 RSS — 실패 시 섹션 자동 숨김)
+var HL_CH=[
+  {tag:"FIFA",id:"UCpcTrCXblq78GZrTUTLWeBw"},   // FIFA 공식 (월드컵 하이라이트)
+  {tag:"EPL",id:"UCG5qGWdu8nIRZqJ_GgDwQ-w"},
+  {tag:"K리그",id:"UCak5ZEX4BjijJcf7fdppuIQ"}
+];
+function loadHighlights(){
+  var wrap=document.getElementById("hl-wrap"),inner=document.getElementById("hl-inner");
+  if(!wrap||!inner) return;
+  Promise.allSettled(HL_CH.map(function(c){
+    var fu="https://www.youtube.com/feeds/videos.xml?channel_id="+c.id;
+    // 실측: 유튜브 피드는 rss2json 경유가 안정적 (직접 수신은 CORS 차단)
+    return rss2json(fu).then(function(arr){
+      return arr.slice(0,2).map(function(n){
+        var vid=(n.l.match(/[?&]v=([\w-]{6,})/)||[])[1]||"";
+        return {tag:c.tag,t:n.t,l:n.l,img:n.img||(vid?"https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg":"")};
+      }).filter(function(v){return v.t&&v.img;});
+    }).catch(function(){
+      return fetchFeed(fu).then(function(txt){
+        var xml=new DOMParser().parseFromString(txt,"text/xml");
+        return [].slice.call(xml.getElementsByTagNameNS("*","entry")).slice(0,3).map(function(e){
+          var q=function(t){var n=e.getElementsByTagNameNS("*",t)[0];return n?n.textContent:"";};
+          var vid=q("videoId");
+          var ln=e.getElementsByTagNameNS("*","link")[0];
+          return {tag:c.tag,t:q("title"),l:ln?ln.getAttribute("href"):"https://youtu.be/"+vid,
+            img:vid?"https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg":""};
+        }).filter(function(v){return v.t&&v.img;});
+      });
+    });
+  })).then(function(results){
+    var vids=results.filter(function(r){return r.status==="fulfilled";})
+      .reduce(function(a,r){return a.concat(r.value);},[]).slice(0,6);
+    if(!vids.length){inner.style.display="none";return;}
+    wrap.innerHTML=vids.map(function(v){
+      return '<a href="'+escHtml(v.l)+'" target="_blank" rel="noopener" style="display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden">'
+        +'<img src="'+escHtml(v.img)+'" alt="" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block">'
+        +'<div style="padding:8px 10px"><span class="pill">'+v.tag+'</span> <span style="font-size:12px;font-weight:600">'+escHtml(v.t)+'</span></div></a>';
+    }).join("");
+    inner.style.display="";
+  });
+}
+
+// ⑧-2 🌐 고속 영문 모드 (아래 재선언이 위의 느린 버전을 대체)
+// 3단: ① PRE_EN 내장 사전(0ms) → ② tren: 캐시 → ③ 25개 묶음 배치 API (요청 수 1/25)
+// 한국어 복귀: EN_NODES 레지스트리로 원문 즉시 복원 (새로고침 없음)
+var PRE_EN={
+"도구함":"Tools","🔥 추천 도구":"🔥 Popular","📖 킥오프 매거진":"📖 Kickoff Magazine","해외축구":"World Football","국내축구":"K-Football","이적시장":"Transfers","💬 커뮤니티":"💬 Community","커뮤니티":"Football Community","주제별 방에서 익명으로 실시간 대화":"Anonymous real-time chat by topic",
+"⚙️ 설정":"⚙️ Settings","🌙 다크모드":"🌙 Dark mode","☀️ 라이트모드":"☀️ Light mode",
+"축구 팬을 위한 도구 · 뉴스 · 커뮤니티":"Tools · News · Community for football fans",
+"필요한 축구 도구, 전부":"Every football tool you need — all in the","창고":"Warehouse","에 있습니다":"",
+"축구 팬의":"The football fan's","축구팬들의":"The football fans'","를 열었습니다":"is now open","를 열었습니다.":"is now open.","창고 열어보기 →":"Open the Warehouse →","도구함 바로가기 →":"Go to Tools →",
+"📰 오늘 들어온 소식":"📰 Today's News","🧰 오늘의 도구":"🧰 Today's Tools","바로 쓰기 →":"Use now →","61종 전체 보기 →":"Browse all 61 →","개인정보처리방침":"Privacy Policy","문의":"Contact","⏳ 개막 D-day":"⏳ Kickoff D-day","전체 일정 보기 →":"See all dates →","오늘의 도구":"Tool of the Day","🧰 카테고리별 도구 찾기":"🧰 Browse Tools by Category","📚 창고에서 골라둔 글":"📚 Picked from the Warehouse","🔥 많이 꺼내 쓴 도구":"🔥 Most Used Tools","📖 함께 보면 좋은 글":"📖 Recommended Reads","📅 경기 일정 · 결과":"📅 Fixtures & Results","🎬 공식 하이라이트":"🎬 Official Highlights","🏆 이번 주 퀴즈 챌린지":"🏆 Weekly Quiz Challenge",
+"🔎 도구 빠른 검색":"🔎 Quick Tool Search","⭐ 즐겨찾기":"⭐ Favorites","전체":"All","일간":"Daily","주간":"Weekly","월간":"Monthly",
+"도전하러 가기 →":"Take the challenge →","📤 기록 공유":"📤 Share Score","📤 결과 공유하기":"📤 Share Result","📤 팀 배정 공유하기":"📤 Share Teams",
+"다음 문제 →":"Next →","새 라운드 시작 →":"New round →","채점하기":"Grade","이번 라운드":"This round","누적 정답률":"Accuracy",
+"K리그 뉴스":"K League News","공식 소식":"Official News","언론 보도 헤드라인":"Media Headlines","이적":"Transfer","이적시장 콘텐츠":"Transfer Content",
+"소개":"About","개인정보처리방침":"Privacy Policy","문의하기":"Contact","축구창고 — 모든 콘텐츠는 무료입니다.":"ChukguChanggo — All content is free.",
+"홈으로":"Home","월드컵":"World Cup","한국시간 기준 · 출처: TheSportsDB":"Korea time · Source: TheSportsDB"
+};
+var EN_NODES=[]; // {n:노드, ko:원문} — 복귀용
+function markEN(nd){
+  if(!/[가-힣]/.test(nd.nodeValue||"")) return; // 이미 영문이면 기록 안 함(이중 등록 방지)
+  EN_NODES.push({n:nd,ko:nd.nodeValue});
+}
+function collectKo(root,out){
+  (function walk(n){
+    for(var c=n.firstChild;c;c=c.nextSibling){
+      if(c.nodeType===3){ if(/[가-힣]/.test(c.nodeValue||"")) out.push(c); }
+      else if(c.nodeType===1&&c.tagName!=="SCRIPT"&&c.tagName!=="STYLE"&&!c.hasAttribute("data-notranslate")&&!c.hidden) walk(c);
+    }
+  })(root);
+}
+function translateView(v){
+  if(LANG!=="en") return;
+  var nodes=[];
+  var roots=[].slice.call(document.querySelectorAll('[data-view~="'+v+'"]'));
+  ["header","nav","aside","footer"].forEach(function(s){var e=document.querySelector(s);if(e)roots.push(e);});
+  if(!roots.length) roots=[document.body];
+  roots.forEach(function(r){collectKo(r,nodes);});
+  var pend=[];
+  nodes.forEach(function(nd){
+    var txt=nd.nodeValue,key=txt.trim();
+    if(PRE_EN[key]!==undefined){markEN(nd);nd.nodeValue=txt.replace(key,PRE_EN[key]);return;}
+    var c=null; try{c=localStorage.getItem("tren:"+key);}catch(e){}
+    if(c){markEN(nd);nd.nodeValue=txt.replace(key,c);return;}
+    pend.push({n:nd,k:key});
+  });
+  trBatchEN(pend);
+}
+function trBatchEN(pend){
+  var CH=25;
+  (function run(start){
+    if(start>=pend.length||LANG!=="en") return;
+    var part=pend.slice(start,start+CH);
+    var joined=part.map(function(p){return p.k.replace(/\n/g," ");}).join("\n");
+    fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q="+encodeURIComponent(joined))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var en=(d[0]||[]).map(function(s){return s[0];}).join("");
+        var lines=en.split("\n");
+        if(lines.length===part.length){
+          part.forEach(function(p,i){
+            var val=(lines[i]||"").trim();
+            if(!val) return;
+            try{localStorage.setItem("tren:"+p.k,val);}catch(e){}
+            if(LANG==="en"&&/[가-힣]/.test(p.n.nodeValue||"")){markEN(p.n);p.n.nodeValue=p.n.nodeValue.replace(p.k,val);}
+          });
+          run(start+CH);
+        }else{ trOneByOne(part,function(){run(start+CH);}); } // 줄 수 불일치 → 개별 처리
+      })
+      .catch(function(){ trOneByOne(part,function(){run(start+CH);}); });
+  })(0);
+}
+function trOneByOne(part,done){
+  (function step(i){
+    if(i>=part.length||LANG!=="en"){if(done)done();return;}
+    var p=part[i];
+    fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q="+encodeURIComponent(p.k))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var val=((d[0]||[]).map(function(s){return s[0];}).join("")||"").trim();
+        if(val){
+          try{localStorage.setItem("tren:"+p.k,val);}catch(e){}
+          if(LANG==="en"&&/[가-힣]/.test(p.n.nodeValue||"")){markEN(p.n);p.n.nodeValue=p.n.nodeValue.replace(p.k,val);}
+        }
+        step(i+1);
+      },function(){step(i+1);});
+  })(0);
+}
+function setLang(l){
+  LANG=l;
+  try{localStorage.setItem("lang",l);}catch(e){}
+  document.documentElement.lang=(l==="en"?"en":"ko");
+  var btn=document.getElementById("lang-btn");
+  if(btn) btn.textContent=(l==="en")?"🌐 한국어":"🌐 EN";
+  var gs=document.getElementById("gsearch");
+  if(gs) gs.placeholder=(l==="en")?"🔎 Search tools & articles":"🔎 도구·글 검색";
+  try{renderFixtures();}catch(e){} // 경기 위젯: 팀명 언어 즉시 전환
+  if(l==="en"){
+    translateView(lastListView||"home");
+  }else{
+    // 역순 복원: 가장 먼저 기록된 원문이 최종 승자
+    for(var i=EN_NODES.length-1;i>=0;i--){ try{EN_NODES[i].n.nodeValue=EN_NODES[i].ko;}catch(e){} }
+    EN_NODES=[];
+    // EN 모드 동안 밀린 헤드라인 한국어 번역 재개
+    ["#nhero-slot .tr-t","#home-news .nlist .tr-t","#news-live .tr-t","#wc-board .tr-t","#transfer-live .tr-t","#official-live .tr-t"]
+      .forEach(function(s){try{translateNodes(s);}catch(e){}});
+  }
+}
+// 화면 전환 시 EN 자동 번역 훅 + 저장된 언어 복원
+var _navTo_pre_en=navTo;
+navTo=function(v){
+  var r=_navTo_pre_en(v);
+  if(LANG==="en") setTimeout(function(){translateView(v);},80);
+  return r;
+};
+(function(){
+  var s=null; try{s=localStorage.getItem("lang");}catch(e){}
+  if(s==="en"){ setTimeout(function(){setLang("en");},200); return; }
+  if(s===null){
+    // 첫 방문: 브라우저 언어가 한국어가 아니면 영어를 기본으로
+    var nav=((navigator.languages&&navigator.languages[0])||navigator.language||"").toLowerCase();
+    if(nav&&nav.indexOf("ko")!==0) setTimeout(function(){setLang("en");},200);
+  }
+})();
+
+// ⑧-3 🧰 홈 도구 스포트라이트 + 바로가기 카드 (매일 자동 교체)
+var TOOL_SPOT=[
+  {id:"kickoff",ic:"🕐",n:"킥오프 한국시간 변환기",d:"현지 킥오프 시간을 서머타임까지 반영해 한국시간으로 바꿔 드립니다."},
+  {id:"boot-size",ic:"👟",n:"축구화 사이즈 변환기",d:"mm — EU — UK — US 사이즈를 한 번에. 직구 전에 꼭 확인하세요."},
+  {id:"uniform",ic:"👕",n:"유니폼 사이즈 가이드",d:"아시아·미국·유럽 사이즈 차이, 표 하나로 정리했습니다."},
+  {id:"fanquiz",ic:"🧠",n:"축구 팬 레벨 테스트",d:"9만 가지 조합에서 무작위 10문제 — 오늘의 등급에 도전하세요."},
+  {id:"futsal-split",ic:"⚽",n:"풋살 팀 나누기 + 1/N",d:"이름만 붙여넣으면 팀 배정과 대관비 정산이 3초 만에 끝납니다."},
+  {id:"pos-test",ic:"🧬",n:"나의 포지션 테스트",d:"5문항으로 알아보는 내 축구 성향 — 결과를 친구와 공유해 보세요."},
+  {id:"fx-calc",ic:"💱",n:"직구 환율 계산기",d:"£·€ 가격을 오늘 환율로 즉시 원화로 바꿔 드립니다."},
+  {id:"dday",ic:"📅",n:"경기·개막 D-day",d:"확인한 경기 날짜까지 남은 일수를 계산합니다."},
+  {id:"points-sim",ic:"🧮",n:"승점 시뮬레이터",d:"남은 경기 결과를 가정하면 최종 승점과 순위권을 예측해 줍니다."},
+  {id:"stud-pick",ic:"🥾",n:"스터드 선택기",d:"구장 바닥에 맞는 축구화 밑창(FG·AG·TF)을 골라 드립니다."},
+  {id:"winrate",ic:"📊",n:"승률 계산기",d:"승·무·패만 넣으면 승률과 경기당 승점을 계산합니다."},
+  {id:"marking",ic:"🔤",n:"유니폼 마킹 미리보기",d:"등번호와 이름을 유니폼 위에 미리 얹어 봅니다."}
+];
+function renderToolSpot(){
+  var spot=document.getElementById("tool-spot"),grid=document.getElementById("tool-quick");
+  if(!spot||!grid) return;
+  var pool=TOOL_SPOT.filter(function(t){return document.getElementById(t.id);});
+  if(!pool.length) return;
+  // 로컬(한국) 날짜 기준 일별 시드 → 매일 자정에 무작위 재배치
+  var n0=new Date(), daySalt=n0.getFullYear()*10000+(n0.getMonth()+1)*100+n0.getDate();
+  var shuffled=pool.slice().sort(function(a,b){return rankScore(a.id,daySalt)-rankScore(b.id,daySalt);});
+  var s=shuffled[0];
+  // 실사용 횟수(Firebase 집계)는 100회 이상일 때만 표시 — 배포 초기엔 숨김
+  function useTag(id){
+    var n=(window.TOOL_USES||{})[id]||0;
+    return n>=100 ? '<small style="color:var(--pitch);font-weight:700">누적 '+n.toLocaleString()+'회 꺼냄</small>' : '<small>무료 · 가입 없음</small>';
+  }
+  spot.innerHTML='<div class="spot"><span class="sic">'+s.ic+'</span>'
+    +'<div><b>오늘의 도구 · '+s.n+'</b><div class="small" style="margin-top:4px">'+s.d+'</div>'
+    +'<div style="margin-top:2px">'+useTag(s.id)+'</div></div>'
+    +'<button class="go" onclick="return navToolA(\''+s.id+'\')">바로 쓰기 →</button></div>';
+  var others=shuffled.slice(1,7);
+  grid.innerHTML=others.map(function(t){
+    return '<div class="tqcard" onclick="navToolA(\''+t.id+'\')"><span class="ic">'+t.ic+'</span><b>'+t.n+'</b>'+useTag(t.id)+'</div>';
+  }).join("");
+}
+renderToolSpot();
+// 자정(00:00:05)마다 오늘의 도구·추천 도구 재배치 — 주간은 월요일, 월간은 1일 자정에 시드가 바뀌며 함께 반영
+// ═══════════ SG 공통 컴포넌트 (홈 개편 준비 · v0728-A) ═══════════
+// 이 블록은 컴포넌트 정의만 담는다. 아직 어떤 뷰에도 렌더링하지 않는다.
+var SG_TRANSFER_STATUS = {
+  official:    { label: "오피셜",     bg: "#1d75a3", fg: "#fff" },
+  likely:      { label: "유력",       bg: "#0e7a3d", fg: "#fff" },
+  negotiating: { label: "협상 중",    bg: "#b45309", fg: "#fff" },
+  interest:    { label: "관심",       bg: "#6d28d9", fg: "#fff" },
+  rumor:       { label: "루머",       bg: "#6b7280", fg: "#fff" },
+  unknown:     { label: "상태 미확인", bg: "#e5e7eb", fg: "#374151" }
+};
+var SG_SOCIAL_PLATFORMS = [
+  { key: "youtube",    label: "YouTube",      url: "https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0" },
+  { key: "instagram",  label: "Instagram",    url: "https://www.instagram.com/chukguchanggo/" },
+  { key: "naver_clip", label: "네이버 클립",  url: "https://clip.naver.com/@chukguchanggo" },
+  { key: "naver_blog", label: "네이버 블로그", url: "https://blog.naver.com/48975_" }
+];
+function sgExtAttr(external){ return external ? ' target="_blank" rel="noopener noreferrer"' : ""; }
+function sgThumb(src, alt, cls){
+  if (src) return '<img class="' + cls + '" src="' + escHtml(src) + '" alt="' + escHtml(alt || "") + '" loading="lazy">';
+  return '<div class="' + cls + ' sg-ph" role="img" aria-label="' + escHtml(alt || "이미지 준비 중") + '">⚽</div>';
+}
+function SGSectionHeader(o){
+  var more = o.moreHref
+    ? '<a class="sg-more" href="' + escHtml(o.moreHref) + '"' + sgExtAttr(o.external) + '>' + escHtml(o.moreLabel || "전체 보기") + " →</a>" : "";
+  return '<div class="sg-sechead"><div><h2 class="sec" style="margin:0">' + escHtml(o.title) + "</h2>"
+    + (o.desc ? '<div class="sg-secdesc">' + escHtml(o.desc) + "</div>" : "") + "</div>" + more + "</div>";
+}
+function SGContentCard(c){
+  var inner = sgThumb(c.thumb, c.title, "sg-cc-thumb")
+    + '<div class="sg-cc-body"><span class="sg-cat">' + escHtml(c.category || "") + "</span>"
+    + "<b>" + escHtml(c.title) + "</b>"
+    + (c.summary ? "<p>" + escHtml(c.summary) + "</p>" : "")
+    + (c.date ? '<small class="sg-date">' + escHtml(c.date) + "</small>" : "") + "</div>";
+  return c.href
+    ? '<a class="sg-cc" href="' + escHtml(c.href) + '"' + sgExtAttr(c.external) + ">" + inner + "</a>"
+    : '<div class="sg-cc">' + inner + "</div>";
+}
+function SGVideoCard(vd){
+  var plat = { youtube: "▶ YouTube", instagram: "◎ Reels", naver_clip: "N 클립" }[vd.platform] || escHtml(vd.platform || "");
+  var inner = sgThumb(vd.thumb, vd.title, "sg-vc-thumb")
+    + '<div class="sg-vc-body"><span class="sg-cat">' + plat + "</span>"
+    + "<b>" + escHtml(vd.title) + "</b>"
+    + (vd.desc && vd.desc !== vd.title ? "<p>" + escHtml(vd.desc) + "</p>" : "")
+    + (vd.date ? '<small class="sg-date">' + escHtml(vd.date) + "</small>" : "") + "</div>";
+  return vd.href
+    ? '<a class="sg-vc" href="' + escHtml(vd.href) + '" target="_blank" rel="noopener noreferrer">' + inner + "</a>"
+    : '<div class="sg-vc">' + inner + "</div>";
+}
+function SGPlayerCard(p){
+  var inner = sgThumb(p.img, p.name, "sg-pc-img")
+    + '<div class="sg-pc-body"><b>' + escHtml(p.name) + "</b>"
+    + (p.nameEn ? '<small class="sg-pc-en">' + escHtml(p.nameEn) + "</small>" : "")
+    + '<div class="sg-pc-meta">' + escHtml([p.team, p.position].filter(Boolean).join(" · ")) + "</div></div>";
+  return p.href
+    ? '<a class="sg-pc" href="' + escHtml(p.href) + '">' + inner + "</a>"
+    : '<div class="sg-pc">' + inner + "</div>";
+}
+function SGToolCard(t){
+  return '<a class="sg-tc" href="#' + escHtml(t.id) + '" onclick="return navToolA(&quot;' + escHtml(t.id) + '&quot;)">'
+    + '<span class="sg-tc-ic">' + (t.icon || "🧰") + "</span><span><b>" + escHtml(t.name) + "</b>"
+    + (t.desc ? "<small>" + escHtml(t.desc) + "</small>" : "") + "</span></a>";
+}
+function SGTransferBadge(status){
+  var st = SG_TRANSFER_STATUS[status] || SG_TRANSFER_STATUS.unknown;
+  return '<span class="sg-badge" style="background:' + st.bg + ";color:" + st.fg + '">' + st.label + "</span>";
+}
+function SGEmptyState(o){
+  o = o || {};
+  return '<div class="sg-empty"><div class="sg-empty-ic">📭</div><p>' + escHtml(o.message || "표시할 내용이 아직 없습니다.") + "</p>"
+    + (o.ctaHref ? '<a class="sg-empty-cta" href="' + escHtml(o.ctaHref) + '"' + sgExtAttr(o.external) + ">" + escHtml(o.ctaLabel || "더 보기") + "</a>" : "") + "</div>";
+}
+function SGSocialLinks(platforms){
+  var list = (platforms || SG_SOCIAL_PLATFORMS).filter(function(p){ return p && p.url; });
+  if (!list.length) return SGEmptyState({ message: "연결된 채널이 없습니다." });
+  return '<div class="sg-social">' + list.map(function(p){
+    return '<a href="' + escHtml(p.url) + '" target="_blank" rel="noopener noreferrer">' + escHtml(p.label) + "</a>";
+  }).join("") + "</div>";
+}
+function SG_selfTest(){
+  var results = [], box = document.createElement("div");
+  function t(name, fn){
+    try { var h = fn(); box.innerHTML = h; results.push({ name: name, ok: !!(h && box.firstChild) }); }
+    catch(e){ results.push({ name: name, ok: false, err: String(e) }); }
+  }
+  t("SectionHeader", function(){ return SGSectionHeader({ title: "테스트", desc: "설명", moreHref: "#tools" }); });
+  t("ContentCard", function(){ return SGContentCard({ category: "뉴스", title: "제목", href: "https://example.com", external: true }); });
+  t("ContentCard-noURL", function(){ return SGContentCard({ category: "뉴스", title: "제목만" }); });
+  t("VideoCard", function(){ return SGVideoCard({ title: "영상", platform: "youtube" }); });
+  t("PlayerCard", function(){ return SGPlayerCard({ name: "선수", team: "팀", position: "MF" }); });
+  t("ToolCard", function(){ return SGToolCard({ id: "kickoff", name: "킥오프 변환기", icon: "🕐" }); });
+  t("Badge-all", function(){ return Object.keys(SG_TRANSFER_STATUS).map(SGTransferBadge).join(""); });
+  t("EmptyState", function(){ return SGEmptyState({ message: "없음", ctaHref: "/links", ctaLabel: "채널 보기" }); });
+  t("SocialLinks", function(){ return SGSocialLinks(); });
+  t("SocialLinks-empty", function(){ return SGSocialLinks([]); });
+  var fail = results.filter(function(r){ return !r.ok; });
+  return { pass: results.length - fail.length, fail: fail.length, detail: results };
+}
+if (location.search.indexOf("sgtest=1") > -1) {
+  try { console.log("[SG]", SG_selfTest()); } catch(e){ console.error("SG test err", e); }
+}
+
+// ═══════ SG 3단계: 홈 상단 데이터·렌더러 (v0728-B) ═══════
+// 최신 축구창고 영상 — 관리: 아래 배열에 항목 추가/삭제 (href 없는 항목은 렌더되지 않음)
+// 전 항목 실제 채널 영상 (2026-07-28 채널에서 수집)
+var SG_VIDEOS = [
+  {title:'김민수의 첫 올드펌',platform:'youtube',href:'https://www.youtube.com/shorts/jy5EXBXUJCc',thumb:'https://i.ytimg.com/vi/jy5EXBXUJCc/oar2.jpg'},
+  {title:'백승호, 시즌 첫 골',platform:'youtube',href:'https://www.youtube.com/shorts/tlDXI_fqSJA',thumb:'https://i.ytimg.com/vi/tlDXI_fqSJA/oar2.jpg'},
+  {title:'오현규의 첫 도움',platform:'youtube',href:'https://www.youtube.com/shorts/RKkslgXe2WI',thumb:'https://i.ytimg.com/vi/RKkslgXe2WI/oar2.jpg'},
+  {title:'황희찬, 샬케 데뷔전 도움',platform:'youtube',href:'https://www.youtube.com/shorts/QmuCOMqRBEQ',thumb:'https://i.ytimg.com/vi/QmuCOMqRBEQ/oar2.jpg'}
+];
+// 한국 선수 — 소속팀은 프로젝트 데이터로 검증된 선수만 표기(미확인 정보 미표시 원칙). 상세 페이지 미구현 → 링크 없음
+/*SG_PLAYERS_DB_JSON*/
+var SG_PLAYERS_DB = [
+  { "id": "son-heung-min", "slug": "son-heung-min", "nameKo": "손흥민", "nameEn": "Son Heung-min", "team": "LAFC", "position": "FW", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "lee-kang-in", "slug": "lee-kang-in", "nameKo": "이강인", "nameEn": "Lee Kang-in", "position": "MF", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "kim-min-jae", "slug": "kim-min-jae", "nameKo": "김민재", "nameEn": "Kim Min-jae", "position": "DF", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "hwang-hee-chan", "slug": "hwang-hee-chan", "nameKo": "황희찬", "nameEn": "Hwang Hee-chan", "position": "FW", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "hwang-in-beom", "slug": "hwang-in-beom", "nameKo": "황인범", "nameEn": "Hwang In-beom", "position": "MF", "relatedVideoIds": [], "relatedArticleIds": [] },
+  { "id": "yang-min-hyeok", "slug": "yang-min-hyeok", "nameKo": "양민혁", "nameEn": "Yang Min-hyeok", "position": "FW", "relatedVideoIds": [], "relatedArticleIds": [] }
+];
+/*END_SG_PLAYERS_DB_JSON*/
+var SG_PLAYERS = SG_PLAYERS_DB.map(function(p){ return { name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }; });
+function sgScrollTo(id){
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  return false;
+}
+function sgRenderVideos(){
+  var grid = document.getElementById("sg-videos-grid");
+  if (!grid) return;
+  var list = SG_VIDEOS.filter(function(x){ return x && x.href; });
+  if (!list.length) {
+    grid.innerHTML = SGEmptyState({ message: "등록된 영상이 아직 없습니다.",
+      ctaHref: "https://www.youtube.com/@%EC%B6%95%EA%B5%AC%EC%B0%BD%EA%B3%A0",
+      ctaLabel: "유튜브 채널 보기", external: true });
+    return;
+  }
+  grid.innerHTML = list.map(SGVideoCard).join("");
+}
+function sgRenderPlayers(){
+  var row = document.getElementById("sg-players-row");
+  if (!row) return;
+  if (!SG_PLAYERS.length) { row.innerHTML = SGEmptyState({ message: "선수 정보가 아직 없습니다." }); return; }
+  row.innerHTML = SG_PLAYERS.map(SGPlayerCard).join("");
+}
+function sgRenderIssues(items){
+  var sec = document.getElementById("sg-issues-grid");
+  if (!sec) return;
+  if (!items || !items.length) {
+    sec.innerHTML = SGEmptyState({ message: "뉴스를 불러오는 중이거나 아직 소식이 없습니다." });
+    return;
+  }
+  sec.innerHTML = items.slice(0, 3).map(function(n){
+    return SGContentCard({ category: n.tag || "뉴스", title: n.t, thumb: n.img || null, href: n.l, external: true });
+  }).join("");
+}
+// 기존 함수 무수정 확장: 뉴스 렌더 시 핵심 이슈도 함께 갱신
+if (typeof renderHomeNewsLive === "function") {
+  var _sgOrigRHNL = renderHomeNewsLive;
+  renderHomeNewsLive = function(items){
+    _sgOrigRHNL(items);
+    try { sgRenderIssues(items); } catch (e) {}
+  };
+}
+// 초기 렌더 (뉴스 도착 전엔 Empty State)
+try { sgRenderIssues(null); sgRenderVideos(); sgRenderPlayers(); } catch (e) {}
+
+// ═══════ SG 4단계: 홈 중·하단 렌더러 (v0728-D) ═══════
+// 추천 도구 6종 — 전부 실존 도구 id (정적 5 + 미니 1), 로직 무변경·카드 진입만
+var SG_POPULAR_TOOLS = [
+  { id: "kickoff",      icon: "🕐", name: "킥오프 한국시간 변환기", desc: "현지 킥오프를 한국시간으로" },
+  { id: "boot-size",    icon: "⚽", name: "축구화 사이즈 변환기",   desc: "발 길이(mm)로 EU·UK·US 확인" },
+  { id: "fee-convert",  icon: "💱", name: "이적료 원화 환산기",     desc: "€m·£m를 억 원으로 (실시간 환율)" },
+  { id: "points-sim",   icon: "📊", name: "승점 시뮬레이터",        desc: "남은 경기 결과별 승점 계산" },
+  { id: "uniform",      icon: "👕", name: "유니폼 사이즈 가이드",   desc: "가슴둘레로 사이즈 찾기" },
+  { id: "futsal-split", icon: "🤝", name: "풋살 팀 나누기",         desc: "공평한 팀 배정과 회비 1/N" }
+];
+function sgRenderTools(){
+  var g = document.getElementById("sg-tools-grid");
+  if (g) g.innerHTML = SG_POPULAR_TOOLS.map(SGToolCard).join("");
+}
+// 이적시장 — 기존 검수 오피셜 목록(#official-live)에서 상위 4건 재사용. 상태는 원본 칩 텍스트 기준(임의 판단 없음)
+function sgRenderTransfers(){
+  var box = document.getElementById("sg-transfer-list");
+  if (!box) return;
+  var lis = document.querySelectorAll("#official-live li");
+  var rows = [];
+  for (var i = 0; i < lis.length && rows.length < 4; i++) {
+    var li = lis[i];
+    var b = li.querySelector("b"), a = li.querySelector("a");
+    if (!b || !a) continue;
+    var chip = li.querySelector(".klcat");
+    var st = chip && chip.textContent.indexOf("오피셜") > -1 ? "official" : "unknown";
+    var fee = li.querySelector(".feechip");
+    rows.push('<div class="sg-tr">' + SGTransferBadge(st)
+      + '<a href="' + escHtml(a.getAttribute("href") || "#") + '" target="_blank" rel="noopener noreferrer"><b>'
+      + escHtml(b.textContent) + "</b></a>"
+      + (fee ? '<small class="sg-date">' + escHtml(fee.textContent) + "</small>" : "") + "</div>");
+  }
+  if (!rows.length) {
+    box.innerHTML = "";
+    box.style.border = "none";
+    box.insertAdjacentHTML("beforeend", SGEmptyState({ message: "표시할 이적 소식이 아직 없습니다." }));
+    return;
+  }
+  box.innerHTML = rows.join("");
+}
+// 매거진 — 기존 ARTICLES 데이터 재사용 (t=제목, cat=카테고리, body=본문). 발행일·읽기시간 데이터 없음 → 미표시
+function sgRenderMag(){
+  var g = document.getElementById("sg-mag-grid");
+  if (!g || typeof ARTICLES === "undefined") return;
+  var keys = ["watch", "boots", "xg"].filter(function(k){ return ARTICLES[k]; });
+  if (!keys.length) { g.innerHTML = SGEmptyState({ message: "매거진 글이 아직 없습니다." }); return; }
+  g.innerHTML = keys.map(function(k){
+    var a = ARTICLES[k];
+    var tmp = document.createElement("div");
+    tmp.innerHTML = a.body || "";
+    var summ = (tmp.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">'
+      + SGContentCard({ category: a.cat || "매거진", title: a.t || k, summary: summ ? summ + "…" : null }) + "</a>";
+  }).join("");
+}
+// 커뮤니티 — 게시물 데이터는 토론방 진입 시 로드되는 구조(기능 재구현 금지 원칙) → 홈에서는 안내+이동 버튼
+function sgRenderComm(){
+  var box = document.getElementById("sg-comm-list");
+  if (!box) return;
+  box.innerHTML = '<div class="sg-empty"><div class="sg-empty-ic">💬</div>'
+    + "<p>리그별·한국축구 게시판은 커뮤니티에서 이용할 수 있습니다.</p>"
+    + '<a class="sg-empty-cta" href="#" onclick="return navTo(&quot;part&quot;)">커뮤니티 가기</a></div>';
+}
+function sgRenderSNS(){
+  var box = document.getElementById("sg-sns-links");
+  if (box) box.innerHTML = SGSocialLinks();
+}
+try { sgRenderTools(); sgRenderTransfers(); sgRenderMag(); sgRenderComm(); sgRenderSNS(); } catch (e) {}
+
+// ═══════ SG 5단계: 헤더·내비게이션 (v0728-E) ═══════
+function sgNavPlayers(){ navTo("home"); setTimeout(function(){ try{ sgScrollTo("sg-players-sec"); }catch(e){} }, 80); return false; }
+(function sgMoreMenu(){
+  var btn = document.getElementById("sg-more-btn"), menu = document.getElementById("sg-more-menu");
+  if (!btn || !menu) return;
+  function open(){ menu.hidden = false; btn.setAttribute("aria-expanded","true"); var f = Array.prototype.find.call(menu.querySelectorAll("a"), function(x){ return x.offsetParent !== null; }); if (f) f.focus(); }
+  function close(back){ menu.hidden = true; btn.setAttribute("aria-expanded","false"); if (back) btn.focus(); }
+  btn.addEventListener("click", function(e){ e.stopPropagation(); if (menu.hidden) open(); else close(false); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !menu.hidden) close(true); });
+  document.addEventListener("click", function(e){ if (!menu.hidden && !menu.contains(e.target) && e.target !== btn) close(false); });
+  window.sgMoreGo = function(v){ close(false); return navTo(v); };
+})();
+(function sgSheet(){
+  var btn = document.getElementById("sg-sheet-btn"), sheet = document.getElementById("sg-sheet"), bd = document.getElementById("sg-sheet-backdrop");
+  if (!btn || !sheet || !bd) return;
+  function open(){ sheet.hidden = false; bd.hidden = false; btn.setAttribute("aria-expanded","true"); document.body.style.overflow = "hidden"; var f = sheet.querySelector("a"); if (f) f.focus(); }
+  function close(back){ sheet.hidden = true; bd.hidden = true; btn.setAttribute("aria-expanded","false"); document.body.style.overflow = ""; if (back) btn.focus(); }
+  window.sgSheetClose = close;
+  btn.addEventListener("click", function(){ if (sheet.hidden) open(); else close(true); });
+  bd.addEventListener("click", function(){ close(false); });
+  document.addEventListener("keydown", function(e){
+    if (sheet.hidden) return;
+    if (e.key === "Escape") { close(true); return; }
+    if (e.key === "Tab") {
+      var f = sheet.querySelectorAll("a, button"); if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  window.sgSheetGo = function(v){ close(false); return navTo(v); };
+})();
+function sgSyncAria(){
+  try {
+    document.querySelectorAll("nav a[data-nav]").forEach(function(a){
+      if (a.classList.contains("on")) a.setAttribute("aria-current","page");
+      else a.removeAttribute("aria-current");
+    });
+  } catch(e){}
+}
+if (typeof navTo === "function") {
+  var _sgOrigNavTo = navTo;
+  navTo = function(v){
+    var r = _sgOrigNavTo(v);
+    try { if (window.sgSheetClose) sgSheetClose(false); } catch(e){}
+    sgSyncAria();
+    return r;
+  };
+}
+sgSyncAria();
+(function sgInitActive(){
+  try {
+    if (document.querySelector("nav a.on")) { sgSyncAria(); return; }
+    var h = (location.hash || "").replace("#", "");
+    var cur;
+    if (typeof VIEW_NAMES !== "undefined" && VIEW_NAMES.indexOf(h) > -1) cur = h;
+    else if (h && document.getElementById(h)) cur = "tools";
+    else cur = "home";
+    document.querySelectorAll("nav a[data-nav]").forEach(function(a){
+      a.classList.toggle("on", a.dataset.nav === cur);
+    });
+    sgSyncAria();
+  } catch(e){}
+})();
+
+// ═══════ SG 6단계: 한국 선수 허브·상세 (v0728-G) ═══════
+function sgPlayerBySlug(sl){ for (var i = 0; i < SG_PLAYERS_DB.length; i++) if (SG_PLAYERS_DB[i].slug === sl) return SG_PLAYERS_DB[i]; return null; }
+function sgVideoById(id){ return SG_VIDEOS.filter(function(vd){ return vd.href.indexOf(id) > -1; })[0] || null; }
+function sgLatestVideoFor(p){
+  var ids = p.relatedVideoIds || [];
+  for (var i = 0; i < ids.length; i++) { var vd = sgVideoById(ids[i]); if (vd) return vd; }
+  return null;
+}
+function sgSetMetaDesc(txt){
+  var m = document.querySelector('meta[name="description"]'); if (!m) return;
+  if (!m.getAttribute("data-sg-default")) m.setAttribute("data-sg-default", m.getAttribute("content") || "");
+  m.setAttribute("content", txt || m.getAttribute("data-sg-default"));
+}
+function sgRenderPlayers(){
+  var g = document.getElementById("sg-players-row");
+  if (!g) return;
+  g.innerHTML = SG_PLAYERS_DB.map(function(p){
+    return '<a href="#player-' + p.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+      + SGPlayerCard({ name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }) + "</a>";
+  }).join("");
+}
+function sgRenderPlayersHub(){
+  var g = document.getElementById("sg-phub-grid");
+  if (!g) return;
+  g.innerHTML = SG_PLAYERS_DB.map(function(p){
+    var meta = [p.team, p.position].filter(Boolean).join(" · ");
+    var vd = sgLatestVideoFor(p);
+    return '<div class="sg-phub-card">'
+      + '<a href="#player-' + p.slug + '" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" class="sg-phub-top" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+      + '<div class="sg-pc-img sg-ph" role="img" aria-label="' + escHtml(p.nameKo) + ' (' + escHtml(p.nameEn) + ') 프로필 이미지 준비 중">⚽</div>'
+      + "<b>" + escHtml(p.nameKo) + '</b><small class="sg-pc-en">' + escHtml(p.nameEn) + "</small>"
+      + (meta ? '<div class="sg-pd-meta">' + escHtml(meta) + "</div>" : "")
+      + "</a>"
+      + (vd ? '<a class="sg-phub-latest" href="' + escHtml(vd.href) + '" target="_blank" rel="noopener noreferrer">▶ ' + escHtml(vd.title) + "</a>" : "")
+      + '<a class="sg-more" href="#player-' + p.slug + '" onclick="return openPlayer(&quot;' + p.slug + '&quot;)">상세 보기 →</a>'
+      + "</div>";
+  }).join("");
+}
+function openPlayer(slug){
+  var p = sgPlayerBySlug(slug);
+  if (!p) return navTo("home");
+  var box = document.getElementById("sg-player-detail");
+  if (!box) return false;
+  var meta = [p.team, p.position].filter(Boolean).join(" · ");
+  var html = '<div class="wrap sg-pd">';
+  html += '<nav class="sg-crumb" aria-label="현재 위치"><a href="#" onclick="return navTo(&quot;home&quot;)">홈</a> › <a href="#players" onclick="return navTo(&quot;players&quot;)">한국 선수</a> › <span aria-current="page">' + escHtml(p.nameKo) + "</span></nav>";
+  html += '<div class="sg-pd-head"><div class="sg-pc-img sg-ph sg-pd-img" role="img" aria-label="' + escHtml(p.nameKo) + ' (' + escHtml(p.nameEn) + ') 프로필 이미지 준비 중">⚽</div>'
+    + '<div><h2 style="margin:0">' + escHtml(p.nameKo) + '</h2><div class="sg-pc-en">' + escHtml(p.nameEn) + "</div>"
+    + (meta ? '<div class="sg-pd-meta">' + escHtml(meta) + "</div>" : "") + "</div></div>";
+  var vids = (p.relatedVideoIds || []).map(sgVideoById).filter(Boolean);
+  html += '<h3 class="sec">📺 최신 축구창고 영상</h3>';
+  if (vids.length) html += '<div class="sg-vgrid">' + vids.map(SGVideoCard).join("") + "</div>";
+  else html += SGEmptyState({ message: "아직 " + p.nameKo + " 관련 축구창고 영상이 없습니다. 새 영상이 올라오면 이곳에 연결됩니다." });
+  html += '<h3 class="sec">📰 최신 관련 뉴스</h3><div id="sg-pd-news"></div>';
+  var arts = (p.relatedArticleIds || []).filter(function(k){ return typeof ARTICLES !== "undefined" && ARTICLES[k]; });
+  if (arts.length) {
+    html += '<h3 class="sec">📖 관련 매거진</h3><div class="sg-mgrid">' + arts.map(function(k){
+      var a = ARTICLES[k];
+      return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">' + SGContentCard({ category: a.cat || "매거진", title: a.t || k }) + "</a>";
+    }).join("") + "</div>";
+  }
+  var others = SG_PLAYERS_DB.filter(function(o){ return o.slug !== p.slug; });
+  html += '<h3 class="sec">👥 다른 한국 선수</h3><div class="sg-hscroll">' + others.map(function(o){
+    return '<a href="#player-' + o.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + o.slug + '&quot;)" aria-label="' + escHtml(o.nameKo) + ' 선수 상세 페이지">'
+      + SGPlayerCard({ name: o.nameKo, nameEn: o.nameEn, team: o.team, position: o.position }) + "</a>";
+  }).join("") + "</div>";
+  html += '<h3 class="sec">📣 축구창고에서 ' + escHtml(p.nameKo) + ' 소식 받기</h3>' + SGSocialLinks();
+  html += "</div>";
+  box.innerHTML = html;
+  navTo("player");
+  try { history.replaceState(null, "", "#player-" + p.slug); } catch(e){}
+  document.title = p.nameKo + " 최신 소식·영상 | 축구창고";
+  sgSetMetaDesc(p.nameKo + "(" + p.nameEn + ") 최신 소식·영상·뉴스 모음 | 축구창고");
+  sgFillPlayerNews(p);
+  window.scrollTo({ top: 0 });
+  return false;
+}
+function sgFillPlayerNews(p){
+  var box = document.getElementById("sg-pd-news"); if (!box) return;
+  var items = window.SG_NEWS_CACHE || [];
+  var hits = items.filter(function(it){
+    var t = String(it.title || it.t || "");
+    return t.indexOf(p.nameKo) > -1 || (p.nameEn && t.toLowerCase().indexOf(p.nameEn.toLowerCase()) > -1);
+  }).slice(0, 5);
+  if (!hits.length) {
+    box.innerHTML = SGEmptyState({ message: "지금 수집된 뉴스 중 " + p.nameKo + " 관련 기사가 없습니다." })
+      + '<div style="text-align:center;margin-top:10px"><a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">축구 뉴스 전체 보기</a></div>';
+    return;
+  }
+  box.innerHTML = '<div class="sg-trlist">' + hits.map(function(it){
+    var u = it.link || it.l || it.u || it.url || "", src = it.source || it.src || it.tag || it.m || "";
+    if (!u) return "";
+    return '<div class="sg-tr"><a href="' + escHtml(u) + '" target="_blank" rel="noopener noreferrer"><b>' + escHtml(String(it.title || it.t || "")) + "</b></a>"
+      + (src ? '<small class="sg-date">출처: ' + escHtml(String(src)) + " · 원문 보기</small>" : "") + "</div>";
+  }).join("") + "</div>";
+}
+if (typeof renderHomeNewsLive === "function") {
+  var _sgPrevRHNL6 = renderHomeNewsLive;
+  renderHomeNewsLive = function(items){ try { if (items && items.length) window.SG_NEWS_CACHE = items; } catch(e){} return _sgPrevRHNL6(items); };
+}
+if (typeof VIEW_NAMES !== "undefined") { VIEW_NAMES.push("players"); VIEW_NAMES.push("player"); }
+if (typeof routeTo === "function") {
+  var _sgOrigRouteTo = routeTo;
+  routeTo = function(h){
+    if (h && h.indexOf("player-") === 0 && sgPlayerBySlug(h.slice(7))) return openPlayer(h.slice(7));
+    return _sgOrigRouteTo(h);
+  };
+}
+if (typeof navTo === "function") {
+  var SG_DEFAULT_TITLE = document.title;
+  var _sgNavTo6 = navTo;
+  navTo = function(vw){
+    var r = _sgNavTo6(vw);
+    if (vw !== "player") { try { document.title = SG_DEFAULT_TITLE; sgSetMetaDesc(null); } catch(e){} }
+    return r;
+  };
+}
+try { sgRenderPlayers(); sgRenderPlayersHub(); } catch(e){}
+try {
+  var _h0 = (location.hash || "").replace("#", "");
+  if (_h0.indexOf("player-") === 0 && sgPlayerBySlug(_h0.slice(7))) openPlayer(_h0.slice(7));
+  else if (_h0 === "players") navTo("players");
+} catch(e){}
+
+// ═══════ SG 7단계: 뉴스 내부 요약(브리지) 페이지 (v0728-I) ═══════
+/* SGNewsItem 데이터 타입 (향후 저장/백엔드 확장용 계약):
+   { t: 제목(필수), u: 원문 URL(필수), src: 출처 언론사, cat: 카테고리,
+     d: 발행 타임스탬프(ms), img: 대표 이미지 URL,
+     summary: 핵심 요약 — 실제 데이터가 있을 때만, 자동 생성 금지,
+     why: 왜 중요한지 — 실제 데이터가 있을 때만, 임의 해석 금지,
+     relatedArticleIds: [매거진 키] }
+   현재 RSS 파이프라인은 t/l/tag/img/d만 제공 → summary·why는 렌더러가 지원하되 표시되지 않음 */
+function sgFindCachedNews(u){
+  var c = window.SG_NEWS_CACHE || [];
+  for (var i = 0; i < c.length; i++) if (c[i].l === u) return c[i];
+  return null;
+}
+function sgNewsMatchPlayers(t){
+  if (typeof SG_PLAYERS_DB === "undefined") return [];
+  var low = String(t).toLowerCase();
+  return SG_PLAYERS_DB.filter(function(p){
+    return t.indexOf(p.nameKo) > -1 || (p.nameEn && low.indexOf(p.nameEn.toLowerCase()) > -1);
+  });
+}
+function sgFmtDate(d){
+  var x = new Date(d);
+  if (isNaN(x.getTime())) return "";
+  function p2(n){ return n < 10 ? "0" + n : "" + n; }
+  return x.getFullYear() + "-" + p2(x.getMonth() + 1) + "-" + p2(x.getDate());
+}
+function openNewsView(item){
+  var box = document.getElementById("sg-news-detail");
+  if (!box || !item || !item.t || !/^https?:/.test(item.u || "")) return false;
+  try { sessionStorage.setItem('sg-last-news',JSON.stringify(item)); } catch(e){}
+  var cached = sgFindCachedNews(item.u) || {};
+  var src = item.src || cached.tag || "";
+  var d = item.d || cached.d || null;
+  var img = item.img || cached.img || sgFbImg(item.t);
+  var html = '<div class="wrap sg-pd">';
+  html += '<nav class="sg-crumb" aria-label="현재 위치"><a href="#" onclick="return navTo(&quot;home&quot;)">홈</a> › <span aria-current="page">기사</span></nav>';
+  var chips = [];
+  if (item.cat) chips.push('<span class="pill">' + escHtml(item.cat) + "</span>");
+  if (src) chips.push('<span class="sg-nd-src">출처: ' + escHtml(src) + "</span>");
+  var ds = d ? sgFmtDate(d) : "";
+  if (ds) chips.push('<span class="sg-nd-date">' + ds + "</span>");
+  if (chips.length) html += '<div class="sg-nd-chips">' + chips.join(" ") + "</div>";
+  html += '<h2 class="sg-nd-title">' + escHtml(item.t) + "</h2>";
+  if (img) html += '<img class="sg-nd-img" src="' + escHtml(img) + '" alt="기사 대표 이미지 (' + escHtml(src || "출처 제공") + ')" loading="lazy">';
+  if (item.summary) html += '<h3 class="sec">핵심 요약</h3><p>' + escHtml(item.summary) + "</p>";
+  if (item.why) html += '<h3 class="sec">왜 중요한가</h3><p>' + escHtml(item.why) + "</p>";
+  if (!item.summary) html += '<p class="sg-nd-note">저작권 보호를 위해 기사 본문은 제공하지 않습니다. 전체 내용은 아래 원문에서 확인해 주세요.</p>';
+  html += '<p><a class="hbtn" href="' + escHtml(item.u) + '" target="_blank" rel="noopener noreferrer">원문 기사 보기 ↗' + (src ? " (" + escHtml(src) + " · 외부 사이트로 이동)" : " (외부 사이트로 이동)") + "</a></p>";
+  var players = sgNewsMatchPlayers(item.t);
+  if (players.length) {
+    html += '<h3 class="sec">👤 관련 선수</h3><div class="sg-hscroll">' + players.map(function(p){
+      return '<a href="#player-' + p.slug + '" class="sg-pc-link" onclick="return openPlayer(&quot;' + p.slug + '&quot;)" aria-label="' + escHtml(p.nameKo) + ' 선수 상세 페이지">'
+        + SGPlayerCard({ name: p.nameKo, nameEn: p.nameEn, team: p.team, position: p.position }) + "</a>";
+    }).join("") + "</div>";
+    var vids = [];
+    players.forEach(function(p){ (p.relatedVideoIds || []).forEach(function(id){ var vd = sgVideoById(id); if (vd && vids.indexOf(vd) === -1) vids.push(vd); }); });
+    if (vids.length) html += '<h3 class="sec">📺 관련 축구창고 영상</h3><div class="sg-vgrid">' + vids.map(SGVideoCard).join("") + "</div>";
+  }
+  var arts = (item.relatedArticleIds || []).filter(function(k){ return typeof ARTICLES !== "undefined" && ARTICLES[k]; });
+  if (arts.length) {
+    html += '<h3 class="sec">📖 관련 매거진</h3><div class="sg-mgrid">' + arts.map(function(k){
+      var a = ARTICLES[k];
+      return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">' + SGContentCard({ category: a.cat || "매거진", title: a.t || k }) + "</a>";
+    }).join("") + "</div>";
+  }
+  html += '<p style="margin-top:16px"><a class="hbtn" href="#" onclick="return navTo(&quot;intl&quot;)">해외축구 뉴스 목록</a> <a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">국내축구 뉴스 목록</a></p>';
+  html += "</div>";
+  box.innerHTML = html;
+  try { translateNodes("#sg-news-detail .sg-nd-title"); } catch(e){}
+  navTo("newsitem");
+  try { history.replaceState(null, "", "#newsitem"); } catch(e){}
+  window.scrollTo({ top: 0 });
+  return false;
+}
+document.addEventListener("click", function(e){
+  var t = e.target;
+  var a = t && t.closest ? t.closest('a[href^="http"]') : null;
+  if (!a) return;
+  if (a.closest("#sg-news-detail")) return;
+  if (a.classList && a.classList.contains("sg-orig")) return;
+  var host = a.closest("#intl-hero, #news-live, #dom-hero, #knews-live, #kl-board, #sg-issues-grid, #sg-pd-news");
+  if (!host) return;
+  var li = a.closest("li") || a.closest(".sg-tr") || a;
+  var title = a.getAttribute("title") || "";
+  if (title.indexOf("원문: ") === 0) title = title.slice(4);
+  if (!title) { var b = a.querySelector("b"); title = (b ? b.textContent : a.textContent) || ""; }
+  title = title.replace(/\s+/g, " ").trim();
+  if (!title) return;
+  var pill = li.querySelector ? li.querySelector(".pill") : null;
+  var pm = li.querySelector ? li.querySelector(".pmeta2") : null;
+  var pillT = pill ? pill.textContent.trim() : "", pmT = pm ? pm.textContent.trim() : "";
+  var INTL_SRC = ["ESPN", "Sky", "BBC"];
+  var src, cat;
+  if (INTL_SRC.indexOf(pillT) > -1) { src = pillT; cat = pmT; }
+  else { cat = pillT; src = pmT; }
+  e.preventDefault();
+  e.stopPropagation();
+  openNewsView({ t: title, u: a.href, src: src, cat: cat });
+}, true);
+try {
+  if ((location.hash || "") === "#newsitem") {
+    var _nb = document.getElementById("sg-news-detail");
+    if (_nb && !_nb.innerHTML) {
+      _nb.innerHTML = '<div class="wrap sg-pd">' + SGEmptyState({ message: "기사 정보가 만료되었습니다. 뉴스 목록에서 다시 선택해 주세요." })
+        + '<p style="text-align:center"><a class="hbtn" href="#" onclick="return navTo(&quot;intl&quot;)">해외축구 뉴스</a> <a class="hbtn" href="#" onclick="return navTo(&quot;domestic&quot;)">국내축구 뉴스</a></p></div>';
+      navTo("newsitem");
+    }
+  }
+} catch(e){}
+if (typeof VIEW_NAMES !== "undefined") VIEW_NAMES.push("newsitem");
+
+// ═══════ SG: 폴백 이미지 + 영상 자동 최신화 (v0728-Q) ═══════
+var SG_FB = { transfer: "img/fb-transfer.jpg", goal: "img/fb-goal.jpg", match: "img/fb-match.jpg", net: "img/fb-net.jpg", record: "img/fb-record.jpg", sad: "img/fb-sad.jpg" };
+function sgFbImg(txt){
+  var t = String(txt || "");
+  if (/이적|영입|오피셜|계약|임대|방출|transfer|sign/i.test(t)) return SG_FB.transfer;
+  if (/골|득점|해트트릭|goal/i.test(t)) return SG_FB.goal;
+  if (/패배|탈락|부상|경질|참사/.test(t)) return SG_FB.sad;
+  if (/승리|경기|맞대결|격돌|리그|매치|더비|결승/.test(t)) return SG_FB.match;
+  var h = 0; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+  return [SG_FB.match, SG_FB.net, SG_FB.record][h % 3];
+}
+function sgImgGuard(scope){
+  try {
+    (scope || document).querySelectorAll("img").forEach(function(im){
+      if (!im.getAttribute("data-sg-guard")) { im.setAttribute("data-sg-guard","1");
+        im.onerror = function(){ this.onerror = null; this.src = "hero.jpg"; };
+        if (im.complete && im.naturalWidth === 0) { im.onerror = null; im.src = "hero.jpg"; }
+      }
+    });
+  } catch(e){}
+}
+function sgRenderIssues(items){
+  var g = document.getElementById("sg-issues-grid");
+  if (!g || !items || !items.length) return;
+  g.innerHTML = items.slice(0, 3).map(function(it){
+    var t = String(it.title || it.t || "");
+    var u = it.link || it.l || it.u || "";
+    var src = it.source || it.src || it.tag || "";
+    return SGContentCard({ category: src || "뉴스", title: t, href: u || undefined, external: true, thumb: it.img || sgFbImg(t) });
+  }).join("");
+  sgImgGuard(g);
+  try { translateNodes("#sg-issues-grid .sg-cc b"); } catch(e){}
+}
+function sgRenderMag(){
+  var g = document.getElementById("sg-mag-grid");
+  if (!g || typeof ARTICLES === "undefined") return;
+  var keys = ["watch", "boots", "xg"].filter(function(k){ return ARTICLES[k]; });
+  if (!keys.length) { g.innerHTML = SGEmptyState({ message: "매거진 글이 아직 없습니다." }); return; }
+  g.innerHTML = keys.map(function(k){
+    var a = ARTICLES[k];
+    var tmp = document.createElement("div");
+    tmp.innerHTML = a.body || "";
+    var summ = (tmp.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    return '<a href="#" style="display:block" onclick="return openArticle(&quot;' + k + '&quot;)">'
+      + SGContentCard({ category: a.cat || "매거진", title: a.t || k, summary: summ ? summ + "…" : null, thumb: sgFbImg((a.t || "") + k) }) + "</a>";
+  }).join("");
+  sgImgGuard(g);
+}
+var SG_YT_CHANNEL = "UCrnWcWwlBUSvYra46zPqK_w";
+function sgLoadVideos(){
+  try {
+    rss2json("https://www.youtube.com/feeds/videos.xml?channel_id=" + SG_YT_CHANNEL).then(function(res){
+      var items = Array.isArray(res) ? res : ((res && res.items) || []);
+      if (!items.length) return;
+      var fresh = [];
+      items.slice(0, 10).forEach(function(it){
+        var link = String(it.link || it.l || "");
+        var m = link.match(/[?&]v=([\w-]{6,})/) || link.match(/shorts\/([\w-]{6,})/);
+        if (!m) return;
+        var id = m[1];
+        fresh.push({ title: String(it.title || it.t || ""), platform: "youtube", href: "https://www.youtube.com/watch?v=" + id, thumb: "https://i.ytimg.com/vi/" + id + "/oar2.jpg", date: it.d ? new Date(it.d).toLocaleDateString("ko-KR", {timeZone:"Asia/Seoul"}) : "" });
+      });
+      if (!fresh.length) return;
+      fresh.forEach(function(v2){
+        var vid = v2.href.split("v=")[1];
+        if (!SG_VIDEOS.some(function(o){ return o.href.indexOf(vid) > -1; })) SG_VIDEOS.push(v2);
+      });
+      var g = document.getElementById("sg-videos-grid");
+      if (g) {
+        g.innerHTML = fresh.slice(0, 4).map(SGVideoCard).join("");
+        g.querySelectorAll("img").forEach(function(im){
+          im.onerror = function(){ this.onerror = null; this.src = this.src.replace("/oar2.jpg", "/hqdefault.jpg"); };
+        });
+      }
+    }).catch(function(){});
+  } catch(e){}
+}
+sgLoadVideos();
+(function sgVideoMidnight(){
+  try {
+    var now = new Date();
+    var next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 30);
+    setTimeout(function(){ sgLoadVideos(); setInterval(sgLoadVideos, 86400000); }, next - now);
+  } catch(e){}
+})();
+try { sgRenderMag(); } catch(e){}
+
+// ═══════ SG: 트랜스퍼마르크트 이적 뉴스 (v0728-X) ═══════
+function sgLoadTM(){
+  try {
+    rss2json("https://www.transfermarkt.com/rss/news").then(function(res){
+      var items = Array.isArray(res) ? res : ((res && res.items) || []);
+      var ul = document.getElementById("official-live");
+      if (!ul || !items.length) return;
+      var have = {};
+      ul.querySelectorAll("a").forEach(function(a){ have[a.href] = 1; });
+      var html = "";
+      items.slice(0, 8).forEach(function(it){
+        var tt = String(it.t || it.title || "");
+        var l = String(it.l || it.link || "");
+        if (!tt || !l || have[l]) return;
+        var cls = RUMOUR_RE.test(tt) ? "루머 보도" : "관련 보도";
+        html += '<li><span class="klcat">' + cls + '</span><a href="' + escHtml(l) + '" target="_blank" rel="noopener"><b class="tr-t" data-en="' + escHtml(tt) + '">' + escHtml(tt) + '</b></a><span class="pmeta2">Transfermarkt</span></li>';
+      });
+      if (html) {
+        ul.insertAdjacentHTML("beforeend", html);
+        try { translateNodes("#official-live .tr-t"); } catch(e){}
+          try { sgFillBadges(); } catch(e){}
+      }
+    }).catch(function(){});
+  } catch(e){}
+}
+sgLoadTM();
+document.addEventListener("error", function(e){
+  var im = e.target;
+  if (im && im.classList && im.classList.contains("sg-nthumb")) {
+    if (im.getAttribute("data-fb")) return;
+    im.setAttribute("data-fb", "1");
+    im.src = sgFbImg(im.alt || "");
+  }
+}, true);
+
+// ═══════ SG: 뉴스 목록 표시 개편 (v0728-Z) ═══════
+function sgDecorateNews(root){
+  try {
+    root.querySelectorAll("li").forEach(function(li){
+      if (li.getAttribute("data-sgdec")) return;
+      var a = li.querySelector('a[href^="http"]');
+      if (!a) return;
+      li.setAttribute("data-sgdec", "1");
+      var pm = li.querySelector(".pmeta2");
+      if (pm) {
+        var fee = (pm.textContent.match(/[£€$]\s?[\d.,]+m?\b|\d[\d.,]*\s*(?:mil\.|k|만|억)?\s*€|임대|자유이적/i) || [])[0] || "";
+        pm.textContent = fee;
+        if (!fee) pm.style.display = "none";
+      }
+      var o = document.createElement("a");
+      o.className = "sg-orig";
+      o.href = a.href;
+      o.target = "_blank";
+      o.rel = "noopener noreferrer";
+      o.textContent = "원문기사 보러가기 ↗";
+      li.appendChild(o);
+    });
+  } catch(e){}
+}
+(function sgArmDecorators(){
+  ["news-live", "knews-live", "kl-board", "official-live", "lg-boards"].forEach(function(id){
+    var el = document.getElementById(id);
+    if (!el) return;
+    sgDecorateNews(el);
+    try {
+      new MutationObserver(function(){ sgDecorateNews(el); }).observe(el, { childList: true, subtree: true });
+    } catch(e){}
+  });
+})();
+
+// ═══════ SG: TM 자동 수집 이적 표시 (v0729-A) ═══════
+function sgKoClub(n){
+  n = String(n || "").trim();
+  if (typeof FX_KO === "undefined") return null;
+  if (FX_KO[n]) return FX_KO[n];
+  var st = n.replace(/^(FC|AFC|SC|CF|AC|RC|KV|KVC|VfB|VfL)\s+/i, "").replace(/\s+(FC|AFC|SC|CF|AC|KV|Enschede|Alsace)$/i, "").trim();
+  if (FX_KO[st]) return FX_KO[st];
+  var keys = Object.keys(FX_KO);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i].length > 3 && n.indexOf(keys[i]) > -1) return FX_KO[keys[i]];
+  }
+  return null;
+}
+function sgKoFee(f){
+  f = String(f || "");
+  var m = f.match(/([\d.,]+)\s*mil\.\s*€/i);
+  if (m) return Math.round(parseFloat(m[1].replace(",", ".")) * 100) + "만 €";
+  m = f.match(/([\d.,]+)\s*k\s*€/i);
+  if (m) return Math.round(parseFloat(m[1].replace(",", "")) / 10) + "만 €";
+  return f;
+}
+function sgFillBadges(){
+  var spans = document.querySelectorAll("#official-live .sg-club:not([data-bdg])");
+  var i = 0;
+  function next(){
+    if (i >= spans.length) return;
+    var sp = spans[i++];
+    sp.setAttribute("data-bdg", "1");
+    var club = sp.getAttribute("data-club") || "";
+    var ic = iconFor(club);
+    if (ic) { sp.insertAdjacentHTML("afterbegin", ic); next(); return; }
+    var key = "sgBadge:" + club;
+    var cached = null;
+    try { cached = localStorage.getItem(key); } catch(e){}
+    if (cached === "none") { next(); return; }
+    if (cached) { sp.insertAdjacentHTML("afterbegin", "<img class=\"fxbdg\" src=\"" + cached + "\" alt=\"\" loading=\"lazy\">"); next(); return; }
+    fetch("https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=" + encodeURIComponent(club))
+      .then(function(r2){ return r2.ok ? r2.json() : null; })
+      .then(function(j){
+        var b = j && j.teams && j.teams[0] && (j.teams[0].strBadge || j.teams[0].strTeamBadge);
+        if (b) {
+          try { localStorage.setItem(key, b); } catch(e){}
+          sp.insertAdjacentHTML("afterbegin", "<img class=\"fxbdg\" src=\"" + b + "\" alt=\"\" loading=\"lazy\">");
+        } else { try { localStorage.setItem(key, "none"); } catch(e){} }
+        next();
+      }).catch(function(){ next(); });
+  }
+  next();
+}
+function sgLoadTMTable(){
+  try {
+    fetch("transfer/tm.json?d=" + Math.floor(Date.now() / 3600000), { cache: "no-store" })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if (!j || !j.items || !j.items.length) return;
+        var ul = document.getElementById("official-live");
+        if (!ul) return;
+        var exist = ul.textContent;
+        var html = "";
+        j.items.slice(0, 10).forEach(function(it){
+          if (!it.name || !it.to) return;
+          if (exist.indexOf(it.name) > -1) return;
+          var fee = sgKoFee(it.fee);
+          var lab = "외부 집계";
+          var fromKo = sgKoClub(it.from), toKo = sgKoClub(it.to);
+          var nameH = "<span class=\"tr-t\" data-en=\"" + escHtml(it.name) + "\">" + escHtml(it.name) + "</span>";
+          var fromH = "<span class=\"sg-club\" data-club=\"" + escHtml(it.from) + "\">" + (fromKo ? escHtml(fromKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.from) + "\">" + escHtml(it.from) + "</span>") + "</span>";
+          var toH = "<span class=\"sg-club\" data-club=\"" + escHtml(it.to) + "\">" + (toKo ? escHtml(toKo) : "<span class=\"tr-t\" data-en=\"" + escHtml(it.to) + "\">" + escHtml(it.to) + "</span>") + "</span>";
+          html += "<li><span class=\"klcat\">" + lab + "</span><a href=\"" + escHtml(it.url || "https://www.transfermarkt.co.kr/statistik/neuestetransfers") + "\" target=\"_blank\" rel=\"noopener\"><b>" + nameH + ": " + fromH + " → " + toH + "</b></a>" + (fee ? "<span class=\"pmeta2\">" + escHtml(fee) + "</span>" : "") + "</li>";
+        });
+        if (html) {
+          ul.insertAdjacentHTML("afterbegin", html);
+          if (j.updated) { window.__tmStamp = "Transfermarkt 자동 수집 " + String(j.updated).slice(0, 16) + " · 외부 집계"; try { stamp("of-stamp", window.__tmStamp); } catch(e){} }
+          try { translateNodes("#official-live .tr-t"); } catch(e){}
+          try { sgFillBadges(); } catch(e){}
+          try { sgRenderTransfers(); } catch(e){}
+        }
+      }).catch(function(){});
+  } catch(e){}
+}
+sgLoadTMTable();
+setTimeout(function(){ try { sgFillBadges(); } catch(e){} }, 4000);
+setTimeout(function(){ try { sgFillBadges(); } catch(e){} }, 9000);
+
+(function armMidnight(){
+  var now=new Date();
+  var next=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,5);
+  setTimeout(function(){
+    try{renderToolSpot();}catch(e){}
+    try{
+      var onTab=document.querySelector(".rk-tab.on");
+      renderRank(onTab&&onTab.dataset?onTab.dataset.p:"day");
+    }catch(e){}
+    if(typeof renderSideDday==="function") renderSideDday();
+    armMidnight();
+  },next-now);
+})();
+// 실사용 카운터: 도구를 열 때마다 Firebase에 +1 (게시판 DB 연결 시 자동 활성화)
+window.TOOL_USES={};
+var _navToolA_cnt=navToolA;
+navToolA=function(id){
+  try{
+    if(boardReady&&window.firebase){
+      firebase.database().ref("counts/"+id).set(firebase.database.ServerValue.increment(1));
+      window.TOOL_USES[id]=(window.TOOL_USES[id]||0)+1;
+    }
+  }catch(e){}
+  return _navToolA_cnt(id);
+};
+
+// ⑧-4 💬 익명 채팅방 (Firebase 무료 실시간 DB — 설정 전에는 "오픈 준비 중" 표시)
+var FB_CONFIG={
+  apiKey:"AIzaSyC9PL_2SYwlXhVFuR9U03kb0oguS36r6p0",
+  authDomain:"chukguchanggo-f1e56.firebaseapp.com",
+  databaseURL:"https://chukguchanggo-f1e56-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"chukguchanggo-f1e56",
+  storageBucket:"chukguchanggo-f1e56.firebasestorage.app",
+  messagingSenderId:"650733600142",
+  appId:"1:650733600142:web:19f80d9a569b020bf0f8df"
+};
+
+var BOARD_BAN=/시발|씨발|병신|지랄|개새|좆|꺼져|섹스|야동|도박|토토|카지노/;
+var boardReady=false, boardCur="all", boardLoadVersion=0, boardSaving=false, boardLastComment=0;
+var boardDrafts={};
+function renderBoardCategories(){
+ var wrap=document.getElementById("board-categories");if(!wrap)return;
+ var topics=[SGBoards.find('all')].concat(SGBoards.categories);
+ wrap.innerHTML=topics.map(function(c){return '<a href="#board-'+c.id+'" class="board-category'+(c.id===boardCur?' on':'')+'"'+(c.id===boardCur?' aria-current="page"':'')+' onclick="boardJoin(\''+c.id+'\');return false;">'+c.name+'</a>';}).join('');
+
+}
+function boardJoin(id,silent){
+ var category=SGBoards.find(id);if(!category)return;
+ if(boardSaving){alert("글 등록이 끝난 뒤 게시판을 이동해 주세요.");return;}
+ var w=document.getElementById("board-write");
+ if(w)boardDrafts[boardCur]={topic:document.getElementById("bw-topic").value,n:document.getElementById("bw-nick").value,t:document.getElementById("bw-title").value,b:document.getElementById("bw-body").value};
+ boardCur=id;document.getElementById("bw-topic").value=id==='all'?'free':id;boardOpenId=null;boardPosts=[];boardCmts={};
+ renderBoardCategories();
+ document.getElementById("board-room-title").textContent=category.name;
+ document.getElementById("board-room-desc").textContent="";
+ document.getElementById("board-write-target").textContent="어떤 축구 이야기를 나누고 싶으세요?";
+ if(w){w.hidden=true;var draft=boardDrafts[id]||{};document.getElementById("bw-topic").value=draft.topic||(id==='all'?'free':id);document.getElementById("bw-nick").value=draft.n||'';document.getElementById("bw-title").value=draft.t||'';document.getElementById("bw-body").value=draft.b||'';}
+ if(!silent){var prev=NAV_SILENT;NAV_SILENT=true;navTo("part");NAV_SILENT=prev;setHash("board-"+id);}
+ if(typeof curView!=='undefined'&&curView==='part')document.title=category.name+" | 축구창고 커뮤니티";
+ boardLoad();
+}
+function boardInit(){
+ renderBoardCategories();
+ var hash=location.hash.slice(1),id=hash.indexOf('board-')===0?hash.slice(6):'all';
+ boardJoin(SGBoards.find(id)?id:'all',true);
+ var s1=document.createElement("script"),s2=document.createElement("script");
+ s1.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js";
+ s2.src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js";
+ function failed(){document.getElementById('board-list').innerHTML='<p class="board-empty">게시판에 연결하지 못했습니다. 페이지를 새로고침해 주세요.</p>';}
+ s1.onerror=failed;s2.onerror=failed;
+ s1.onload=function(){document.head.appendChild(s2);};
+ s2.onload=function(){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);boardReady=true;boardLoad();firebase.database().ref('counts').once('value').then(function(snap){window.TOOL_USES=snap.val()||{};}).catch(function(){});}catch(e){failed();}};
+ document.head.appendChild(s1);
+}
+// ⑧-5 📝 자유게시판 (익명 · ㅇㅇ(IP) 표시 — 디시식) : posts/{id}, 댓글 pcmt/{postId}/{cmtId}
+var BOARD_IP=null, boardLastWrite=0, boardOpenId=null, boardPosts=[], boardCmts={};
+function boardIp(cb){ // IP 앞 두 자리만 (예: 112.150) — 전체 IP는 저장하지 않음
+  if(BOARD_IP){cb(BOARD_IP);return;}
+  var s=null; try{s=sessionStorage.getItem("my-ip");}catch(e){}
+  if(s){BOARD_IP=s;cb(s);return;}
+  fetch("https://api.ipify.org?format=json").then(function(r){return r.json();}).then(function(j){
+    var m=String((j&&j.ip)||"").match(/^(\d+\.\d+)\./);
+    BOARD_IP=m?m[1]:"0.0";
+    try{sessionStorage.setItem("my-ip",BOARD_IP);}catch(e){}
+    cb(BOARD_IP);
+  }).catch(function(){BOARD_IP="0.0";cb("0.0");});
+}
+function fmtBd(d){
+  var dt=new Date(d||0),now=new Date();
+  return dt.toDateString()===now.toDateString()
+    ? dt.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})
+    : (dt.getMonth()+1)+"."+dt.getDate();
+}
+function boardLoad(){
+ var list=document.getElementById('board-list');if(!list)return;
+ var version=++boardLoadVersion,category=boardCur;
+ if(!boardReady||!window.firebase){list.innerHTML='<p class="board-empty">게시판에 연결하고 있습니다.</p>';return;}
+ list.innerHTML='<p class="board-empty" role="status">글을 불러오고 있습니다.</p>';
+ var query=firebase.database().ref(SGCommunitySecurity.enabled?'communityV2/public/posts':'posts');
+ query=category==='all'?query.orderByChild('d'):query.orderByChild('board').equalTo(SGBoards.queryValue(category));
+ query.limitToLast(100).once('value').then(function(snap){
+  if(version!==boardLoadVersion)return null;
+  var values=snap.val()||{};
+  boardPosts=Object.keys(values).map(function(key){return Object.assign({},values[key],{_id:key});}).filter(function(p){return SGBoards.belongs(p,category);}).sort(function(a,b){return (b.d||0)-(a.d||0);});
+  return Promise.all(boardPosts.map(function(p){return firebase.database().ref((SGCommunitySecurity.enabled?'communityV2/public/pcmt/':'pcmt/')+p._id).once('value').then(function(s){return [p._id,s.val()||{}];});}));
+ }).then(function(comments){if(version!==boardLoadVersion||!comments)return;boardCmts={};comments.forEach(function(pair){boardCmts[pair[0]]=pair[1];});renderBoardList();}).catch(function(){if(version===boardLoadVersion)list.innerHTML='<p class="board-empty">글을 불러오지 못했습니다. 위의 새로고침 버튼으로 다시 시도해 주세요.</p>';});
+}
+function renderBoardList(){
+  var list=document.getElementById("board-list"); if(!list) return;
+  if(!boardPosts.length){
+    document.getElementById("board-count").textContent="";
+    list.innerHTML='<div class="small" style="text-align:center;padding:40px 0">등록된 글이 없습니다.</div>';
+    return;
+  }
+  var search=(document.getElementById('board-search').value||'').trim().toLowerCase();
+  var posts=boardPosts.filter(function(p){return (String(p.t||'')+' '+String(p.b||'')).toLowerCase().includes(search);});
+  if(document.getElementById('board-sort').value==='comments')posts.sort(function(a,b){return Object.keys(boardCmts[b._id]||{}).length-Object.keys(boardCmts[a._id]||{}).length||(b.d||0)-(a.d||0);});
+  document.getElementById('board-count').textContent='최근 불러온 '+boardPosts.length+'개 중 '+posts.length+'개';
+  if(!posts.length){list.innerHTML='<p class="board-empty">검색 결과가 없습니다. 다른 검색어를 입력해 주세요.</p>';return;}
+  var no=posts.length;
+  list.innerHTML='<div class="bbs">'+posts.map(function(p,i){
+    var id=p._id, cm=boardCmts[id]||{}, cn=Object.keys(cm).length;
+    var row='<button type="button" class="bbs-row" aria-expanded="'+(boardOpenId===id)+'" onclick="boardOpen(\''+id+'\')">'
+      +'<span class="bno">'+(no-i)+'</span>'
+      +'<span class="btit"><span class="board-topic">'+escHtml((SGBoards.find(p.board||'free')||{name:'자유'}).name)+'</span>'+escHtml(String(p.t||"").slice(0,100))+(cn?' <em class="bcnt">['+cn+']</em>':'')+'</span>'
+      +'<span class="bwho">'+escHtml(String(p.n||"ㅇㅇ").slice(0,10))+'</span>'
+      +'<span class="bdate">'+fmtBd(p.d)+'</span></button>';
+    if(boardOpenId===id){
+      var carr=Object.keys(cm).map(function(k){return cm[k];}).sort(function(a,b){return (a.d||0)-(b.d||0);});
+      row+='<div class="bbs-view">'
+        +'<div class="bbody">'+escHtml(String(p.b||"").slice(0,2000)).replace(/\n/g,"<br>")+'</div>'
+        +'<div class="bcmts">'+(carr.length?carr.map(function(c){
+            return '<div class="bcmt"><b>'+escHtml(String(c.n||"ㅇㅇ").slice(0,10))+'</b>'
+              +escHtml(String(c.t||"").slice(0,200))+'<span class="ctime">'+fmtBd(c.d)+'</span></div>';
+          }).join(""):'<div class="small">아직 댓글이 없습니다.</div>')+'</div>'
+        +'<div class="frow" style="margin-top:8px;margin-bottom:0">'
+        +'<input id="bc-in" maxlength="200" placeholder="댓글 (200자 · Enter 등록)" style="flex:1;min-width:160px" onclick="event.stopPropagation()" onkeydown="if(event.key===\'Enter\')boardCmt(\''+id+'\')">'
+        +'<button class="go" style="padding:8px 14px" onclick="event.stopPropagation();boardCmt(\''+id+'\')">등록</button></div>'
+        +'</div>';
+    }
+    return row;
+  }).join("")+'</div>';
+}
+function boardOpen(id){
+  boardOpenId=(boardOpenId===id)?null:id;
+  renderBoardList();
+}
+function boardToggleWrite(){
+  var w=document.getElementById("board-write");
+  if(w) w.hidden=!w.hidden;
+}
+function boardWrite(){
+  if(!boardReady||!window.firebase){alert("게시판 연결 후 다시 시도해 주세요.");return;}
+  if(boardSaving)return;
+  var nk=(document.getElementById("bw-nick").value||"").trim()||"ㅇㅇ";
+  var t=(document.getElementById("bw-title").value||"").trim();
+  var b=(document.getElementById("bw-body").value||"").trim();
+  if(!t){alert("제목을 입력해 주세요.");return;}
+  if(!b){alert("내용을 입력해 주세요.");return;}
+  if(BOARD_BAN.test(nk+" "+t+" "+b)){alert("부적절한 표현이 포함되어 등록할 수 없습니다.");return;}
+  if(/https?:\/\//i.test(t+" "+b)){alert("링크는 넣을 수 없습니다. (스팸 방지)");return;}
+  var now=Date.now();
+  if(now-boardLastWrite<30000){alert("도배 방지: 30초에 한 번만 작성할 수 있어요.");return;}
+  var targetBoard=document.getElementById("bw-topic").value;
+  if(!SGBoards.categories.some(function(c){return c.id===targetBoard;})){alert("글 주제를 선택해 주세요.");return;}boardSaving=true;document.getElementById("board-submit").disabled=true;
+  boardIp(function(ip){
+    boardLastWrite=Date.now();
+    firebase.database().ref("posts").push({
+      board:SGBoards.queryValue(targetBoard),n:nk.slice(0,10),ip:ip,t:t.slice(0,100),b:b.slice(0,2000),d:firebase.database.ServerValue.TIMESTAMP
+    }).then(function(){
+      document.getElementById("bw-title").value="";
+      document.getElementById("bw-body").value="";
+      var w=document.getElementById("board-write"); if(w) w.hidden=true;
+      boardLoad();
+    }).catch(function(){boardLastWrite=0;alert("등록에 실패했습니다. 작성한 글은 유지됩니다. 잠시 후 다시 시도해 주세요.");}).finally(function(){boardSaving=false;document.getElementById("board-submit").disabled=false;});
+  });
+}
+function boardCmt(id){
+  if(!boardReady||!window.firebase) return;
+  var el=document.getElementById("bc-in"); if(!el) return;
+  var t=(el.value||"").trim(); if(!t) return;
+  if(t.length>200){alert("200자 이내로 입력해 주세요.");return;}
+  if(BOARD_BAN.test(t)){alert("부적절한 표현이 포함되어 있습니다.");return;}
+  if(/https?:\/\//i.test(t)){alert("링크는 넣을 수 없습니다.");return;}
+  var now=Date.now();
+  if(now-boardLastComment<5000){alert("잠시 후 다시 시도해 주세요. (5초 간격)");return;}
+  boardLastComment=now;
+  boardIp(function(ip){
+    firebase.database().ref("pcmt/"+id).push({
+      n:"ㅇㅇ",ip:ip,t:t.slice(0,200),d:firebase.database.ServerValue.TIMESTAMP
+    }).then(function(){
+      return firebase.database().ref("pcmt/"+id).once("value");
+    }).then(function(s){
+      boardCmts[id]=s.val()||{};
+      renderBoardList();
+    }).catch(function(){});
+  });
+}
+
+
+// ⑨ 매 10분(+10초) 자동 갱신 등록 — 10분 간격
+scheduleHourly(loadNews,5);
+scheduleHourly(loadKNews,5);
+scheduleHourly(loadKLeague,5);
+scheduleHourly(loadFixtures);
+scheduleHourly(loadHighlights);
+
+// ── 초기화 ─────────────────────────────────────────────
+(function init(){
+  try{renderChal();}catch(e){}
+  try{buildMagList();}catch(e){}
+  try{renderVote();}catch(e){}
+  try{renderWeeklyPick();}catch(e){}
+  try{renderTransferWindow();}catch(e){}
+  try{clubIconize();}catch(e){}
+  try{ofPager();}catch(e){}
+  try{loadNews();}catch(e){}
+  try{loadKLeague();}catch(e){}
+  try{loadKNews();}catch(e){}
+  try{loadFixtures();}catch(e){}
+  try{loadHighlights();}catch(e){}
+  // renderRank 는 상단의 setTimeout(renderRank,0) 로 호출됩니다.
+  var h=(location.hash||"").replace(/^#/,"");
+  if(h){ NAV_SILENT=true; routeTo(h); NAV_SILENT=false; }
+})();

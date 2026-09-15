@@ -1,0 +1,1 @@
+/* a11y: 동적 히어로 이미지 alt 보정 */(function(){function sgFixAlt(){document.querySelectorAll('#dom-hero img:not([alt]),#intl-hero img:not([alt])').forEach(function(i){i.setAttribute('alt','축구 뉴스 이미지')});}[1500,4000,9000,20000].forEach(function(t){setTimeout(sgFixAlt,t)});})();

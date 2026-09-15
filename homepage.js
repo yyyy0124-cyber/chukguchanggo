@@ -30,7 +30,7 @@
   const settings = document.createElement('button');
   settings.id = 'hr-settings'; settings.type = 'button'; settings.textContent = '설정 · 블랙 / 화이트 모드';
   settings.onclick = event => { event.stopPropagation(); window.sgSheetClose(false); window.scrollTo({top:0,behavior:'instant'}); toggleCfg(); const first = document.querySelector('#cfg-panel button'); if (first) first.focus(); };
-  document.getElementById('sg-sheet').appendChild(settings);
+
   document.addEventListener('keydown', event => {
     const panel = document.getElementById('cfg-panel');
     if (event.key === 'Escape' && !panel.hidden) {

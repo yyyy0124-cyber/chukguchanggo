@@ -34,7 +34,7 @@
    heading.append(h,p);view.prepend(heading);
    view.querySelectorAll(':scope > .banner,:scope > .tabhero').forEach(el=>el.classList.add('edition-old-banner'));
  });
- document.querySelector('.thero h2').textContent='축구 도구';
+ const thero=document.querySelector('.thero h2');if(thero)thero.textContent='축구 도구';
  const intlView=document.querySelector('[data-view="intl"]');
  intlView.querySelector('.edition-heading p').textContent='해외축구 뉴스 모아보기';
  const intlHeads=intlView.querySelectorAll(':scope > .klhead');
@@ -49,5 +49,5 @@
    meta.append(league,source);row.querySelector('.pill')?.remove();row.querySelector('.pmeta2')?.remove();row.prepend(meta);row.classList.add('intl-news-row');
  });
  document.querySelector('.wrap > [data-view="tools"]')?.remove();
- document.querySelector('.thero p').textContent='시간 변환부터 사이즈와 승점 계산까지';
+
 })();

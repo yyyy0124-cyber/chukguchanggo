@@ -50,21 +50,21 @@ const search=document.getElementById('lookup');if(search){const rows=[...documen
 const form=document.getElementById('tool-form');if(!form)return;
 const id=location.pathname.split('/')[2],result=document.getElementById('tool-result'),actions=document.getElementById('tool-actions'),copy=document.getElementById('copy-result');
 let catalog;
-const ready=fetch('/tool-catalog.json?v=0915-content2').then(r=>{if(!r.ok)throw Error('도구 설명을 불러오지 못했습니다.');return r.json();}).then(data=>catalog=data.find(d=>d.id===id)).catch(e=>show(e.message));
-function show(s){result.hidden=false;result.textContent=s;copy.hidden=false;}
+const ready=fetch('/tool-catalog.json?v=0915-content2').then(r=>{if(!r.ok)throw Error('도구 설명을 불러오지 못했습니다.');return r.json();}).then(data=>catalog=data.find(d=>d.id===id)).catch(e=>show(e.message,true));
+function show(s,error=false){result.dataset.export=error?"error":"ok";result.hidden=false;result.textContent=s;copy.hidden=false;}
 function button(text,fn){let b=document.createElement('button');b.type='button';b.textContent=text;b.addEventListener('click',fn);actions.append(b);return b;}
 function renderPK(){actions.replaceChildren();let s=pkState(history);show(`A ${s.a} : ${s.b} B\nA ${s.na}회 / B ${s.nb}회\n${s.winner?s.winner+'팀 승리':s.next+'팀 차례'}\n기록: ${history.map((x,i)=>(i%2?'B':'A')+(x?' 성공':' 실패')).join(' / ')||'아직 없음'}`);if(!s.winner){button(s.next+' 성공',()=>{history.push(1);renderPK();});button(s.next+' 실패',()=>{history.push(0);renderPK();});}if(history.length)button('한 단계 되돌리기',()=>{history.pop();renderPK();});}
 const questions=[['4-3-3에서 골키퍼를 제외한 선수 수는?', ['10명','11명','9명'],0,'4+3+3=10명이며 골키퍼는 별도입니다.'],['득점 3, 실점 1일 때 골득실은?', ['+2','+4','-2'],0,'골득실은 득점에서 실점을 뺀 값입니다.'],['승 3점·무 1점일 때 2승 1무의 승점은?', ['6점','7점','8점'],1,'2×3+1=7점입니다.'],['xG 합계 1.0은 한 골 이상 넣을 확률 100%일까?', ['맞다','아니다'],1,'기대 득점 합계와 최소 한 골의 확률은 다릅니다.'],['단일 풀리그 4팀의 전체 경기 수는?', ['12경기','4경기','6경기'],2,'4×3÷2=6경기입니다.']];
 function renderQuiz(){actions.replaceChildren();if(quizIndex===questions.length){show(`5문제 중 ${quizScore}개 정답. 아래 초기화로 다시 풀 수 있습니다.`);return;}answered=false;let q=questions[quizIndex];show(`${quizIndex+1}/5 · ${q[0]}`);q[1].forEach((answer,i)=>button(answer,()=>{if(answered)return;answered=true;if(i===q[2])quizScore++;show((i===q[2]?'정답입니다. ':'다시 확인해 보세요. ')+q[3]);[...actions.children].forEach(b=>b.disabled=true);button('다음 문제',()=>{quizIndex++;renderQuiz();});}));}
 async function run(e){e?.preventDefault();await ready;if(!catalog)return;if(!form.reportValidity())return;stop();actions.replaceChildren();try{
  let v={};for(let f of catalog.fields){let raw=form.elements.namedItem(f.k).value;need(raw.trim()!=='','입력값을 채워 주세요.');if(f.type==='number'){v[f.k]=Number(raw);need(Number.isFinite(v[f.k])&&v[f.k]>=f.min&&v[f.k]<=f.max,'입력 범위를 확인하세요.');if(f.step===1)need(Number.isInteger(v[f.k]),'인원·횟수·원 금액은 정수로 입력하세요.');}else if(f.type==='select'&&f.opts.every(x=>typeof x[0]==='number'))v[f.k]=Number(raw);else v[f.k]=raw;}
- if(id==='pk-helper'){renderPK();return;}
+ result.dataset.export='ok';if(id==='pk-helper'){renderPK();return;}
  if(id==='fanquiz'){renderQuiz();return;}
  if(id==='formation'){result.hidden=false;copy.hidden=true;result.innerHTML='<p>↑ 공격 방향</p><div class="pitch">'+v.shape.split('-').reverse().concat(['1']).map((n,i)=>'<div class="pitch-row">'+Array.from({length:+n},(_,j)=>'<span>'+(i===v.shape.split('-').length?'GK':'●')+'</span>').join('')+'</div>').join('')+'</div>';return;}
  if(id==='marking'){result.hidden=false;copy.hidden=true;result.replaceChildren();const shirt=document.createElement('div');shirt.className='shirt';shirt.style.backgroundColor=v.color;shirt.style.color=(parseInt(v.color.slice(1,3),16)*.299+parseInt(v.color.slice(3,5),16)*.587+parseInt(v.color.slice(5,7),16)*.114)>140?'#171917':'#fff';let name=document.createElement('p'),num=document.createElement('strong');name.textContent=v.name;num.textContent=v.number;shirt.append(name,num);result.append(shirt);return;}
  if(id==='interval-timer'){const start=Date.now(),total=v.work*v.rounds+v.rest*(v.rounds-1);const tick=()=>{let elapsed=Math.floor((Date.now()-start)/1000);if(elapsed>=total){show('모든 구간이 끝났습니다.');stop();return;}let round=Math.floor(elapsed/(v.work+v.rest)),part=elapsed%(v.work+v.rest),work=part<v.work;show(`${round+1}/${v.rounds}회 · ${work?'운동':'휴식'} ${work?v.work-part:v.work+v.rest-part}초 남음\n전체 ${total-elapsed}초 남음`);};tick();timer=setInterval(tick,250);button('중지',()=>{stop();show('타이머를 중지했습니다. 다시 시작하면 첫 구간부터 진행합니다.');});return;}
  show(calculate(id,v));if(['euro-clock','ko-countdown'].includes(id))timer=setInterval(()=>show(calculate(id,v)),1000);
- }catch(e){show(e.message);}}
+ }catch(e){show(e.message,true);}}
 form.addEventListener('submit',run);
 form.addEventListener('input',()=>{stop();actions.replaceChildren();result.hidden=true;copy.hidden=true;});
 document.getElementById('reset-tool').addEventListener('click',()=>{stop();form.reset();history=[];quizIndex=quizScore=0;answered=false;actions.replaceChildren();result.hidden=true;copy.hidden=true;});
