@@ -1,14 +1,23 @@
 {
- "updated": "2026-09-17 12:05",
+ "updated": "2026-09-20 13:26",
  "items": [
   {
-   "name": "Marius Mouandilmadji",
-   "pos": "중앙 공격수",
-   "from": "Samsunspor",
-   "to": "Olympiacos Piraeus",
-   "fee": "7.00 mil. €",
+   "name": "Juan Bezerra",
+   "pos": "우측 윙 포워드",
+   "from": "Zamalek SC",
+   "to": "샤바브 알아흘리 클럽",
+   "fee": "4.35 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/598399/transfer_id/6594341"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1083965/transfer_id/6600483"
+  },
+  {
+   "name": "Yu-min Cho",
+   "pos": "중앙 수비수",
+   "from": "샤르자 FC",
+   "to": "도쿄 베르디",
+   "fee": "자유이적",
+   "kr": true,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/561212/transfer_id/6598945"
   }
  ]
 }
