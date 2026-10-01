@@ -1,14 +1,59 @@
 {
- "updated": "2026-09-30 12:16",
+ "updated": "2026-10-01 12:01",
  "items": [
   {
-   "name": "Juan Cruz de los Santos",
-   "pos": "좌측 윙 포워드",
-   "from": "Club Nacional",
-   "to": "알자지라 클럽",
-   "fee": "1.10 mil. €",
+   "name": "Artur Serobyan",
+   "pos": "우측 윙 포워드",
+   "from": "FC Ararat-Armenia ",
+   "to": "Lechia Gdansk",
+   "fee": "1.00 mil. €",
    "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/988662/transfer_id/6620851"
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/623120/transfer_id/6586744"
+  },
+  {
+   "name": "Marcelo Morales",
+   "pos": "좌측 풀백",
+   "from": "Red Bull New York",
+   "to": "Club Universidad de Chile",
+   "fee": "400 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/841340/transfer_id/6577398"
+  },
+  {
+   "name": "Djylian N'Guessan",
+   "pos": "중앙 공격수",
+   "from": "AS Saint-Étienne",
+   "to": "Liverpool FC",
+   "fee": "5.00 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1200419/transfer_id/6564901"
+  },
+  {
+   "name": "Mohammad Khalifeh",
+   "pos": "골키퍼",
+   "from": "Aluminium Arak FC",
+   "to": "에스테글랄 FC",
+   "fee": "370 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1030744/transfer_id/6446640"
+  },
+  {
+   "name": "Bahram Goudarzi",
+   "pos": "우측 풀백",
+   "from": "Aluminium Arak FC",
+   "to": "에스테글랄 FC",
+   "fee": "115 k €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1136529/transfer_id/6443994"
+  },
+  {
+   "name": "Diego Tarzia",
+   "pos": "좌측 윙 포워드",
+   "from": "CA Independiente",
+   "to": "Esporte Clube Vitória",
+   "fee": "2.30 mil. €",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1225755/transfer_id/6220198"
   }
  ]
 }
