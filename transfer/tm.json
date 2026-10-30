@@ -1,6 +1,24 @@
 {
- "updated": "2026-10-29 12:04",
+ "updated": "2026-10-30 11:55",
  "items": [
+  {
+   "name": "Rodrigo Villagra",
+   "pos": "수비형 미드필더",
+   "from": "CSKA Moscow",
+   "to": "Sport Club Internacional",
+   "fee": "€420.0만",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/657220/transfer_id/6664393"
+  },
+  {
+   "name": "Cherrion Valerius",
+   "pos": "우측 풀백",
+   "from": "NAC Breda",
+   "to": "Minnesota United FC",
+   "fee": "€135.0만",
+   "kr": false,
+   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/936581/transfer_id/6663952"
+  },
   {
    "name": "Moisés Paniagua",
    "pos": "좌측 윙 포워드",
