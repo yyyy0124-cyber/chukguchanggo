@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07 12:35",
+ "updated": "2026-11-10 11:59",
  "items": [
   {
    "name": "Rodrigo Villagra",
@@ -15,7 +15,7 @@
    "pos": "우측 풀백",
    "from": "NAC Breda",
    "to": "Minnesota United FC",
-   "fee": "€135.0만",
+   "fee": "€170.0만",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/936581/transfer_id/6663952"
   },
@@ -72,15 +72,6 @@
    "fee": "€37.0만",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1030744/transfer_id/6446640"
-  },
-  {
-   "name": "Bahram Goudarzi",
-   "pos": "우측 풀백",
-   "from": "Aluminium Arak FC",
-   "to": "에스테글랄 FC",
-   "fee": "€11.5만",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1136529/transfer_id/6443994"
   }
  ]
 }
