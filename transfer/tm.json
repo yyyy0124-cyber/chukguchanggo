@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10 11:59",
+ "updated": "2026-11-12 12:11",
  "items": [
   {
    "name": "Rodrigo Villagra",
@@ -36,42 +36,6 @@
    "fee": "€180.0만",
    "kr": false,
    "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/665309/transfer_id/6640068"
-  },
-  {
-   "name": "Artur Serobyan",
-   "pos": "우측 윙 포워드",
-   "from": "FC Ararat-Armenia ",
-   "to": "Lechia Gdansk",
-   "fee": "€100.0만",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/623120/transfer_id/6586744"
-  },
-  {
-   "name": "Marcelo Morales",
-   "pos": "좌측 풀백",
-   "from": "Red Bull New York",
-   "to": "Club Universidad de Chile",
-   "fee": "€40.0만",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/841340/transfer_id/6577398"
-  },
-  {
-   "name": "Djylian N'Guessan",
-   "pos": "중앙 공격수",
-   "from": "AS Saint-Étienne",
-   "to": "Liverpool FC",
-   "fee": "€500.0만",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1200419/transfer_id/6564901"
-  },
-  {
-   "name": "Mohammad Khalifeh",
-   "pos": "골키퍼",
-   "from": "Aluminium Arak FC",
-   "to": "에스테글랄 FC",
-   "fee": "€37.0만",
-   "kr": false,
-   "url": "https://www.transfermarkt.co.kr/jumplist/transfers/spieler/1030744/transfer_id/6446640"
   }
  ]
 }
